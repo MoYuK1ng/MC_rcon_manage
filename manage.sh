@@ -183,9 +183,14 @@ show_menu() {
     echo "  9) $(msg opt_restore)"
     echo ""
     echo "  [$(msg menu_others)]"
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        echo "  10) 完全卸载"
+    else
+        echo "  10) Uninstall"
+    fi
     echo "  0) $(msg opt_exit)"
     echo ""
-    echo -n "Enter option [0-9]: "
+    echo -n "Enter option [0-10]: "
 }
 
 # ============================================================
@@ -855,6 +860,166 @@ restore_data() {
 }
 
 # ============================================================
+# 10. Uninstall
+# ============================================================
+
+uninstall_all() {
+    print_banner
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        echo "=== 完全卸载 ==="
+    else
+        echo "=== Complete Uninstall ==="
+    fi
+    echo ""
+    
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        print_warning "警告：这将删除所有数据和配置！"
+        echo ""
+        echo "将要删除："
+        echo "  - 项目文件"
+        echo "  - 数据库"
+        echo "  - 配置文件"
+        echo "  - Systemd 服务"
+        echo "  - Nginx 配置"
+        echo ""
+        read -p "确认卸载? 输入 'YES' 继续: " confirm
+    else
+        print_warning "WARNING: This will delete all data and configurations!"
+        echo ""
+        echo "Will delete:"
+        echo "  - Project files"
+        echo "  - Database"
+        echo "  - Configuration files"
+        echo "  - Systemd service"
+        echo "  - Nginx configuration"
+        echo ""
+        read -p "Confirm uninstall? Type 'YES' to continue: " confirm
+    fi
+    
+    if [ "$confirm" != "YES" ]; then
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_info "已取消"
+        else
+            print_info "Cancelled"
+        fi
+        press_any_key
+        return
+    fi
+    
+    # Ask for installation directory
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        read -p "项目安装路径 [/opt/mc_rcon]: " INSTALL_DIR
+    else
+        read -p "Project installation path [/opt/mc_rcon]: " INSTALL_DIR
+    fi
+    INSTALL_DIR=${INSTALL_DIR:-/opt/mc_rcon}
+    
+    if [ ! -d "$INSTALL_DIR" ]; then
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_error "目录不存在: $INSTALL_DIR"
+        else
+            print_error "Directory not found: $INSTALL_DIR"
+        fi
+        press_any_key
+        return
+    fi
+    
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        print_info "开始卸载..."
+    else
+        print_info "Starting uninstall..."
+    fi
+    
+    # 1. Stop and disable service
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        print_info "步骤 1/5: 停止并禁用服务..."
+    else
+        print_info "Step 1/5: Stopping and disabling service..."
+    fi
+    
+    systemctl stop mc-rcon 2>/dev/null || true
+    systemctl disable mc-rcon 2>/dev/null || true
+    print_success "Service stopped"
+    
+    # 2. Remove systemd service file
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        print_info "步骤 2/5: 删除 Systemd 服务..."
+    else
+        print_info "Step 2/5: Removing Systemd service..."
+    fi
+    
+    rm -f /etc/systemd/system/mc-rcon.service
+    systemctl daemon-reload
+    print_success "Service file removed"
+    
+    # 3. Remove Nginx configuration
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        print_info "步骤 3/5: 删除 Nginx 配置..."
+    else
+        print_info "Step 3/5: Removing Nginx configuration..."
+    fi
+    
+    rm -f /etc/nginx/sites-enabled/mc-rcon
+    rm -f /etc/nginx/sites-available/mc-rcon
+    nginx -t && systemctl reload nginx 2>/dev/null || true
+    print_success "Nginx configuration removed"
+    
+    # 4. Backup database (optional)
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        print_info "步骤 4/5: 备份数据库..."
+        read -p "是否备份数据库? (y/n) [y]: " backup_choice
+    else
+        print_info "Step 4/5: Backing up database..."
+        read -p "Backup database? (y/n) [y]: " backup_choice
+    fi
+    
+    backup_choice=${backup_choice:-y}
+    if [ "$backup_choice" = "y" ] || [ "$backup_choice" = "Y" ]; then
+        if [ -f "${INSTALL_DIR}/db.sqlite3" ]; then
+            BACKUP_FILE="/tmp/mc_rcon_backup_$(date +%Y%m%d_%H%M%S).tar.gz"
+            tar -czf "$BACKUP_FILE" -C "$INSTALL_DIR" db.sqlite3 .env 2>/dev/null || true
+            if [ "$LANG_CHOICE" = "zh" ]; then
+                print_success "数据库已备份到: $BACKUP_FILE"
+            else
+                print_success "Database backed up to: $BACKUP_FILE"
+            fi
+        fi
+    fi
+    
+    # 5. Remove project directory
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        print_info "步骤 5/5: 删除项目文件..."
+    else
+        print_info "Step 5/5: Removing project files..."
+    fi
+    
+    rm -rf "$INSTALL_DIR"
+    print_success "Project files removed"
+    
+    # Complete
+    echo ""
+    echo "============================================================"
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        echo "卸载完成！"
+        echo "============================================================"
+        if [ -n "$BACKUP_FILE" ]; then
+            echo ""
+            echo "数据库备份位置: $BACKUP_FILE"
+        fi
+    else
+        echo "Uninstall Complete!"
+        echo "============================================================"
+        if [ -n "$BACKUP_FILE" ]; then
+            echo ""
+            echo "Database backup location: $BACKUP_FILE"
+        fi
+    fi
+    echo ""
+    
+    press_any_key
+}
+
+# ============================================================
 # Main Program
 # ============================================================
 
@@ -879,6 +1044,7 @@ main() {
             7) view_logs ;;
             8) backup_data ;;
             9) restore_data ;;
+            10) uninstall_all ;;
             0) 
                 print_info "$(msg goodbye)"
                 exit 0
