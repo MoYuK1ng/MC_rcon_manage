@@ -9,7 +9,7 @@ set -e
 # Configuration
 # ============================================================
 
-SCRIPT_VERSION="2.2.0"
+SCRIPT_VERSION="2.2.1"
 SCRIPT_DATE="2024-11-28"
 PROJECT_NAME="mc_rcon"
 DEFAULT_INSTALL_DIR="/opt/mc_rcon"
@@ -18,11 +18,12 @@ VERSION_URL="https://raw.githubusercontent.com/MoYuK1ng/MC_rcon_manage/main/VERS
 SCRIPT_URL="https://raw.githubusercontent.com/MoYuK1ng/MC_rcon_manage/main/manage.sh"
 PYTHON_MIN_VERSION="3.10"
 
-# Changelog for v2.2.0
-# - Fixed .env file generation logic to prevent duplicate lines
-# - Improved CSRF_TRUSTED_ORIGINS configuration
-# - Added proper line breaks in .env file
-# - Ensured all necessary origins are included (localhost, 127.0.0.1, domain)
+# Changelog for v2.2.1
+# - CRITICAL FIX: Added safety check to prevent deleting current directory during install
+# - Added confirmation prompt when reinstalling to existing directory
+# - Improved error handling for git clone and directory operations
+# - Removed all Nginx dependencies from service management
+# - Fixed Admin CSS loading with WhiteNoise middleware
 
 # Language setting (will be set by user)
 LANG_CHOICE=""
@@ -335,17 +336,66 @@ install_fresh() {
         print_info "Step 2/10: Cloning repository..."
     fi
     
+    # Check if target directory exists
     if [ -d "$INSTALL_DIR" ]; then
         if [ "$LANG_CHOICE" = "zh" ]; then
-            print_warning "目录已存在，将删除并重新克隆"
+            print_warning "目录已存在: $INSTALL_DIR"
+            read -p "是否删除并重新安装? (y/n): " confirm_reinstall
         else
-            print_warning "Directory exists, will remove and re-clone"
+            print_warning "Directory exists: $INSTALL_DIR"
+            read -p "Remove and reinstall? (y/n): " confirm_reinstall
         fi
+        
+        if [ "$confirm_reinstall" != "y" ] && [ "$confirm_reinstall" != "Y" ]; then
+            if [ "$LANG_CHOICE" = "zh" ]; then
+                print_info "已取消安装"
+            else
+                print_info "Installation cancelled"
+            fi
+            press_any_key
+            return
+        fi
+        
+        # Safety check: don't delete if we're inside the directory
+        CURRENT_DIR=$(pwd)
+        case "$CURRENT_DIR" in
+            "$INSTALL_DIR"*)
+                if [ "$LANG_CHOICE" = "zh" ]; then
+                    print_error "错误: 当前在安装目录内，无法删除"
+                    print_info "请先退出到其他目录: cd /tmp"
+                else
+                    print_error "Error: Currently inside install directory, cannot delete"
+                    print_info "Please exit to another directory: cd /tmp"
+                fi
+                press_any_key
+                return
+                ;;
+        esac
+        
         rm -rf "$INSTALL_DIR"
     fi
     
-    git clone "$REPO_URL" "$INSTALL_DIR"
-    cd "$INSTALL_DIR"
+    # Clone repository
+    if ! git clone "$REPO_URL" "$INSTALL_DIR"; then
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_error "克隆失败，请检查网络连接"
+        else
+            print_error "Clone failed, please check network connection"
+        fi
+        press_any_key
+        return
+    fi
+    
+    cd "$INSTALL_DIR" || {
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_error "无法进入安装目录"
+        else
+            print_error "Cannot enter install directory"
+        fi
+        press_any_key
+        return
+    }
+    
     print_success "Repository cloned"
     
     # 3. Create virtual environment
