@@ -25,39 +25,77 @@ def is_default_group(group_name: str) -> bool:
     return " | " in group_name
 
 
+from django import forms
+
+
+class ServerAdminForm(forms.ModelForm):
+    """Custom form for Server admin with password field"""
+    
+    rcon_password = forms.CharField(
+        label=_('RCON Password / RCON 密码'),
+        widget=forms.PasswordInput(attrs={'placeholder': _('Enter RCON password / 输入 RCON 密码')}),
+        required=False,
+        help_text=_('输入新密码以更新，留空则不修改 / Enter new password to update, leave blank to keep current')
+    )
+    
+    class Meta:
+        model = Server
+        fields = '__all__'
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # If editing existing server, show password status
+        if self.instance.pk and self.instance.rcon_password_encrypted:
+            self.fields['rcon_password'].help_text = _(
+                '✅ 密码已设置。输入新密码以更新，留空则保持不变。<br>'
+                '✅ Password is set. Enter new password to update, leave blank to keep current.'
+            )
+    
+    def save(self, commit=True):
+        server = super().save(commit=False)
+        
+        # If password field has value, encrypt and save it
+        password = self.cleaned_data.get('rcon_password')
+        if password:
+            server.set_password(password)
+        elif not server.pk and not server.rcon_password_encrypted:
+            # New server without password - set a placeholder
+            server.set_password('CHANGE_ME_IMMEDIATELY')
+        
+        if commit:
+            server.save()
+        return server
+
+
 @admin.register(Server)
 class ServerAdmin(admin.ModelAdmin):
     """Admin interface for Server model"""
     
+    form = ServerAdminForm
     list_display = ('name', 'ip_address', 'rcon_port', 'group_count', 'password_status', 'created_at')
     list_filter = ('created_at', 'groups')
     search_fields = ('name', 'ip_address')
     filter_horizontal = ('groups',)  # Nice multi-select widget for groups
-    readonly_fields = ('created_at', 'updated_at', 'rcon_password_encrypted', 'password_help')
+    readonly_fields = ('created_at', 'updated_at', 'rcon_password_encrypted')
     
     fieldsets = (
         (_('Server Information'), {
             'fields': ('name', 'ip_address', 'rcon_port')
         }),
+        (_('RCON Password'), {
+            'fields': ('rcon_password',),
+            'description': _(
+                '🔒 密码将被加密存储，无法查看。<br>'
+                '🔒 Password will be encrypted and cannot be viewed.'
+            )
+        }),
         (_('Access Control'), {
             'fields': ('groups',)
         }),
-        (_('RCON Password'), {
-            'fields': ('rcon_password_encrypted', 'password_help'),
-            'description': _(
-                '<strong style="color: #d32f2f;">⚠️ 重要 / Important:</strong><br>'
-                'RCON 密码已加密存储，无法在此查看或修改。<br>'
-                'The RCON password is encrypted and cannot be viewed or modified here.<br><br>'
-                '<strong>设置密码方法 / How to set password:</strong><br>'
-                '1. 使用命令行脚本 / Use command line script:<br>'
-                '   <code>python set_rcon_password.py</code><br><br>'
-                '2. 或使用 Django Shell / Or use Django Shell:<br>'
-                '   <code>python manage.py shell</code><br>'
-                '   <code>from servers.models import Server</code><br>'
-                '   <code>server = Server.objects.get(name="服务器名称")</code><br>'
-                '   <code>server.set_password("your_password")</code><br>'
-                '   <code>server.save()</code>'
-            )
+        (_('Security Info (Read Only)'), {
+            'fields': ('rcon_password_encrypted',),
+            'classes': ('collapse',),
+            'description': _('加密后的密码数据（仅供参考）/ Encrypted password data (for reference only)')
         }),
         (_('Timestamps'), {
             'fields': ('created_at', 'updated_at'),
@@ -68,32 +106,14 @@ class ServerAdmin(admin.ModelAdmin):
     def password_status(self, obj):
         """Display password status"""
         if obj.rcon_password_encrypted:
-            return "✅ " + _("已设置 / Set")
-        return "❌ " + _("未设置 / Not Set")
+            return "✅ " + _("已设置")
+        return "❌ " + _("未设置")
     password_status.short_description = _('Password Status')
-    
-    def password_help(self, obj):
-        """Display help text for setting password"""
-        if obj.rcon_password_encrypted:
-            return _("密码已设置并加密存储 / Password is set and encrypted")
-        return _("⚠️ 请使用 set_rcon_password.py 脚本设置密码 / Please use set_rcon_password.py script to set password")
-    password_help.short_description = _('Password Help')
     
     def group_count(self, obj):
         """Display the number of groups with access to this server"""
         return obj.groups.count()
     group_count.short_description = _('Groups')
-    
-    def save_model(self, request, obj, form, change):
-        """
-        Custom save to handle password encryption.
-        Note: Password must be set via set_password() method, not through admin form.
-        """
-        # If this is a new server and no password is set, we need to handle it
-        if not change and not obj.rcon_password_encrypted:
-            # Set a placeholder - admin should update this via shell or custom form
-            obj.set_password('CHANGE_ME_IMMEDIATELY')
-        super().save_model(request, obj, form, change)
 
 
 @admin.register(WhitelistRequest)
