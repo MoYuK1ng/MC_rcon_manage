@@ -309,7 +309,7 @@ install_fresh() {
     else
         # Reverse proxy - ask for domain
         if [ "$LANG_CHOICE" = "zh" ]; then
-            read -p "域名 (例如: mc.moyuu.online): " DOMAIN
+            read -p "域名 (例如: mc.example.com): " DOMAIN
         else
             read -p "Domain (e.g., mc.example.com): " DOMAIN
         fi
@@ -533,7 +533,15 @@ EOF
     fi
     
     echo ""
-    python manage.py createsuperuser
+    
+    # Use custom script to create superuser without email
+    if [ -f "create_superuser_no_email.py" ]; then
+        python create_superuser_no_email.py
+    else
+        # Fallback to default Django command
+        python manage.py createsuperuser --noinput --username admin || python manage.py createsuperuser
+    fi
+    
     print_success "Admin account created"
     
     # 9. Collect static files
