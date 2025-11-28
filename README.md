@@ -417,7 +417,7 @@ pytest servers/tests/test_properties.py  # 基于属性的测试
 
 <div align="center">
 
-Made with ❤️ by the IronGate Team
+Developed by MoYuK1ng
 
 [⬆ Back to Top](#-irongate---minecraft-rcon-web-portal)
 
