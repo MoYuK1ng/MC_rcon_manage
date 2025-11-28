@@ -222,6 +222,63 @@ install_fresh() {
     fi
     APP_PORT=${APP_PORT:-8000}
     
+    # Ask for access method
+    echo ""
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        echo "访问方式选择:"
+        echo "  1) 直接访问 (http://IP:端口)"
+        echo "  2) 反向代理 (通过域名访问，需要配置 Nginx/宝塔)"
+        read -p "选择 [1-2]: " ACCESS_METHOD
+    else
+        echo "Access method:"
+        echo "  1) Direct access (http://IP:port)"
+        echo "  2) Reverse proxy (via domain, requires Nginx/BaoTa)"
+        read -p "Choose [1-2]: " ACCESS_METHOD
+    fi
+    
+    ACCESS_METHOD=${ACCESS_METHOD:-2}
+    
+    # Configure based on access method
+    if [ "$ACCESS_METHOD" = "1" ]; then
+        # Direct access - no domain needed
+        DOMAIN=""
+        USE_HTTPS="false"
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_info "配置为直接访问模式"
+        else
+            print_info "Configured for direct access mode"
+        fi
+    else
+        # Reverse proxy - ask for domain
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            read -p "域名 (例如: mc.moyuu.online): " DOMAIN
+        else
+            read -p "Domain (e.g., mc.example.com): " DOMAIN
+        fi
+        
+        if [ -z "$DOMAIN" ]; then
+            print_error "Domain cannot be empty for reverse proxy mode"
+            press_any_key
+            return
+        fi
+        
+        # Ask if using HTTPS
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            read -p "是否使用 HTTPS? (y/n) [y]: " USE_HTTPS_INPUT
+        else
+            read -p "Use HTTPS? (y/n) [y]: " USE_HTTPS_INPUT
+        fi
+        USE_HTTPS_INPUT=${USE_HTTPS_INPUT:-y}
+        
+        if [ "$USE_HTTPS_INPUT" = "y" ] || [ "$USE_HTTPS_INPUT" = "Y" ]; then
+            USE_HTTPS="true"
+            PROTOCOL="https"
+        else
+            USE_HTTPS="false"
+            PROTOCOL="http"
+        fi
+    fi
+    
     if [ "$LANG_CHOICE" = "zh" ]; then
         print_info "开始安装到: $INSTALL_DIR"
     else
@@ -312,8 +369,22 @@ install_fresh() {
     
     sed -i "s/^DEBUG=.*/DEBUG=False/" .env
     sed -i "s/^SECRET_KEY=.*/SECRET_KEY=${SECRET_KEY}/" .env
-    echo "ALLOWED_HOSTS=localhost,127.0.0.1,${DOMAIN}" >> .env
-    echo "CSRF_TRUSTED_ORIGINS=https://${DOMAIN},http://localhost:8000" >> .env
+    
+    # Configure ALLOWED_HOSTS and CSRF based on access method
+    if [ "$ACCESS_METHOD" = "1" ]; then
+        # Direct access mode
+        echo "ALLOWED_HOSTS=localhost,127.0.0.1,*" >> .env
+        echo "CSRF_TRUSTED_ORIGINS=http://localhost:${APP_PORT},http://127.0.0.1:${APP_PORT}" >> .env
+    else
+        # Reverse proxy mode
+        echo "ALLOWED_HOSTS=localhost,127.0.0.1,${DOMAIN}" >> .env
+        if [ "$USE_HTTPS" = "true" ]; then
+            echo "CSRF_TRUSTED_ORIGINS=https://${DOMAIN},http://localhost:${APP_PORT}" >> .env
+        else
+            echo "CSRF_TRUSTED_ORIGINS=http://${DOMAIN},http://localhost:${APP_PORT}" >> .env
+        fi
+    fi
+    
     print_success "Environment configured"
     
     # 7. Initialize database
