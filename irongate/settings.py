@@ -35,7 +35,13 @@ RCON_ENCRYPTION_KEY = os.getenv('RCON_ENCRYPTION_KEY')
 if not RCON_ENCRYPTION_KEY:
     raise ValueError("RCON_ENCRYPTION_KEY must be set in environment variables or .env file")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+
+# CSRF Protection - Add your domain here
+CSRF_TRUSTED_ORIGINS = os.getenv(
+    'CSRF_TRUSTED_ORIGINS', 
+    'http://localhost:8000,http://127.0.0.1:8000'
+).split(',')
 
 
 # Application definition

@@ -63,16 +63,21 @@ python manage.py migrate
 # Create superuser
 python manage.py createsuperuser
 
-# Start development server
-python manage.py runserver
+# Start development server (multiple options)
+python run_server.py              # Smart launcher (auto port selection)
+python run_server.py -p 8080      # Custom port
+python run_server.py --random     # Random port
+python manage.py runserver        # Traditional Django command
 ```
 
 Visit http://localhost:8000/admin to configure servers and groups.
 
 ### 📖 Documentation
 
+- **[Server Launcher Guide](SERVER_LAUNCHER.md)** - Flexible server startup options
 - **[Deployment Guide](DEPLOYMENT.md)** - Complete production deployment instructions (English & Chinese)
 - **[Getting Started](GETTING_STARTED.md)** - Quick start guide (English & Chinese)
+- **[Nginx Setup](NGINX_SETUP.md)** - Nginx reverse proxy configuration
 - **[Production Checklist](PRODUCTION_CHECKLIST.md)** - Pre-deployment verification
 - **[Translation Guide](locale/README.md)** - How to add or update translations
 
@@ -235,16 +240,21 @@ python manage.py migrate
 # 创建超级用户
 python manage.py createsuperuser
 
-# 启动开发服务器
-python manage.py runserver
+# 启动开发服务器（多种方式）
+python run_server.py              # 智能启动器（自动端口选择）
+python run_server.py -p 8080      # 自定义端口
+python run_server.py --random     # 随机端口
+python manage.py runserver        # 传统 Django 命令
 ```
 
 访问 http://localhost:8000/admin 配置服务器和组。
 
 ### 📖 文档
 
+- **[服务器启动指南](SERVER_LAUNCHER.md)** - 灵活的服务器启动选项
 - **[部署指南](DEPLOYMENT.md)** - 完整的生产环境部署说明（中英文）
 - **[快速开始](GETTING_STARTED.md)** - 快速入门指南（中英文）
+- **[Nginx 配置](NGINX_SETUP.md)** - Nginx 反向代理配置
 - **[生产检查清单](PRODUCTION_CHECKLIST.md)** - 部署前验证清单
 - **[翻译指南](locale/README.md)** - 如何添加或更新翻译
 
