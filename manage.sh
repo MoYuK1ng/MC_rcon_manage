@@ -746,7 +746,60 @@ update_code() {
     else
         print_info "Current version:"
     fi
-    git log -1 --oneline 2>/dev/null || echo "Unknown"
+    
+    # Get current version from VERSION file
+    CURRENT_VERSION=""
+    if [ -f "VERSION" ]; then
+        CURRENT_VERSION=$(cat VERSION | tr -d '[:space:]')
+        echo "v${CURRENT_VERSION}"
+    else
+        git log -1 --oneline 2>/dev/null || echo "Unknown"
+    fi
+    echo ""
+    
+    # Check for updates
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        print_info "检查更新..."
+    else
+        print_info "Checking for updates..."
+    fi
+    
+    # Fetch latest version from GitHub
+    REMOTE_VERSION=$(curl -s "${VERSION_URL}" | tr -d '[:space:]')
+    
+    if [ -z "$REMOTE_VERSION" ]; then
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_warning "无法获取远程版本信息，继续更新..."
+        else
+            print_warning "Cannot fetch remote version, continuing update..."
+        fi
+    elif [ "$CURRENT_VERSION" = "$REMOTE_VERSION" ]; then
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_success "已是最新版本 v${CURRENT_VERSION}"
+            echo ""
+            read -p "是否强制更新? (y/n) [n]: " force_update
+        else
+            print_success "Already up to date (v${CURRENT_VERSION})"
+            echo ""
+            read -p "Force update anyway? (y/n) [n]: " force_update
+        fi
+        
+        force_update=${force_update:-n}
+        if [ "$force_update" != "y" ] && [ "$force_update" != "Y" ]; then
+            if [ "$LANG_CHOICE" = "zh" ]; then
+                print_info "已取消更新"
+            else
+                print_info "Update cancelled"
+            fi
+            return
+        fi
+    else
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_success "发现新版本: v${REMOTE_VERSION}"
+        else
+            print_success "New version available: v${REMOTE_VERSION}"
+        fi
+    fi
     echo ""
     
     if [ "$LANG_CHOICE" = "zh" ]; then
