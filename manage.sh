@@ -173,6 +173,37 @@ press_any_key() {
     echo ""
 }
 
+check_and_enter_project_dir() {
+    """
+    Check if we're in the project directory, if not try to find and enter it
+    Returns 0 if successful, 1 if failed
+    """
+    if [ -f "manage.py" ]; then
+        return 0
+    fi
+    
+    # Try to find the installation directory
+    if [ -d "/opt/mc_rcon" ] && [ -f "/opt/mc_rcon/manage.py" ]; then
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_info "检测到安装目录: /opt/mc_rcon"
+        else
+            print_info "Detected installation: /opt/mc_rcon"
+        fi
+        cd /opt/mc_rcon || return 1
+        return 0
+    fi
+    
+    # Not found
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        print_error "未找到项目目录"
+        print_info "请在项目目录下运行: cd /opt/mc_rcon && bash manage.sh"
+    else
+        print_error "Project directory not found"
+        print_info "Please run in project directory: cd /opt/mc_rcon && bash manage.sh"
+    fi
+    return 1
+}
+
 # ============================================================
 # Main Menu
 # ============================================================
@@ -692,12 +723,8 @@ update_code() {
     fi
     echo ""
     
-    if [ ! -f "manage.py" ]; then
-        if [ "$LANG_CHOICE" = "zh" ]; then
-            print_error "未找到项目目录，请先安装"
-        else
-            print_error "Project directory not found, please install first"
-        fi
+    # Check and enter project directory
+    if ! check_and_enter_project_dir; then
         press_any_key
         return
     fi
@@ -953,8 +980,7 @@ backup_data() {
     fi
     echo ""
     
-    if [ ! -f "manage.py" ]; then
-        print_error "Project directory not found"
+    if ! check_and_enter_project_dir; then
         press_any_key
         return
     fi
@@ -1088,12 +1114,7 @@ change_admin_password() {
     fi
     echo ""
     
-    if [ ! -f "manage.py" ]; then
-        if [ "$LANG_CHOICE" = "zh" ]; then
-            print_error "未找到项目目录，请先安装"
-        else
-            print_error "Project directory not found, please install first"
-        fi
+    if ! check_and_enter_project_dir; then
         press_any_key
         return
     fi
