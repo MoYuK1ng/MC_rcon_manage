@@ -132,6 +132,13 @@ class UserAdmin(BaseUserAdmin):
     readonly_fields = ('last_login', 'date_joined')
     filter_horizontal = ('groups',)
     
+    # Hide the detailed permissions section
+    def get_fieldsets(self, request, obj=None):
+        """Remove user_permissions field from fieldsets"""
+        if not obj:
+            return self.add_fieldsets
+        return self.fieldsets
+    
     def role_display(self, obj):
         """Display user role in Chinese/English"""
         if obj.is_superuser:

@@ -1359,9 +1359,10 @@ update_script() {
         print_info "Checking for updates..."
     fi
     
-    # Download latest script to temp file
+    # Download latest script to temp file (with cache busting)
     TEMP_SCRIPT="/tmp/manage.sh.new"
-    if wget -q "$SCRIPT_URL" -O "$TEMP_SCRIPT"; then
+    TIMESTAMP=$(date +%s)
+    if wget -q "${SCRIPT_URL}?t=${TIMESTAMP}" -O "$TEMP_SCRIPT"; then
         # Get new version
         NEW_VERSION=$(grep '^SCRIPT_VERSION=' "$TEMP_SCRIPT" | cut -d'"' -f2)
         
