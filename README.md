@@ -42,6 +42,30 @@ A secure, modern web portal for managing Minecraft servers via RCON protocol wit
 
 #### Installation
 
+**Option 1: One-Click Installation (Production - Linux VPS)**
+
+```bash
+# Download and run the management script
+wget https://raw.githubusercontent.com/MoYuK1ng/MC_rcon_manage/main/irongate.sh
+chmod +x irongate.sh
+bash irongate.sh install
+
+# Or use interactive menu
+bash irongate.sh
+```
+
+The script will automatically:
+- Install all dependencies (Python, Nginx, etc.)
+- Clone the repository
+- Set up virtual environment
+- Configure database
+- Create admin account
+- Set up Gunicorn + Nginx
+- Optional: Install SSL certificate
+- Start as system service
+
+**Option 2: Manual Installation (Development)**
+
 ```bash
 # Clone the repository
 git clone https://github.com/MoYuK1ng/MC_rcon_manage.git
@@ -218,6 +242,30 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - pip（Python 包管理器）
 
 #### 安装
+
+**方式 1：一键安装（生产环境 - Linux VPS）**
+
+```bash
+# 下载并运行管理脚本
+wget https://raw.githubusercontent.com/MoYuK1ng/MC_rcon_manage/main/irongate.sh
+chmod +x irongate.sh
+bash irongate.sh install
+
+# 或使用交互式菜单
+bash irongate.sh
+```
+
+脚本会自动完成：
+- 安装所有依赖（Python、Nginx 等）
+- 克隆仓库
+- 设置虚拟环境
+- 配置数据库
+- 创建管理员账户
+- 配置 Gunicorn + Nginx
+- 可选：安装 SSL 证书
+- 作为系统服务启动
+
+**方式 2：手动安装（开发环境）**
 
 ```bash
 # 克隆仓库
