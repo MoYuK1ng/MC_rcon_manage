@@ -723,7 +723,6 @@ update_code() {
     fi
     
     systemctl start mc-rcon
-    systemctl restart nginx
     print_success "Service restarted"
     
     echo ""
@@ -751,7 +750,6 @@ start_service() {
     echo ""
     
     systemctl start mc-rcon
-    systemctl start nginx
     
     print_success "Service started"
     sleep 2
@@ -783,7 +781,6 @@ restart_service() {
     echo ""
     
     systemctl restart mc-rcon
-    systemctl restart nginx
     
     print_success "Service restarted"
     sleep 2
@@ -807,10 +804,6 @@ view_status() {
     systemctl status mc-rcon --no-pager -l || true
     echo ""
     
-    echo "Nginx Service:"
-    systemctl status nginx --no-pager -l || true
-    echo ""
-    
     press_any_key
 }
 
@@ -823,48 +816,39 @@ view_logs() {
     if [ "$LANG_CHOICE" = "zh" ]; then
         echo "=== 查看日志 ==="
         echo ""
-        echo "1) 应用日志"
-        echo "2) Nginx 访问日志"
-        echo "3) Nginx 错误日志"
+        echo "1) 应用日志 (最近 50 行)"
+        echo "2) 应用日志 (实时)"
         echo "0) 返回主菜单"
     else
         echo "=== View Logs ==="
         echo ""
-        echo "1) Application logs"
-        echo "2) Nginx access logs"
-        echo "3) Nginx error logs"
+        echo "1) Application logs (last 50 lines)"
+        echo "2) Application logs (live)"
         echo "0) Return to main menu"
     fi
     echo ""
-    read -p "Select [0-3]: " log_choice
+    read -p "Select [0-2]: " log_choice
     
     case $log_choice in
         1)
             if [ "$LANG_CHOICE" = "zh" ]; then
-                print_info "显示最近 50 行日志 (按 Ctrl+C 退出)..."
+                print_info "显示最近 50 行日志..."
             else
-                print_info "Showing last 50 lines (Press Ctrl+C to exit)..."
+                print_info "Showing last 50 lines..."
             fi
-            sleep 2
-            journalctl -u mc-rcon -n 50 -f
+            echo ""
+            journalctl -u mc-rcon -n 50 --no-pager
+            echo ""
+            press_any_key
             ;;
         2)
             if [ "$LANG_CHOICE" = "zh" ]; then
-                print_info "显示 Nginx 访问日志 (按 Ctrl+C 退出)..."
+                print_info "显示实时日志 (按 Ctrl+C 退出)..."
             else
-                print_info "Showing Nginx access logs (Press Ctrl+C to exit)..."
+                print_info "Showing live logs (Press Ctrl+C to exit)..."
             fi
             sleep 2
-            tail -f /var/log/nginx/access.log
-            ;;
-        3)
-            if [ "$LANG_CHOICE" = "zh" ]; then
-                print_info "显示 Nginx 错误日志 (按 Ctrl+C 退出)..."
-            else
-                print_info "Showing Nginx error logs (Press Ctrl+C to exit)..."
-            fi
-            sleep 2
-            tail -f /var/log/nginx/error.log
+            journalctl -u mc-rcon -f
             ;;
         0)
             return
@@ -1032,7 +1016,6 @@ uninstall_all() {
         echo "  - 数据库"
         echo "  - 配置文件"
         echo "  - Systemd 服务"
-        echo "  - Nginx 配置"
         echo ""
         read -p "确认卸载? 输入 'YES' 继续: " confirm
     else
@@ -1043,7 +1026,6 @@ uninstall_all() {
         echo "  - Database"
         echo "  - Configuration files"
         echo "  - Systemd service"
-        echo "  - Nginx configuration"
         echo ""
         read -p "Confirm uninstall? Type 'YES' to continue: " confirm
     fi
@@ -1091,6 +1073,21 @@ uninstall_all() {
     
     systemctl stop mc-rcon 2>/dev/null || true
     systemctl disable mc-rcon 2>/dev/null || true
+    
+    # Wait for processes to terminate
+    sleep 2
+    
+    # Force kill any remaining gunicorn processes
+    if pgrep -f "gunicorn.*irongate" > /dev/null; then
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_warning "发现残留进程，强制终止..."
+        else
+            print_warning "Found remaining processes, force killing..."
+        fi
+        pkill -9 -f "gunicorn.*irongate" 2>/dev/null || true
+        sleep 1
+    fi
+    
     print_success "Service stopped"
     
     # 2. Remove systemd service file

@@ -16,6 +16,9 @@ django-htmx>=1.17.0
 # WSGI Server for Production
 gunicorn>=21.2.0
 
+# Static File Serving
+whitenoise>=6.6.0
+
 # Testing Frameworks
 hypothesis>=6.92.0
 pytest>=7.4.0
