@@ -364,24 +364,51 @@ Description=MC RCON Manager
 After=network.target
 
 [Service]
-Type=notify
+Type=simple
 User=root
 Group=root
 WorkingDirectory=${INSTALL_DIR}
 Environment="PATH=${INSTALL_DIR}/venv/bin"
 ExecStart=${INSTALL_DIR}/venv/bin/gunicorn --workers 3 --bind 127.0.0.1:${APP_PORT} irongate.wsgi:application
-ExecReload=/bin/kill -s HUP \$MAINPID
-KillMode=mixed
-TimeoutStopSec=5
-PrivateTmp=true
+Restart=on-failure
+RestartSec=5s
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
+    # Reload systemd
     systemctl daemon-reload
+    
+    # Enable service
     systemctl enable mc-rcon
-    systemctl start mc-rcon
+    
+    # Start service (capture error if fails)
+    if ! systemctl start mc-rcon; then
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_warning "服务启动失败，查看详细错误:"
+            echo ""
+            echo "运行以下命令查看错误:"
+            echo "  systemctl status mc-rcon"
+            echo "  journalctl -xeu mc-rcon -n 50"
+            echo ""
+            echo "常见问题:"
+            echo "  1. 检查 gunicorn 是否安装: ${INSTALL_DIR}/venv/bin/gunicorn --version"
+            echo "  2. 手动测试启动: cd ${INSTALL_DIR} && source venv/bin/activate && gunicorn irongate.wsgi:application"
+        else
+            print_warning "Service failed to start, check errors:"
+            echo ""
+            echo "Run these commands to see errors:"
+            echo "  systemctl status mc-rcon"
+            echo "  journalctl -xeu mc-rcon -n 50"
+            echo ""
+            echo "Common issues:"
+            echo "  1. Check if gunicorn is installed: ${INSTALL_DIR}/venv/bin/gunicorn --version"
+            echo "  2. Test manually: cd ${INSTALL_DIR} && source venv/bin/activate && gunicorn irongate.wsgi:application"
+        fi
+        press_any_key
+        return
+    fi
     
     print_success "System service configured"
     
