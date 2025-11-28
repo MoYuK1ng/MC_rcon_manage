@@ -196,8 +196,6 @@ class GroupAdmin(admin.ModelAdmin):
     ordering = ('name',)
     
     # Hide the permissions field - we only use groups for server access
-    fields = ('name',)
-    
     # Add help text
     fieldsets = (
         (None, {

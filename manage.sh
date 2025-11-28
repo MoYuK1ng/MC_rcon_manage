@@ -175,10 +175,8 @@ press_any_key() {
 }
 
 check_and_enter_project_dir() {
-    """
-    Check if we're in the project directory, if not try to find and enter it
-    Returns 0 if successful, 1 if failed
-    """
+    # Check if we're in the project directory, if not try to find and enter it
+    # Returns 0 if successful, 1 if failed
     if [ -f "manage.py" ]; then
         return 0
     fi
