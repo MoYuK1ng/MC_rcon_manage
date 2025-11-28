@@ -209,18 +209,13 @@ install_fresh() {
     fi
     INSTALL_DIR=${INSTALL_DIR:-$DEFAULT_INSTALL_DIR}
     
-    # Ask for domain
+    # Ask for port
     if [ "$LANG_CHOICE" = "zh" ]; then
-        read -p "域名 (例如: mc.example.com): " DOMAIN
+        read -p "应用端口 [8000]: " APP_PORT
     else
-        read -p "Domain (e.g., mc.example.com): " DOMAIN
+        read -p "Application port [8000]: " APP_PORT
     fi
-    
-    if [ -z "$DOMAIN" ]; then
-        print_error "Domain cannot be empty"
-        press_any_key
-        return
-    fi
+    APP_PORT=${APP_PORT:-8000}
     
     if [ "$LANG_CHOICE" = "zh" ]; then
         print_info "开始安装到: $INSTALL_DIR"
@@ -244,11 +239,6 @@ install_fresh() {
     if ! command_exists git; then
         print_info "Installing Git..."
         apt install -y git
-    fi
-    
-    if ! command_exists nginx; then
-        print_info "Installing Nginx..."
-        apt install -y nginx
     fi
     
     apt install -y gettext
@@ -379,7 +369,7 @@ User=root
 Group=root
 WorkingDirectory=${INSTALL_DIR}
 Environment="PATH=${INSTALL_DIR}/venv/bin"
-ExecStart=${INSTALL_DIR}/venv/bin/gunicorn --workers 3 --bind 127.0.0.1:8000 irongate.wsgi:application
+ExecStart=${INSTALL_DIR}/venv/bin/gunicorn --workers 3 --bind 127.0.0.1:${APP_PORT} irongate.wsgi:application
 ExecReload=/bin/kill -s HUP \$MAINPID
 KillMode=mixed
 TimeoutStopSec=5
@@ -389,37 +379,11 @@ PrivateTmp=true
 WantedBy=multi-user.target
 EOF
 
-    # Create Nginx configuration
-    cat > /etc/nginx/sites-available/mc-rcon <<EOF
-server {
-    listen 80;
-    server_name ${DOMAIN};
-    
-    location /static/ {
-        alias ${INSTALL_DIR}/staticfiles/;
-        expires 30d;
-        add_header Cache-Control "public, immutable";
-    }
-    
-    location / {
-        proxy_pass http://127.0.0.1:8000;
-        proxy_set_header Host \$host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto \$scheme;
-    }
-}
-EOF
-
-    ln -sf /etc/nginx/sites-available/mc-rcon /etc/nginx/sites-enabled/
-    nginx -t
-    
     systemctl daemon-reload
     systemctl enable mc-rcon
     systemctl start mc-rcon
-    systemctl restart nginx
     
-    print_success "System services configured"
+    print_success "System service configured"
     
     # Complete
     echo ""
@@ -428,26 +392,32 @@ EOF
         echo "安装完成！"
         echo "============================================================"
         echo ""
-        echo "访问地址:"
-        echo "  http://${DOMAIN}"
-        echo "  http://${DOMAIN}/admin (管理后台)"
+        echo "应用信息:"
+        echo "  本地访问: http://127.0.0.1:${APP_PORT}"
+        echo "  管理后台: http://127.0.0.1:${APP_PORT}/admin"
+        echo "  安装路径: ${INSTALL_DIR}"
         echo ""
         echo "下一步:"
-        echo "  1. 配置 SSL 证书 (推荐使用 certbot)"
+        echo "  1. 配置域名反向代理 (运行: bash setup_nginx.sh)"
         echo "  2. 在管理后台添加 Minecraft 服务器"
         echo "  3. 创建用户组并分配权限"
+        echo ""
+        echo "提示: 如需配置域名访问，请运行 Nginx 配置脚本"
     else
         echo "Installation Complete!"
         echo "============================================================"
         echo ""
-        echo "Access URL:"
-        echo "  http://${DOMAIN}"
-        echo "  http://${DOMAIN}/admin (Admin Panel)"
+        echo "Application Info:"
+        echo "  Local access: http://127.0.0.1:${APP_PORT}"
+        echo "  Admin panel: http://127.0.0.1:${APP_PORT}/admin"
+        echo "  Install path: ${INSTALL_DIR}"
         echo ""
         echo "Next Steps:"
-        echo "  1. Configure SSL certificate (recommend certbot)"
+        echo "  1. Configure domain reverse proxy (run: bash setup_nginx.sh)"
         echo "  2. Add Minecraft servers in admin panel"
         echo "  3. Create user groups and assign permissions"
+        echo ""
+        echo "Tip: To configure domain access, run the Nginx setup script"
     fi
     echo ""
     
