@@ -371,25 +371,46 @@ install_fresh() {
         print_info "Step 6/10: Configuring environment variables..."
     fi
     
+    # Generate Django SECRET_KEY
     SECRET_KEY=$(python3 -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())")
     
-    sed -i "s/^DEBUG=.*/DEBUG=False/" .env
-    sed -i "s/^SECRET_KEY=.*/SECRET_KEY=${SECRET_KEY}/" .env
+    # Read the encryption key that was just generated
+    ENCRYPTION_KEY=$(grep '^RCON_ENCRYPTION_KEY=' .env | cut -d'=' -f2)
     
     # Configure ALLOWED_HOSTS and CSRF based on access method
     if [ "$ACCESS_METHOD" = "1" ]; then
-        # Direct access mode
-        echo "ALLOWED_HOSTS=localhost,127.0.0.1,*" >> .env
-        echo "CSRF_TRUSTED_ORIGINS=http://localhost:${APP_PORT},http://127.0.0.1:${APP_PORT}" >> .env
+        # Direct access mode - allow all hosts
+        ALLOWED_HOSTS="localhost,127.0.0.1,*"
+        CSRF_ORIGINS="http://localhost:${APP_PORT},http://127.0.0.1:${APP_PORT}"
     else
-        # Reverse proxy mode
-        echo "ALLOWED_HOSTS=localhost,127.0.0.1,${DOMAIN}" >> .env
+        # Reverse proxy mode - specific domain
+        ALLOWED_HOSTS="localhost,127.0.0.1,${DOMAIN}"
         if [ "$USE_HTTPS" = "true" ]; then
-            echo "CSRF_TRUSTED_ORIGINS=https://${DOMAIN},http://localhost:${APP_PORT}" >> .env
+            CSRF_ORIGINS="https://${DOMAIN},http://localhost:${APP_PORT},http://127.0.0.1:${APP_PORT}"
         else
-            echo "CSRF_TRUSTED_ORIGINS=http://${DOMAIN},http://localhost:${APP_PORT}" >> .env
+            CSRF_ORIGINS="http://${DOMAIN},http://localhost:${APP_PORT},http://127.0.0.1:${APP_PORT}"
         fi
     fi
+    
+    # Create new .env file with proper formatting
+    cat > .env << EOF
+# Django Settings
+SECRET_KEY=${SECRET_KEY}
+DEBUG=False
+
+# RCON Encryption Key (DO NOT SHARE OR COMMIT THIS)
+RCON_ENCRYPTION_KEY=${ENCRYPTION_KEY}
+
+# Allowed Hosts (comma-separated, no spaces)
+ALLOWED_HOSTS=${ALLOWED_HOSTS}
+
+# CSRF Trusted Origins (comma-separated, include protocol)
+CSRF_TRUSTED_ORIGINS=${CSRF_ORIGINS}
+
+# Development Server Settings (optional)
+# DEV_SERVER_PORT=${APP_PORT}
+# DEV_SERVER_HOST=127.0.0.1
+EOF
     
     print_success "Environment configured"
     
