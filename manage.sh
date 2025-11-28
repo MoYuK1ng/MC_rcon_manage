@@ -510,11 +510,37 @@ EOF
     
     python manage.py collectstatic --noinput
     
-    # Compile translations (ignore errors if gettext not installed or translations incomplete)
-    if command_exists msgfmt; then
-        python manage.py compilemessages 2>/dev/null || print_warning "Translation compilation skipped (non-critical)"
+    # Compile translations
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        print_info "编译翻译文件..."
     else
-        print_warning "gettext not installed, skipping translation compilation"
+        print_info "Compiling translations..."
+    fi
+    
+    if command_exists msgfmt; then
+        if python manage.py compilemessages 2>&1 | tee /tmp/compile_messages.log; then
+            if [ "$LANG_CHOICE" = "zh" ]; then
+                print_success "翻译文件编译成功"
+            else
+                print_success "Translations compiled successfully"
+            fi
+        else
+            if [ "$LANG_CHOICE" = "zh" ]; then
+                print_warning "翻译编译失败，将使用英文界面"
+                print_info "查看日志: cat /tmp/compile_messages.log"
+            else
+                print_warning "Translation compilation failed, will use English interface"
+                print_info "View log: cat /tmp/compile_messages.log"
+            fi
+        fi
+    else
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_warning "未安装 gettext，跳过翻译编译"
+            print_info "安装: apt install -y gettext"
+        else
+            print_warning "gettext not installed, skipping translation compilation"
+            print_info "Install: apt install -y gettext"
+        fi
     fi
     
     print_success "Static files collected"
@@ -758,9 +784,9 @@ update_code() {
     
     python manage.py collectstatic --noinput
     
-    # Compile translations (ignore errors)
+    # Compile translations
     if command_exists msgfmt; then
-        python manage.py compilemessages 2>/dev/null || print_warning "Translation compilation skipped (non-critical)"
+        python manage.py compilemessages 2>&1 || true
     fi
     
     print_success "Static files collected"
