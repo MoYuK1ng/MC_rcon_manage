@@ -27,8 +27,9 @@ Developed by **MoYuK1ng**
 - ✅ **Whitelist Management** - Add players to server whitelists via RCON
 - 🔒 **Encrypted Credentials** - RCON passwords encrypted with Fernet symmetric encryption
 - 🌍 **Internationalization** - Full support for English and Simplified Chinese
-- 📱 **Responsive Design** - Bootstrap 5 UI works seamlessly on all devices
+- 📱 **Responsive Design** - Modern Tailwind CSS UI works seamlessly on all devices
 - ⚡ **Modern Tech Stack** - HTMX for dynamic updates without page reloads
+- 🎨 **Beautiful UI** - Inspired by Vercel, Linear, and Stripe dashboards
 - 🧪 **Comprehensive Testing** - 70 tests including property-based testing with Hypothesis
 
 ### 📸 Screenshots
@@ -174,7 +175,7 @@ pytest servers/tests/test_properties.py  # Property-based tests
 | Database | SQLite (dev) / PostgreSQL (prod) |
 | RCON Client | mcrcon |
 | Encryption | cryptography (Fernet) |
-| Frontend | Bootstrap 5 + HTMX |
+| Frontend | Tailwind CSS + HTMX + Lucide Icons |
 | Testing | pytest + Hypothesis |
 | WSGI Server | Gunicorn (production) |
 
@@ -206,7 +207,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - Built with [Django](https://www.djangoproject.com/)
 - RCON client: [mcrcon](https://github.com/barneygale/MCRcon)
-- UI: [Bootstrap 5](https://getbootstrap.com/)
+- UI: [Tailwind CSS](https://tailwindcss.com/) + [Lucide Icons](https://lucide.dev/)
 - Dynamic updates: [HTMX](https://htmx.org/)
 - Testing: [Hypothesis](https://hypothesis.readthedocs.io/)
 
@@ -227,8 +228,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - ✅ **白名单管理** - 通过 RCON 将玩家添加到服务器白名单
 - 🔒 **加密凭证** - 使用 Fernet 对称加密保护 RCON 密码
 - 🌍 **国际化** - 完整支持英语和简体中文
-- 📱 **响应式设计** - Bootstrap 5 UI 在所有设备上无缝工作
+- 📱 **响应式设计** - 现代化 Tailwind CSS UI 在所有设备上无缝工作
 - ⚡ **现代技术栈** - HTMX 实现无需页面重载的动态更新
+- 🎨 **精美界面** - 灵感来自 Vercel、Linear 和 Stripe 仪表板
 - 🧪 **全面测试** - 70 个测试，包括使用 Hypothesis 的基于属性的测试
 
 ### 📸 截图
@@ -372,7 +374,7 @@ pytest servers/tests/test_properties.py  # 基于属性的测试
 | 数据库 | SQLite（开发）/ PostgreSQL（生产）|
 | RCON 客户端 | mcrcon |
 | 加密 | cryptography (Fernet) |
-| 前端 | Bootstrap 5 + HTMX |
+| 前端 | Tailwind CSS + HTMX + Lucide Icons |
 | 测试 | pytest + Hypothesis |
 | WSGI 服务器 | Gunicorn（生产）|
 
@@ -404,7 +406,7 @@ pytest servers/tests/test_properties.py  # 基于属性的测试
 
 - 使用 [Django](https://www.djangoproject.com/) 构建
 - RCON 客户端：[mcrcon](https://github.com/barneygale/MCRcon)
-- UI：[Bootstrap 5](https://getbootstrap.com/)
+- UI：[Tailwind CSS](https://tailwindcss.com/) + [Lucide Icons](https://lucide.dev/)
 - 动态更新：[HTMX](https://htmx.org/)
 - 测试：[Hypothesis](https://hypothesis.readthedocs.io/)
 

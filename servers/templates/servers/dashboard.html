@@ -5,302 +5,160 @@
 
 {% block extra_css %}
 <style>
-    /* Modern Dashboard Styles - Inspired by Nezha/ServerStatus */
-    .dashboard-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 2rem 0;
-        margin: -1rem -1rem 2rem -1rem;
-        border-radius: 0 0 1rem 1rem;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    @keyframes shimmer {
+        0% { background-position: -1000px 0; }
+        100% { background-position: 1000px 0; }
     }
     
-    .server-card {
-        border: none;
-        border-radius: 1rem;
-        overflow: hidden;
-        transition: all 0.3s ease;
-        background: white;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-    
-    .server-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 16px rgba(0,0,0,0.12);
-    }
-    
-    .server-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 1.25rem;
-        position: relative;
-    }
-    
-    .server-status-badge {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        background: #10b981;
-        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
-        animation: pulse 2s infinite;
-    }
-    
-    @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.5; }
-    }
-    
-    .server-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        margin: 0 0 0.25rem 0;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    
-    .server-address {
-        font-size: 0.875rem;
-        opacity: 0.9;
-        font-family: 'Courier New', monospace;
-    }
-    
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        gap: 1rem;
-        padding: 1.25rem;
-        background: #f8fafc;
-    }
-    
-    .stat-item {
-        text-align: center;
-    }
-    
-    .stat-value {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #667eea;
-        display: block;
-    }
-    
-    .stat-label {
-        font-size: 0.75rem;
-        color: #64748b;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-top: 0.25rem;
-    }
-    
-    .player-list {
-        padding: 1.25rem;
-        min-height: 120px;
-    }
-    
-    .player-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 0.75rem;
-        background: #f1f5f9;
-        border-radius: 0.5rem;
-        margin: 0.25rem;
-        font-size: 0.875rem;
-        transition: all 0.2s;
-    }
-    
-    .player-badge:hover {
-        background: #e2e8f0;
-        transform: scale(1.05);
-    }
-    
-    .player-avatar {
-        width: 24px;
-        height: 24px;
-        border-radius: 4px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
-    
-    .whitelist-section {
-        padding: 1.25rem;
-        background: white;
-        border-top: 1px solid #e2e8f0;
-    }
-    
-    .whitelist-form {
-        display: flex;
-        gap: 0.5rem;
-    }
-    
-    .whitelist-input {
-        flex: 1;
-        padding: 0.75rem 1rem;
-        border: 2px solid #e2e8f0;
-        border-radius: 0.5rem;
-        font-size: 0.875rem;
-        transition: all 0.2s;
-    }
-    
-    .whitelist-input:focus {
-        outline: none;
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
-    
-    .whitelist-btn {
-        padding: 0.75rem 1.5rem;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border: none;
-        border-radius: 0.5rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-    
-    .whitelist-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-    }
-    
-    .empty-state {
-        text-align: center;
-        padding: 4rem 2rem;
-        background: white;
-        border-radius: 1rem;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-    
-    .empty-state-icon {
-        font-size: 4rem;
-        opacity: 0.3;
-        margin-bottom: 1rem;
-    }
-    
-    .loading-spinner {
-        display: inline-block;
-        width: 20px;
-        height: 20px;
-        border: 3px solid #f3f4f6;
-        border-top-color: #667eea;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-    }
-    
-    @keyframes spin {
-        to { transform: rotate(360deg); }
+    .loading-shimmer {
+        animation: shimmer 2s infinite linear;
+        background: linear-gradient(to right, #f3f4f6 4%, #e5e7eb 25%, #f3f4f6 36%);
+        background-size: 1000px 100%;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Dashboard Header -->
-<div class="dashboard-header">
-    <div class="container">
-        <h1 class="mb-2">
-            <i class="bi bi-speedometer2"></i>
-            {% trans "Server Dashboard" %}
-        </h1>
-        <p class="mb-0 opacity-75">
-            {% trans "Manage your Minecraft servers" %}
-        </p>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Dashboard Header -->
+    <div class="mb-8 animate-fade-in">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                    {% trans "Server Dashboard" %}
+                </h1>
+                <p class="text-gray-600">
+                    {% trans "Manage your Minecraft servers" %}
+                </p>
+            </div>
+            <div class="flex items-center space-x-3">
+                <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-primary-50 text-primary-700 border border-primary-200">
+                    <i data-lucide="tag" class="w-3.5 h-3.5 mr-1.5"></i>
+                    v{{ app_version }}
+                </span>
+            </div>
+        </div>
     </div>
-</div>
 
-<div class="container">
+    <!-- Server Grid -->
     {% if servers %}
-        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 animate-slide-up">
             {% for server in servers %}
-                <div class="col">
-                    <div class="server-card">
-                        <!-- Server Header -->
-                        <div class="server-header">
-                            <div class="server-status-badge" title="{% trans 'Online' %}"></div>
-                            <h3 class="server-title">
-                                <i class="bi bi-hdd-network"></i>
-                                {{ server.name }}
-                            </h3>
-                            <div class="server-address">
-                                <i class="bi bi-globe2"></i>
-                                {{ server.ip_address }}:{{ server.rcon_port }}
+                <div class="group bg-white rounded-2xl border border-gray-200 hover:border-primary-300 hover:shadow-xl transition-all duration-300 overflow-hidden">
+                    <!-- Server Header -->
+                    <div class="relative bg-gradient-to-br from-primary-500 to-primary-700 p-6">
+                        <!-- Status Indicator -->
+                        <div class="absolute top-4 right-4">
+                            <div class="relative">
+                                <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse-slow"></div>
+                                <div class="absolute inset-0 w-3 h-3 bg-green-400 rounded-full animate-ping"></div>
                             </div>
                         </div>
                         
-                        <!-- Stats Grid -->
-                        <div class="stats-grid">
-                            <div class="stat-item">
-                                <span class="stat-value" id="player-count-{{ server.id }}">-</span>
-                                <span class="stat-label">{% trans "Players" %}</span>
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                                <i data-lucide="server" class="w-6 h-6 text-white"></i>
                             </div>
-                            <div class="stat-item">
-                                <span class="stat-value">
-                                    <i class="bi bi-check-circle-fill text-success"></i>
-                                </span>
-                                <span class="stat-label">{% trans "Status" %}</span>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="text-xl font-bold text-white truncate">
+                                    {{ server.name }}
+                                </h3>
+                                <p class="text-primary-100 text-sm font-mono mt-1">
+                                    {{ server.ip_address }}:{{ server.rcon_port }}
+                                </p>
                             </div>
                         </div>
-                        
-                        <!-- Player List -->
-                        <div class="player-list">
-                            <h6 class="text-muted mb-3">
-                                <i class="bi bi-people-fill"></i>
+                    </div>
+                    
+                    <!-- Stats -->
+                    <div class="grid grid-cols-2 gap-4 p-6 bg-gray-50">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-primary-600" id="player-count-{{ server.id }}">
+                                <div class="w-8 h-8 mx-auto loading-shimmer rounded"></div>
+                            </div>
+                            <div class="text-xs text-gray-500 uppercase tracking-wide mt-1">
+                                {% trans "Players" %}
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-green-600">
+                                <i data-lucide="check-circle" class="w-8 h-8 mx-auto"></i>
+                            </div>
+                            <div class="text-xs text-gray-500 uppercase tracking-wide mt-1">
+                                {% trans "Status" %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Player List -->
+                    <div class="p-6 border-t border-gray-200">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="text-sm font-semibold text-gray-900 flex items-center">
+                                <i data-lucide="users" class="w-4 h-4 mr-2 text-gray-400"></i>
                                 {% trans "Online Players" %}
-                            </h6>
-                            <div 
-                                id="player-list-{{ server.id }}"
-                                hx-get="{% url 'player_list' server.id %}"
-                                hx-trigger="load, every 30s"
-                                hx-swap="innerHTML"
-                            >
-                                <div class="text-center text-muted">
-                                    <div class="loading-spinner"></div>
-                                    <small class="d-block mt-2">{% trans "Loading..." %}</small>
+                            </h4>
+                        </div>
+                        <div 
+                            id="player-list-{{ server.id }}"
+                            hx-get="{% url 'player_list' server.id %}"
+                            hx-trigger="load, every 30s"
+                            hx-swap="innerHTML"
+                            class="min-h-[80px]"
+                        >
+                            <div class="flex items-center justify-center py-8">
+                                <div class="flex flex-col items-center space-y-2">
+                                    <div class="w-8 h-8 border-4 border-gray-200 border-t-primary-600 rounded-full animate-spin"></div>
+                                    <span class="text-sm text-gray-500">{% trans "Loading..." %}</span>
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Whitelist Section -->
-                        <div class="whitelist-section">
-                            <h6 class="text-muted mb-3">
-                                <i class="bi bi-person-plus-fill"></i>
-                                {% trans "Add to Whitelist" %}
-                            </h6>
-                            <form method="post" action="{% url 'whitelist_add' server.id %}" class="whitelist-form">
-                                {% csrf_token %}
+                    </div>
+                    
+                    <!-- Whitelist Section -->
+                    <div class="p-6 bg-gray-50 border-t border-gray-200">
+                        <h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center">
+                            <i data-lucide="user-plus" class="w-4 h-4 mr-2 text-gray-400"></i>
+                            {% trans "Add to Whitelist" %}
+                        </h4>
+                        <form method="post" action="{% url 'whitelist_add' server.id %}" class="space-y-3">
+                            {% csrf_token %}
+                            <div class="flex space-x-2">
                                 <input 
                                     type="text" 
                                     name="minecraft_username" 
-                                    class="whitelist-input" 
+                                    class="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-sm"
                                     placeholder="{% trans 'Minecraft Username' %}"
                                     pattern="[a-zA-Z0-9_]{3,16}"
                                     title="{% trans '3-16 characters, letters, numbers, and underscores only' %}"
                                     required
                                 >
-                                <button type="submit" class="whitelist-btn">
-                                    <i class="bi bi-plus-lg"></i>
-                                    {% trans "Add" %}
+                                <button 
+                                    type="submit" 
+                                    class="px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2"
+                                >
+                                    <i data-lucide="plus" class="w-4 h-4"></i>
+                                    <span>{% trans "Add" %}</span>
                                 </button>
-                            </form>
-                            <small class="text-muted d-block mt-2">
-                                <i class="bi bi-info-circle"></i>
+                            </div>
+                            <p class="text-xs text-gray-500 flex items-center">
+                                <i data-lucide="info" class="w-3.5 h-3.5 mr-1.5"></i>
                                 {% trans "3-16 characters, alphanumeric and underscores only" %}
-                            </small>
-                        </div>
+                            </p>
+                        </form>
                     </div>
                 </div>
             {% endfor %}
         </div>
     {% else %}
         <!-- Empty State -->
-        <div class="empty-state">
-            <div class="empty-state-icon">
-                <i class="bi bi-inbox"></i>
+        <div class="text-center py-16 animate-fade-in">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-6">
+                <i data-lucide="inbox" class="w-10 h-10 text-gray-400"></i>
             </div>
-            <h3 class="mb-3">{% trans "No Servers Available" %}</h3>
-            <p class="text-muted mb-0">
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">
+                {% trans "No Servers Available" %}
+            </h3>
+            <p class="text-gray-600 max-w-md mx-auto">
                 {% trans "You don't have access to any servers yet. Please contact your administrator to be added to a server group." %}
             </p>
         </div>

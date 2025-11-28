@@ -3,37 +3,44 @@
 {% if success %}
     {% if players %}
         <!-- Players Online -->
-        <ul class="list-group list-group-flush">
+        <div class="space-y-2">
             {% for player in players %}
-                <li class="list-group-item py-1 px-2">
-                    <i class="bi bi-person-fill text-success"></i> {{ player }}
-                </li>
+                <div class="flex items-center space-x-3 p-2.5 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-150 player-badge">
+                    <div class="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-primary-400 to-primary-600 rounded-lg flex items-center justify-center">
+                        <i data-lucide="user" class="w-4 h-4 text-white"></i>
+                    </div>
+                    <span class="text-sm font-medium text-gray-900">{{ player }}</span>
+                </div>
             {% endfor %}
-        </ul>
-        <div class="text-end mt-2">
-            <small class="text-muted">
+        </div>
+        <div class="mt-3 flex items-center justify-between text-xs text-gray-500">
+            <span class="flex items-center">
+                <i data-lucide="clock" class="w-3.5 h-3.5 mr-1"></i>
                 {% trans "Last updated" %}: {% now "H:i:s" %}
-            </small>
+            </span>
         </div>
     {% else %}
         <!-- No Players Online -->
-        <div class="text-center text-muted py-2">
-            <i class="bi bi-person-x"></i>
-            <p class="mb-0">{% trans "No players online" %}</p>
-            <small>{% trans "Last updated" %}: {% now "H:i:s" %}</small>
+        <div class="text-center py-6">
+            <div class="inline-flex items-center justify-center w-12 h-12 bg-gray-100 rounded-full mb-3">
+                <i data-lucide="user-x" class="w-6 h-6 text-gray-400"></i>
+            </div>
+            <p class="text-sm text-gray-600 mb-1">{% trans "No players online" %}</p>
+            <p class="text-xs text-gray-500">{% trans "Last updated" %}: {% now "H:i:s" %}</p>
         </div>
     {% endif %}
 {% else %}
     <!-- Error State -->
-    <div class="alert alert-danger alert-sm mb-0" role="alert">
-        <small>
-            <i class="bi bi-exclamation-triangle-fill"></i>
-            <strong>{% trans "Error" %}:</strong> {{ message }}
-        </small>
-    </div>
-    <div class="text-end mt-2">
-        <small class="text-muted">
+    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div class="flex items-start">
+            <i data-lucide="alert-circle" class="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5"></i>
+            <div class="ml-3 flex-1">
+                <p class="text-sm font-medium text-red-800">{% trans "Error" %}</p>
+                <p class="text-sm text-red-700 mt-1">{{ message }}</p>
+            </div>
+        </div>
+        <div class="mt-3 text-xs text-red-600">
             {% trans "Last updated" %}: {% now "H:i:s" %}
-        </small>
+        </div>
     </div>
 {% endif %}

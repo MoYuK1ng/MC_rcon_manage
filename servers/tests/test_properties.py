@@ -430,6 +430,445 @@ class TestRconHandlerReturnStructure:
 
 
 @pytest.mark.property
+class TestVersionContextProcessorProperties:
+    """Property-based tests for version context processor"""
+    
+    @given(version_string=st.text(min_size=1, max_size=50))
+    @settings(max_examples=100)
+    def test_version_display_consistency(self, version_string):
+        """
+        Feature: version-and-group-management, Property 1: Version display consistency
+        
+        For any version string written to the VERSION file, reading it through 
+        the context processor should return the same string (with whitespace stripped).
+        
+        Validates: Requirements 1.1, 1.2
+        """
+        from servers.context_processors import version_context
+        from django.conf import settings
+        from unittest.mock import Mock
+        import tempfile
+        import os
+        
+        # Create a temporary directory
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            # Create a temporary VERSION file
+            version_file_path = os.path.join(tmp_dir, "VERSION")
+            # Write with newline=None to match how the context processor reads
+            with open(version_file_path, 'w', encoding='utf-8', newline='') as f:
+                f.write(version_string)
+            
+            # Mock settings.BASE_DIR to point to tmp_dir
+            original_base_dir = settings.BASE_DIR
+            try:
+                settings.BASE_DIR = tmp_dir
+                
+                # Create a mock request
+                mock_request = Mock()
+                
+                # Call the context processor
+                result = version_context(mock_request)
+                
+                # Read the file the same way to get expected value
+                with open(version_file_path, 'r', encoding='utf-8', newline=None) as f:
+                    expected_version = f.read().strip()
+                
+                # Verify the result
+                assert 'app_version' in result, "Result must contain 'app_version' key"
+                assert result['app_version'] == expected_version, \
+                    f"Version mismatch: expected '{expected_version}', got '{result['app_version']}'"
+            finally:
+                # Restore original BASE_DIR
+                settings.BASE_DIR = original_base_dir
+    
+    @given(error_type=st.sampled_from(['missing', 'permission', 'empty']))
+    @settings(max_examples=100)
+    def test_version_fallback_handling(self, error_type):
+        """
+        Feature: version-and-group-management, Property 2: Version fallback handling
+        
+        For any file error condition (missing file, permission denied, corrupted content), 
+        the context processor should return a valid string without raising exceptions.
+        
+        Validates: Requirements 1.3
+        """
+        from servers.context_processors import version_context
+        from django.conf import settings
+        from unittest.mock import Mock
+        import tempfile
+        import os
+        import platform
+        
+        # Create a temporary directory
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            # Mock settings.BASE_DIR to point to tmp_dir
+            original_base_dir = settings.BASE_DIR
+            try:
+                settings.BASE_DIR = tmp_dir
+                
+                # Simulate different error conditions
+                if error_type == 'missing':
+                    # Don't create the file
+                    pass
+                elif error_type == 'permission':
+                    # Create file but make it unreadable (skip on Windows)
+                    if platform.system() != 'Windows':
+                        version_file_path = os.path.join(tmp_dir, "VERSION")
+                        with open(version_file_path, 'w', encoding='utf-8') as f:
+                            f.write("test")
+                        os.chmod(version_file_path, 0o000)
+                    else:
+                        # On Windows, just test missing file instead
+                        pass
+                elif error_type == 'empty':
+                    # Create empty file
+                    version_file_path = os.path.join(tmp_dir, "VERSION")
+                    with open(version_file_path, 'w', encoding='utf-8') as f:
+                        f.write("")
+                
+                # Create a mock request
+                mock_request = Mock()
+                
+                # Call the context processor - should not raise exception
+                try:
+                    result = version_context(mock_request)
+                    
+                    # Verify the result structure
+                    assert isinstance(result, dict), "Result must be a dictionary"
+                    assert 'app_version' in result, "Result must contain 'app_version' key"
+                    assert isinstance(result['app_version'], str), "'app_version' must be a string"
+                    
+                    # For empty file, should return empty string (stripped)
+                    # For missing/permission errors, should return 'Unknown'
+                    if error_type == 'empty':
+                        assert result['app_version'] == '', "Empty file should return empty string"
+                    else:
+                        assert result['app_version'] == 'Unknown', \
+                            f"Error condition should return 'Unknown', got '{result['app_version']}'"
+                except Exception as e:
+                    pytest.fail(f"Context processor raised exception: {e}")
+            finally:
+                # Restore original BASE_DIR
+                settings.BASE_DIR = original_base_dir
+
+
+@pytest.mark.property
+class TestGroupFilteringProperties:
+    """Property-based tests for group filtering functionality"""
+    
+    @given(group_name=st.text(min_size=1, max_size=100))
+    @settings(max_examples=100)
+    def test_default_group_identification(self, group_name):
+        """
+        Feature: version-and-group-management, Property 3: Default group identification
+        
+        For any group name, the is_default_group function should return True 
+        if and only if the name contains " | " (Django's default format).
+        
+        Validates: Requirements 2.4
+        """
+        from servers.admin import is_default_group
+        
+        # Check if group name contains " | "
+        has_pipe_separator = " | " in group_name
+        
+        # Function should return True only if name contains " | "
+        result = is_default_group(group_name)
+        
+        assert result == has_pipe_separator, \
+            f"is_default_group('{group_name}') returned {result}, expected {has_pipe_separator}"
+    
+    @pytest.mark.django_db
+    @given(
+        custom_group_names=st.lists(
+            st.text(
+                alphabet=st.characters(blacklist_categories=('Cs', 'Cc')),  # Exclude surrogates and control chars
+                min_size=1,
+                max_size=50
+            ).filter(lambda s: " | " not in s and s.strip()),
+            min_size=0,
+            max_size=10,
+            unique=True
+        ),
+        default_group_names=st.lists(
+            st.text(
+                alphabet=st.characters(blacklist_categories=('Cs', 'Cc')),
+                min_size=1,
+                max_size=20
+            ).filter(lambda s: s.strip()).map(lambda s: f"{s} | {s}"),
+            min_size=0,
+            max_size=10,
+            unique=True
+        )
+    )
+    @settings(max_examples=100)
+    def test_group_filtering_completeness(self, custom_group_names, default_group_names):
+        """
+        Feature: version-and-group-management, Property 4: Group filtering completeness
+        
+        For any queryset of groups containing both default and custom groups, 
+        applying the admin filter should return only groups where is_default_group returns False.
+        
+        Validates: Requirements 2.1, 2.2, 2.3
+        """
+        from django.contrib.auth.models import Group
+        from django.contrib import admin
+        from servers.admin import GroupAdmin
+        from unittest.mock import Mock
+        
+        # Create test groups
+        created_groups = []
+        
+        # Create custom groups (without " | ")
+        for name in custom_group_names:
+            if name.strip():  # Skip empty names
+                group, _ = Group.objects.get_or_create(name=name)
+                created_groups.append(group)
+        
+        # Create default groups (with " | ")
+        for name in default_group_names:
+            if name.strip() and " | " in name:  # Ensure it has the separator
+                group, _ = Group.objects.get_or_create(name=name)
+                created_groups.append(group)
+        
+        try:
+            # Create admin instance and get filtered queryset
+            admin_instance = GroupAdmin(Group, admin.site)
+            mock_request = Mock()
+            filtered_qs = admin_instance.get_queryset(mock_request)
+            
+            # Get all filtered group names
+            filtered_names = set(filtered_qs.values_list('name', flat=True))
+            
+            # Verify: all custom groups should be in filtered results
+            for name in custom_group_names:
+                if name.strip():
+                    assert name in filtered_names, \
+                        f"Custom group '{name}' should be in filtered results"
+            
+            # Verify: no default groups should be in filtered results
+            for name in default_group_names:
+                if name.strip() and " | " in name:
+                    assert name not in filtered_names, \
+                        f"Default group '{name}' should NOT be in filtered results"
+            
+            # Verify: filtered results contain only custom groups
+            for name in filtered_names:
+                assert " | " not in name, \
+                    f"Filtered results should not contain default group '{name}'"
+        
+        finally:
+            # Cleanup: delete all created groups
+            for group in created_groups:
+                group.delete()
+    
+    @pytest.mark.django_db
+    @given(
+        num_users=st.integers(min_value=0, max_value=5),
+        num_servers=st.integers(min_value=0, max_value=5)
+    )
+    @settings(max_examples=50, deadline=None)
+    def test_group_statistics_accuracy(self, num_users, num_servers):
+        """
+        Feature: version-and-group-management, Property 7: Group statistics accuracy
+        
+        For any group with associated users and servers, the displayed user count 
+        and server count should equal the actual number of related objects.
+        
+        Validates: Requirements 3.5
+        """
+        from django.contrib.auth.models import User, Group
+        from django.contrib import admin
+        from servers.models import Server
+        from servers.admin import GroupAdmin
+        
+        # Create a test group
+        group = Group.objects.create(name=f"TestGroup_{id(self)}")
+        
+        # Create users and add to group
+        created_users = []
+        for i in range(num_users):
+            user = User.objects.create_user(
+                username=f"testuser_{id(self)}_{i}",
+                password="testpass"
+            )
+            user.groups.add(group)
+            created_users.append(user)
+        
+        # Create servers and link to group
+        created_servers = []
+        for i in range(num_servers):
+            server = Server(
+                name=f"TestServer_{id(self)}_{i}",
+                ip_address=f"192.168.1.{i+1}",
+                rcon_port=25575
+            )
+            server.set_password("testpass")
+            server.save()
+            server.groups.add(group)
+            created_servers.append(server)
+        
+        try:
+            # Create admin instance
+            admin_instance = GroupAdmin(Group, admin.site)
+            
+            # Get counts from admin methods
+            user_count = admin_instance.user_count(group)
+            server_count = admin_instance.server_count(group)
+            
+            # Verify counts match actual numbers
+            assert user_count == num_users, \
+                f"User count mismatch: expected {num_users}, got {user_count}"
+            assert server_count == num_servers, \
+                f"Server count mismatch: expected {num_servers}, got {server_count}"
+            
+            # Also verify against direct queries
+            actual_user_count = group.user_set.count()
+            actual_server_count = group.servers.count()
+            
+            assert user_count == actual_user_count, \
+                f"User count doesn't match direct query: {user_count} vs {actual_user_count}"
+            assert server_count == actual_server_count, \
+                f"Server count doesn't match direct query: {server_count} vs {actual_server_count}"
+        
+        finally:
+            # Cleanup
+            for user in created_users:
+                user.delete()
+            for server in created_servers:
+                server.delete()
+            group.delete()
+    
+    @pytest.mark.django_db(transaction=True)
+    @given(group_name=st.text(
+        alphabet=st.characters(blacklist_categories=('Cs', 'Cc')),
+        min_size=1,
+        max_size=150
+    ).filter(lambda s: s.strip()))
+    @settings(max_examples=50)
+    def test_group_name_validation(self, group_name):
+        """
+        Feature: version-and-group-management, Property 5: Group name validation
+        
+        For any attempt to create a group with an empty name or duplicate name, 
+        the system should raise a validation error.
+        
+        Validates: Requirements 3.2
+        """
+        from django.contrib.auth.models import Group
+        from django.core.exceptions import ValidationError
+        from django.db import IntegrityError, transaction
+        
+        # Test 1: Create a group with valid name (should succeed)
+        group1 = Group.objects.create(name=group_name)
+        
+        try:
+            # Test 2: Try to create duplicate group (should fail)
+            with transaction.atomic():
+                try:
+                    group2 = Group.objects.create(name=group_name)
+                    # If we get here, duplicate was allowed (bad!)
+                    group2.delete()
+                    pytest.fail(f"Duplicate group name '{group_name}' was allowed!")
+                except IntegrityError:
+                    # Expected - duplicate names are not allowed
+                    pass
+            
+            # Test 3: Try to create group with empty name (should fail)
+            try:
+                empty_group = Group(name="")
+                empty_group.full_clean()  # This should raise ValidationError
+                # If we get here, empty name was allowed (bad!)
+                pytest.fail("Empty group name was allowed!")
+            except ValidationError as e:
+                # Expected - empty names are not allowed
+                assert 'name' in e.message_dict, "ValidationError should be for name field"
+        
+        finally:
+            # Cleanup
+            group1.delete()
+    
+    @pytest.mark.django_db
+    @given(
+        num_users=st.integers(min_value=0, max_value=5),
+        num_servers=st.integers(min_value=0, max_value=5)
+    )
+    @settings(max_examples=50, deadline=None)
+    def test_group_association_cascade(self, num_users, num_servers):
+        """
+        Feature: version-and-group-management, Property 6: Group association cascade
+        
+        For any group with associated users and servers, deleting that group should 
+        remove all many-to-many relationships while preserving the user and server objects themselves.
+        
+        Validates: Requirements 3.3, 3.4
+        """
+        from django.contrib.auth.models import User, Group
+        from servers.models import Server
+        
+        # Create a test group
+        group = Group.objects.create(name=f"TestGroup_{id(self)}")
+        
+        # Create users and add to group
+        created_users = []
+        for i in range(num_users):
+            user = User.objects.create_user(
+                username=f"testuser_{id(self)}_{i}",
+                password="testpass"
+            )
+            user.groups.add(group)
+            created_users.append(user)
+        
+        # Create servers and link to group
+        created_servers = []
+        for i in range(num_servers):
+            server = Server(
+                name=f"TestServer_{id(self)}_{i}",
+                ip_address=f"192.168.1.{i+1}",
+                rcon_port=25575
+            )
+            server.set_password("testpass")
+            server.save()
+            server.groups.add(group)
+            created_servers.append(server)
+        
+        try:
+            # Verify associations exist before deletion
+            assert group.user_set.count() == num_users
+            assert group.servers.count() == num_servers
+            
+            # Delete the group
+            group.delete()
+            
+            # Verify all users still exist
+            for user in created_users:
+                assert User.objects.filter(id=user.id).exists(), \
+                    f"User {user.username} was deleted when group was deleted!"
+                # Verify user no longer has the group
+                user.refresh_from_db()
+                assert not user.groups.filter(name=f"TestGroup_{id(self)}").exists(), \
+                    f"User {user.username} still has deleted group!"
+            
+            # Verify all servers still exist
+            for server in created_servers:
+                assert Server.objects.filter(id=server.id).exists(), \
+                    f"Server {server.name} was deleted when group was deleted!"
+                # Verify server no longer has the group
+                server.refresh_from_db()
+                assert not server.groups.filter(name=f"TestGroup_{id(self)}").exists(), \
+                    f"Server {server.name} still has deleted group!"
+        
+        finally:
+            # Cleanup
+            for user in created_users:
+                if User.objects.filter(id=user.id).exists():
+                    user.delete()
+            for server in created_servers:
+                if Server.objects.filter(id=server.id).exists():
+                    server.delete()
+
+
+@pytest.mark.property
 @pytest.mark.django_db
 class TestAccessControlProperties:
     """Property-based tests for access control logic"""

@@ -5,9 +5,24 @@ Registers Server and WhitelistRequest models with custom admin interfaces
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.utils.translation import gettext_lazy as _
 from servers.models import Server, WhitelistRequest
+
+
+def is_default_group(group_name: str) -> bool:
+    """
+    Check if a group name matches Django's default permission group pattern.
+    
+    Django creates groups like "app_label | model_name" for each model.
+    
+    Args:
+        group_name: Name of the group to check
+        
+    Returns:
+        bool: True if group appears to be a default Django group
+    """
+    return " | " in group_name
 
 
 @admin.register(Server)
@@ -167,6 +182,42 @@ class UserAdmin(BaseUserAdmin):
         super().save_model(request, obj, form, change)
 
 
-# Unregister the default User admin and register our custom one
+# Custom Group Admin with filtering
+class GroupAdmin(admin.ModelAdmin):
+    """
+    Custom Group Admin that filters out Django's default permission groups.
+    
+    Only shows custom groups created for server access control.
+    """
+    
+    list_display = ('name', 'user_count', 'server_count')
+    search_fields = ('name',)
+    ordering = ('name',)
+    
+    def get_queryset(self, request):
+        """
+        Override to filter out default Django groups.
+        
+        Only returns groups that don't match the default pattern (containing " | ").
+        """
+        qs = super().get_queryset(request)
+        # Exclude groups with " | " in their name (Django's default format)
+        return qs.exclude(name__contains=" | ")
+    
+    def user_count(self, obj):
+        """Return number of users in this group"""
+        return obj.user_set.count()
+    user_count.short_description = _('Users')
+    
+    def server_count(self, obj):
+        """Return number of servers accessible by this group"""
+        return obj.servers.count()
+    server_count.short_description = _('Servers')
+
+
+# Unregister the default User and Group admins and register our custom ones
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
+
+admin.site.unregister(Group)
+admin.site.register(Group, GroupAdmin)
