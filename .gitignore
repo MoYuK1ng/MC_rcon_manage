@@ -40,5 +40,5 @@ htmlcov/
 .hypothesis/
 
 # Translations
-*.mo
+# *.mo  # Keep compiled translations in repo for production
 *.pot
