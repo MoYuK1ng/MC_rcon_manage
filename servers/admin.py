@@ -4,6 +4,8 @@ Registers Server and WhitelistRequest models with custom admin interfaces
 """
 
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 from servers.models import Server, WhitelistRequest
 
@@ -84,3 +86,34 @@ class WhitelistRequestAdmin(admin.ModelAdmin):
         but allow admins to create them manually if needed.
         """
         return True
+
+
+# Customize User Admin to remove email field
+class UserAdmin(BaseUserAdmin):
+    """Customized User Admin without email field"""
+    
+    # Remove email from list display
+    list_display = ('username', 'first_name', 'last_name', 'is_staff')
+    
+    # Customize fieldsets to remove email
+    fieldsets = (
+        (None, {'fields': ('username', 'password')}),
+        (_('Personal info'), {'fields': ('first_name', 'last_name')}),
+        (_('Permissions'), {
+            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
+        }),
+        (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
+    )
+    
+    # Customize add form to remove email
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('username', 'password1', 'password2'),
+        }),
+    )
+
+
+# Unregister the default User admin and register our custom one
+admin.site.unregister(User)
+admin.site.register(User, UserAdmin)

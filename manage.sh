@@ -85,6 +85,7 @@ msg() {
             "opt_logs") echo "查看日志" ;;
             "opt_backup") echo "备份数据" ;;
             "opt_restore") echo "恢复数据" ;;
+            "opt_change_password") echo "修改管理员密码" ;;
             "opt_update_script") echo "更新管理脚本" ;;
             "opt_exit") echo "退出" ;;
             "press_key") echo "按任意键继续..." ;;
@@ -112,6 +113,7 @@ msg() {
             "opt_logs") echo "View Logs" ;;
             "opt_backup") echo "Backup Data" ;;
             "opt_restore") echo "Restore Data" ;;
+            "opt_change_password") echo "Change Admin Password" ;;
             "opt_update_script") echo "Update Script" ;;
             "opt_exit") echo "Exit" ;;
             "press_key") echo "Press any key to continue..." ;;
@@ -205,15 +207,17 @@ show_menu() {
     echo ""
     echo "  [$(msg menu_others)]"
     if [ "$LANG_CHOICE" = "zh" ]; then
-        echo "  10) 完全卸载"
-        echo "  11) 更新管理脚本"
+        echo "  10) 修改管理员密码"
+        echo "  11) 完全卸载"
+        echo "  12) 更新管理脚本"
     else
-        echo "  10) Uninstall"
-        echo "  11) Update Script"
+        echo "  10) Change Admin Password"
+        echo "  11) Uninstall"
+        echo "  12) Update Script"
     fi
     echo "  0) $(msg opt_exit)"
     echo ""
-    echo -n "Enter option [0-11]: "
+    echo -n "Enter option [0-12]: "
 }
 
 # ============================================================
@@ -1072,7 +1076,79 @@ restore_data() {
 }
 
 # ============================================================
-# 10. Uninstall
+# 10. Change Admin Password
+# ============================================================
+
+change_admin_password() {
+    print_banner
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        echo "=== 修改管理员密码 ==="
+    else
+        echo "=== Change Admin Password ==="
+    fi
+    echo ""
+    
+    if [ ! -f "manage.py" ]; then
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_error "未找到项目目录，请先安装"
+        else
+            print_error "Project directory not found, please install first"
+        fi
+        press_any_key
+        return
+    fi
+    
+    # Check if change_password.py exists
+    if [ ! -f "change_password.py" ]; then
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_warning "密码修改脚本不存在，正在下载..."
+        else
+            print_warning "Password change script not found, downloading..."
+        fi
+        
+        wget -q https://raw.githubusercontent.com/MoYuK1ng/MC_rcon_manage/main/change_password.py -O change_password.py
+        
+        if [ ! -f "change_password.py" ]; then
+            if [ "$LANG_CHOICE" = "zh" ]; then
+                print_error "下载失败"
+            else
+                print_error "Download failed"
+            fi
+            press_any_key
+            return
+        fi
+        
+        chmod +x change_password.py
+    fi
+    
+    # Activate virtual environment
+    source venv/bin/activate
+    
+    # Run password change script
+    python change_password.py
+    
+    # Check exit code
+    if [ $? -eq 0 ]; then
+        echo ""
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_success "密码修改完成"
+        else
+            print_success "Password changed successfully"
+        fi
+    else
+        echo ""
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_warning "密码修改已取消或失败"
+        else
+            print_warning "Password change cancelled or failed"
+        fi
+    fi
+    
+    press_any_key
+}
+
+# ============================================================
+# 11. Uninstall
 # ============================================================
 
 uninstall_all() {
@@ -1345,8 +1421,9 @@ main() {
             7) view_logs ;;
             8) backup_data ;;
             9) restore_data ;;
-            10) uninstall_all ;;
-            11) update_script ;;
+            10) change_admin_password ;;
+            11) uninstall_all ;;
+            12) update_script ;;
             0) 
                 print_info "$(msg goodbye)"
                 exit 0
