@@ -9,8 +9,8 @@ set -e
 # Configuration
 # ============================================================
 
-SCRIPT_VERSION="2.2.1"
-SCRIPT_DATE="2024-11-28"
+SCRIPT_VERSION="2.3.0"
+SCRIPT_DATE="2025-11-28"
 PROJECT_NAME="mc_rcon"
 DEFAULT_INSTALL_DIR="/opt/mc_rcon"
 REPO_URL="https://github.com/MoYuK1ng/MC_rcon_manage.git"
@@ -18,12 +18,13 @@ VERSION_URL="https://raw.githubusercontent.com/MoYuK1ng/MC_rcon_manage/main/VERS
 SCRIPT_URL="https://raw.githubusercontent.com/MoYuK1ng/MC_rcon_manage/main/manage.sh"
 PYTHON_MIN_VERSION="3.10"
 
-# Changelog for v2.2.1
-# - CRITICAL FIX: Added safety check to prevent deleting current directory during install
-# - Added confirmation prompt when reinstalling to existing directory
-# - Improved error handling for git clone and directory operations
-# - Removed all Nginx dependencies from service management
-# - Fixed Admin CSS loading with WhiteNoise middleware
+# Changelog for v2.3.0
+# - Removed email input during user creation
+# - Simplified permission system (Administrator/Regular User)
+# - Modern UI design inspired by monitoring panels
+# - Improved project directory detection
+# - Added change password functionality
+# - Removed all personal domain references
 
 # Language setting (will be set by user)
 LANG_CHOICE=""
