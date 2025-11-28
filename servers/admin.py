@@ -88,30 +88,76 @@ class WhitelistRequestAdmin(admin.ModelAdmin):
         return True
 
 
-# Customize User Admin to remove email field
+# Simplified User Admin - Only Administrator and Regular User roles
 class UserAdmin(BaseUserAdmin):
-    """Customized User Admin without email field"""
+    """
+    Simplified User Admin with clear role distinction:
+    - Administrator (is_superuser=True): Full access to everything
+    - Regular User (is_superuser=False): Only access assigned servers
+    """
     
-    # Remove email from list display
-    list_display = ('username', 'first_name', 'last_name', 'is_staff')
+    list_display = ('username', 'role_display', 'is_active', 'server_access_display', 'last_login')
+    list_filter = ('is_superuser', 'is_active', 'groups')
+    search_fields = ('username',)
+    ordering = ('-is_superuser', 'username')
     
-    # Customize fieldsets to remove email
     fieldsets = (
-        (None, {'fields': ('username', 'password')}),
-        (_('Personal info'), {'fields': ('first_name', 'last_name')}),
-        (_('Permissions'), {
-            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
+        (_('Basic Information'), {
+            'fields': ('username', 'password')
         }),
-        (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
+        (_('Role and Permissions'), {
+            'fields': ('is_superuser', 'is_active'),
+            'description': _(
+                '<strong>Administrator</strong>: Full access to admin panel and all servers<br>'
+                '<strong>Regular User</strong>: Only access assigned servers via dashboard'
+            )
+        }),
+        (_('Server Access (Regular Users Only)'), {
+            'fields': ('groups',),
+            'description': _('Assign user groups to grant access to specific servers')
+        }),
+        (_('Important Dates'), {
+            'fields': ('last_login', 'date_joined'),
+            'classes': ('collapse',)
+        }),
     )
     
-    # Customize add form to remove email
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('username', 'password1', 'password2'),
+            'fields': ('username', 'password1', 'password2', 'is_superuser', 'is_active'),
         }),
     )
+    
+    readonly_fields = ('last_login', 'date_joined')
+    filter_horizontal = ('groups',)
+    
+    def role_display(self, obj):
+        """Display user role in Chinese/English"""
+        if obj.is_superuser:
+            return _('Administrator')
+        return _('Regular User')
+    role_display.short_description = _('Role')
+    role_display.admin_order_field = 'is_superuser'
+    
+    def server_access_display(self, obj):
+        """Display server access count"""
+        if obj.is_superuser:
+            return _('All Servers')
+        
+        group_count = obj.groups.count()
+        if group_count == 0:
+            return _('No Access')
+        return _(f'{group_count} Server(s)')
+    server_access_display.short_description = _('Server Access')
+    
+    def save_model(self, request, obj, form, change):
+        """
+        Auto-set is_staff based on is_superuser for Django admin access
+        """
+        # Administrators need is_staff=True to access admin panel
+        obj.is_staff = obj.is_superuser
+        super().save_model(request, obj, form, change)
 
 
 # Unregister the default User admin and register our custom one

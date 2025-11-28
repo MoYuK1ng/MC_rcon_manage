@@ -47,6 +47,39 @@ msgstr "访问组"
 msgid "User groups that can access this server"
 msgstr "可以访问此服务器的用户组"
 
+msgid "Administrator"
+msgstr "管理员"
+
+msgid "Regular User"
+msgstr "普通用户"
+
+msgid "Role"
+msgstr "角色"
+
+msgid "Server Access"
+msgstr "服务器权限"
+
+msgid "All Servers"
+msgstr "全部服务器"
+
+msgid "No Access"
+msgstr "无权限"
+
+msgid "Basic Information"
+msgstr "基本信息"
+
+msgid "Role and Permissions"
+msgstr "角色和权限"
+
+msgid "Server Access (Regular Users Only)"
+msgstr "服务器权限（仅普通用户）"
+
+msgid "Important Dates"
+msgstr "重要日期"
+
+msgid "Assign user groups to grant access to specific servers"
+msgstr "分配用户组以授予特定服务器的访问权限"
+
 msgid "Created At"
 msgstr "创建时间"
 

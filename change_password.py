@@ -19,25 +19,38 @@ from django.contrib.auth.password_validation import validate_password
 
 def list_users():
     """List all users in the system"""
-    users = User.objects.all().order_by('username')
+    users = User.objects.all().order_by('-is_superuser', 'username')
     
     if not users:
         print("No users found in the system.")
         return []
     
-    print("\n" + "="*60)
+    print("\n" + "="*70)
     print("Current Users:")
-    print("="*60)
-    print(f"{'Username':<20} {'Staff':<10} {'Superuser':<12} {'Active':<10}")
-    print("-"*60)
+    print("="*70)
+    print(f"{'Username':<20} {'Role':<15} {'Status':<10} {'Server Access':<20}")
+    print("-"*70)
     
     for user in users:
-        staff = "✓" if user.is_staff else "✗"
-        superuser = "✓" if user.is_superuser else "✗"
-        active = "✓" if user.is_active else "✗"
-        print(f"{user.username:<20} {staff:<10} {superuser:<12} {active:<10}")
+        # Role
+        role = "Administrator" if user.is_superuser else "Regular User"
+        
+        # Status
+        status = "Active" if user.is_active else "Disabled"
+        
+        # Server Access
+        if user.is_superuser:
+            access = "All Servers"
+        else:
+            group_count = user.groups.count()
+            if group_count == 0:
+                access = "No Access"
+            else:
+                access = f"{group_count} Server(s)"
+        
+        print(f"{user.username:<20} {role:<15} {status:<10} {access:<20}")
     
-    print("="*60 + "\n")
+    print("="*70 + "\n")
     return users
 
 
@@ -104,9 +117,17 @@ def interactive_mode():
     # Show user info
     print(f"\nUser Information:")
     print(f"  Username: {user.username}")
-    print(f"  Staff: {'Yes' if user.is_staff else 'No'}")
-    print(f"  Superuser: {'Yes' if user.is_superuser else 'No'}")
-    print(f"  Active: {'Yes' if user.is_active else 'No'}")
+    print(f"  Role: {'Administrator' if user.is_superuser else 'Regular User'}")
+    print(f"  Status: {'Active' if user.is_active else 'Disabled'}")
+    
+    if user.is_superuser:
+        print(f"  Server Access: All Servers")
+    else:
+        group_count = user.groups.count()
+        if group_count == 0:
+            print(f"  Server Access: No Access")
+        else:
+            print(f"  Server Access: {group_count} Server(s)")
     print()
     
     # Confirm
