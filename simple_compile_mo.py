@@ -55,8 +55,12 @@ def parse_po_file(po_path):
 
 def generate_mo_file(translations, mo_path):
     """Generate a .mo file from translations dictionary"""
-    # Filter out empty translations
+    # Filter out empty translations and add metadata
     translations = {k: v for k, v in translations.items() if k and v}
+    
+    # Add required metadata entry
+    if '' not in translations:
+        translations[''] = 'Content-Type: text/plain; charset=UTF-8\n'
     
     # Sort by msgid
     keys = sorted(translations.keys())
