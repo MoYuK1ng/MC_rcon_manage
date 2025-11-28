@@ -9,10 +9,12 @@ set -e
 # Configuration
 # ============================================================
 
-SCRIPT_VERSION="2.0.0"
+SCRIPT_VERSION="2.1.0"
 PROJECT_NAME="mc_rcon"
 DEFAULT_INSTALL_DIR="/opt/mc_rcon"
 REPO_URL="https://github.com/MoYuK1ng/MC_rcon_manage.git"
+VERSION_URL="https://raw.githubusercontent.com/MoYuK1ng/MC_rcon_manage/main/VERSION"
+SCRIPT_URL="https://raw.githubusercontent.com/MoYuK1ng/MC_rcon_manage/main/manage.sh"
 PYTHON_MIN_VERSION="3.10"
 
 # Language setting (will be set by user)
@@ -67,7 +69,7 @@ msg() {
             "menu_maintenance") echo "维护" ;;
             "menu_others") echo "其他" ;;
             "opt_fresh_install") echo "全新安装" ;;
-            "opt_update") echo "更新代码" ;;
+            "opt_update") echo "更新应用版本" ;;
             "opt_start") echo "启动服务" ;;
             "opt_stop") echo "停止服务" ;;
             "opt_restart") echo "重启服务" ;;
@@ -75,6 +77,7 @@ msg() {
             "opt_logs") echo "查看日志" ;;
             "opt_backup") echo "备份数据" ;;
             "opt_restore") echo "恢复数据" ;;
+            "opt_update_script") echo "更新管理脚本" ;;
             "opt_exit") echo "退出" ;;
             "press_key") echo "按任意键继续..." ;;
             "need_root") echo "请使用 root 权限运行此脚本" ;;
@@ -93,7 +96,7 @@ msg() {
             "menu_maintenance") echo "Maintenance" ;;
             "menu_others") echo "Others" ;;
             "opt_fresh_install") echo "Fresh Install" ;;
-            "opt_update") echo "Update Code" ;;
+            "opt_update") echo "Update Application" ;;
             "opt_start") echo "Start Service" ;;
             "opt_stop") echo "Stop Service" ;;
             "opt_restart") echo "Restart Service" ;;
@@ -101,6 +104,7 @@ msg() {
             "opt_logs") echo "View Logs" ;;
             "opt_backup") echo "Backup Data" ;;
             "opt_restore") echo "Restore Data" ;;
+            "opt_update_script") echo "Update Script" ;;
             "opt_exit") echo "Exit" ;;
             "press_key") echo "Press any key to continue..." ;;
             "need_root") echo "Please run this script as root" ;;
@@ -185,12 +189,14 @@ show_menu() {
     echo "  [$(msg menu_others)]"
     if [ "$LANG_CHOICE" = "zh" ]; then
         echo "  10) 完全卸载"
+        echo "  11) 更新管理脚本"
     else
         echo "  10) Uninstall"
+        echo "  11) Update Script"
     fi
     echo "  0) $(msg opt_exit)"
     echo ""
-    echo -n "Enter option [0-10]: "
+    echo -n "Enter option [0-11]: "
 }
 
 # ============================================================
@@ -563,9 +569,9 @@ EOF
 update_code() {
     print_banner
     if [ "$LANG_CHOICE" = "zh" ]; then
-        echo "=== 更新代码 ==="
+        echo "=== 更新应用版本 ==="
     else
-        echo "=== Update Code ==="
+        echo "=== Update Application ==="
     fi
     echo ""
     
@@ -580,6 +586,15 @@ update_code() {
     fi
     
     INSTALL_DIR=$(pwd)
+    
+    # Show current version
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        print_info "当前版本:"
+    else
+        print_info "Current version:"
+    fi
+    git log -1 --oneline 2>/dev/null || echo "Unknown"
+    echo ""
     
     if [ "$LANG_CHOICE" = "zh" ]; then
         print_info "开始更新..."
@@ -1108,6 +1123,94 @@ uninstall_all() {
 }
 
 # ============================================================
+# 11. Update Script
+# ============================================================
+
+update_script() {
+    print_banner
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        echo "=== 更新管理脚本 ==="
+    else
+        echo "=== Update Management Script ==="
+    fi
+    echo ""
+    
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        print_info "当前版本: v${SCRIPT_VERSION}"
+        print_info "正在检查更新..."
+    else
+        print_info "Current version: v${SCRIPT_VERSION}"
+        print_info "Checking for updates..."
+    fi
+    
+    # Download latest script to temp file
+    TEMP_SCRIPT="/tmp/manage.sh.new"
+    if wget -q "$SCRIPT_URL" -O "$TEMP_SCRIPT"; then
+        # Get new version
+        NEW_VERSION=$(grep '^SCRIPT_VERSION=' "$TEMP_SCRIPT" | cut -d'"' -f2)
+        
+        if [ "$NEW_VERSION" != "$SCRIPT_VERSION" ]; then
+            if [ "$LANG_CHOICE" = "zh" ]; then
+                print_success "发现新版本: v${NEW_VERSION}"
+                echo ""
+                read -p "是否更新? (y/n) [y]: " update_confirm
+            else
+                print_success "New version available: v${NEW_VERSION}"
+                echo ""
+                read -p "Update now? (y/n) [y]: " update_confirm
+            fi
+            
+            update_confirm=${update_confirm:-y}
+            if [ "$update_confirm" = "y" ] || [ "$update_confirm" = "Y" ]; then
+                # Backup current script
+                if [ -f "$0" ]; then
+                    cp "$0" "${0}.backup"
+                fi
+                
+                # Replace with new script
+                mv "$TEMP_SCRIPT" "$0"
+                chmod +x "$0"
+                
+                if [ "$LANG_CHOICE" = "zh" ]; then
+                    print_success "脚本已更新到 v${NEW_VERSION}"
+                    print_info "重新启动脚本..."
+                else
+                    print_success "Script updated to v${NEW_VERSION}"
+                    print_info "Restarting script..."
+                fi
+                
+                sleep 2
+                exec "$0"
+            else
+                rm -f "$TEMP_SCRIPT"
+                if [ "$LANG_CHOICE" = "zh" ]; then
+                    print_info "已取消更新"
+                else
+                    print_info "Update cancelled"
+                fi
+            fi
+        else
+            rm -f "$TEMP_SCRIPT"
+            if [ "$LANG_CHOICE" = "zh" ]; then
+                print_success "已是最新版本"
+            else
+                print_success "Already up to date"
+            fi
+        fi
+    else
+        rm -f "$TEMP_SCRIPT"
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_error "无法连接到更新服务器"
+        else
+            print_error "Cannot connect to update server"
+        fi
+    fi
+    
+    echo ""
+    press_any_key
+}
+
+# ============================================================
 # Main Program
 # ============================================================
 
@@ -1133,6 +1236,7 @@ main() {
             8) backup_data ;;
             9) restore_data ;;
             10) uninstall_all ;;
+            11) update_script ;;
             0) 
                 print_info "$(msg goodbye)"
                 exit 0
