@@ -9,13 +9,20 @@ set -e
 # Configuration
 # ============================================================
 
-SCRIPT_VERSION="2.1.0"
+SCRIPT_VERSION="2.2.0"
+SCRIPT_DATE="2024-11-28"
 PROJECT_NAME="mc_rcon"
 DEFAULT_INSTALL_DIR="/opt/mc_rcon"
 REPO_URL="https://github.com/MoYuK1ng/MC_rcon_manage.git"
 VERSION_URL="https://raw.githubusercontent.com/MoYuK1ng/MC_rcon_manage/main/VERSION"
 SCRIPT_URL="https://raw.githubusercontent.com/MoYuK1ng/MC_rcon_manage/main/manage.sh"
 PYTHON_MIN_VERSION="3.10"
+
+# Changelog for v2.2.0
+# - Fixed .env file generation logic to prevent duplicate lines
+# - Improved CSRF_TRUSTED_ORIGINS configuration
+# - Added proper line breaks in .env file
+# - Ensured all necessary origins are included (localhost, 127.0.0.1, domain)
 
 # Language setting (will be set by user)
 LANG_CHOICE=""
@@ -169,6 +176,15 @@ press_any_key() {
 
 show_menu() {
     print_banner
+    
+    # Display version info
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        echo "  脚本版本: v${SCRIPT_VERSION} (${SCRIPT_DATE})"
+    else
+        echo "  Script Version: v${SCRIPT_VERSION} (${SCRIPT_DATE})"
+    fi
+    echo ""
+    
     echo "$(msg menu_title)"
     echo ""
     echo "  [$(msg menu_install)]"
