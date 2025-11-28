@@ -188,11 +188,27 @@ class GroupAdmin(admin.ModelAdmin):
     Custom Group Admin that filters out Django's default permission groups.
     
     Only shows custom groups created for server access control.
+    This project uses groups ONLY for server access control, not for Django permissions.
     """
     
     list_display = ('name', 'user_count', 'server_count')
     search_fields = ('name',)
     ordering = ('name',)
+    
+    # Hide the permissions field - we only use groups for server access
+    fields = ('name',)
+    
+    # Add help text
+    fieldsets = (
+        (None, {
+            'fields': ('name',),
+            'description': _(
+                '组用于控制服务器访问权限。创建组后，在"服务器"页面将服务器分配给该组。<br>'
+                'Groups are used to control server access. After creating a group, '
+                'assign servers to it in the "Servers" page.'
+            )
+        }),
+    )
     
     def get_queryset(self, request):
         """
