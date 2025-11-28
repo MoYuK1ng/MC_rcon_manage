@@ -1,4 +1,4 @@
-# 🎮 IronGate - Minecraft RCON Web Portal
+# 🎮 MC RCON Manager - Minecraft RCON Web Portal
 
 <div align="center">
 
@@ -8,6 +8,8 @@
 [![Tests](https://img.shields.io/badge/Tests-70%20Passing-brightgreen.svg)](#testing)
 
 A secure, modern web portal for managing Minecraft servers via RCON protocol with group-based access control.
+
+Developed by **MoYuK1ng**
 
 [English](#english) | [中文](#中文)
 
@@ -46,12 +48,12 @@ A secure, modern web portal for managing Minecraft servers via RCON protocol wit
 
 ```bash
 # Download and run the management script
-wget https://raw.githubusercontent.com/MoYuK1ng/MC_rcon_manage/main/irongate.sh
-chmod +x irongate.sh
-bash irongate.sh install
+wget https://raw.githubusercontent.com/MoYuK1ng/MC_rcon_manage/main/manage.sh
+chmod +x manage.sh
+sudo bash manage.sh
 
-# Or use interactive menu
-bash irongate.sh
+# Select language (English/Chinese)
+# Then choose: 1) Fresh Install
 ```
 
 The script will automatically:
@@ -61,7 +63,6 @@ The script will automatically:
 - Configure database
 - Create admin account
 - Set up Gunicorn + Nginx
-- Optional: Install SSL certificate
 - Start as system service
 
 **Option 2: Manual Installation (Development)**
@@ -247,12 +248,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ```bash
 # 下载并运行管理脚本
-wget https://raw.githubusercontent.com/MoYuK1ng/MC_rcon_manage/main/irongate.sh
-chmod +x irongate.sh
-bash irongate.sh install
+wget https://raw.githubusercontent.com/MoYuK1ng/MC_rcon_manage/main/manage.sh
+chmod +x manage.sh
+sudo bash manage.sh
 
-# 或使用交互式菜单
-bash irongate.sh
+# 选择语言（中文/英文）
+# 然后选择：1) 全新安装
 ```
 
 脚本会自动完成：
@@ -262,7 +263,6 @@ bash irongate.sh
 - 配置数据库
 - 创建管理员账户
 - 配置 Gunicorn + Nginx
-- 可选：安装 SSL 证书
 - 作为系统服务启动
 
 **方式 2：手动安装（开发环境）**
@@ -419,6 +419,6 @@ pytest servers/tests/test_properties.py  # 基于属性的测试
 
 Developed by MoYuK1ng
 
-[⬆ Back to Top](#-irongate---minecraft-rcon-web-portal)
+[⬆ Back to Top](#-mc-rcon-manager---minecraft-rcon-web-portal)
 
 </div>
