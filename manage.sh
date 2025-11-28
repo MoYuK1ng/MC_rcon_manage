@@ -497,27 +497,56 @@ EOF
         echo ""
         echo "应用信息:"
         echo "  本地访问: http://127.0.0.1:${APP_PORT}"
+        if [ "$ACCESS_METHOD" = "2" ] && [ -n "$DOMAIN" ]; then
+            echo "  域名访问: ${PROTOCOL}://${DOMAIN}"
+        fi
         echo "  管理后台: http://127.0.0.1:${APP_PORT}/admin"
         echo "  安装路径: ${INSTALL_DIR}"
         echo ""
         echo "下一步:"
-        echo "  1. 配置域名反向代理 (运行: bash setup_nginx.sh)"
-        echo "  2. 在管理后台添加 Minecraft 服务器"
-        echo "  3. 创建用户组并分配权限"
+        if [ "$ACCESS_METHOD" = "2" ]; then
+            echo "  1. 配置反向代理 (Nginx/宝塔面板)"
+            echo "     - 目标地址: http://127.0.0.1:${APP_PORT}"
+            echo "     - 域名: ${DOMAIN}"
+            echo "  2. 在管理后台添加 Minecraft 服务器"
+            echo "  3. 创建用户组并分配权限"
+        else
+            echo "  1. 通过 http://服务器IP:${APP_PORT} 访问"
+            echo "  2. 在管理后台添加 Minecraft 服务器"
+            echo "  3. 创建用户组并分配权限"
+        fi
         echo ""
-        echo "提示: 如需配置域名访问，请运行 Nginx 配置脚本"
+        echo "重要提示:"
+        echo "  - CSRF 已自动配置，无需手动修改"
+        echo "  - 查看配置: cat ${INSTALL_DIR}/.env"
     else
         echo "Installation Complete!"
         echo "============================================================"
         echo ""
         echo "Application Info:"
         echo "  Local access: http://127.0.0.1:${APP_PORT}"
+        if [ "$ACCESS_METHOD" = "2" ] && [ -n "$DOMAIN" ]; then
+            echo "  Domain access: ${PROTOCOL}://${DOMAIN}"
+        fi
         echo "  Admin panel: http://127.0.0.1:${APP_PORT}/admin"
         echo "  Install path: ${INSTALL_DIR}"
         echo ""
         echo "Next Steps:"
-        echo "  1. Configure domain reverse proxy (run: bash setup_nginx.sh)"
-        echo "  2. Add Minecraft servers in admin panel"
+        if [ "$ACCESS_METHOD" = "2" ]; then
+            echo "  1. Configure reverse proxy (Nginx/BaoTa panel)"
+            echo "     - Target: http://127.0.0.1:${APP_PORT}"
+            echo "     - Domain: ${DOMAIN}"
+            echo "  2. Add Minecraft servers in admin panel"
+            echo "  3. Create user groups and assign permissions"
+        else
+            echo "  1. Access via http://ServerIP:${APP_PORT}"
+            echo "  2. Add Minecraft servers in admin panel"
+            echo "  3. Create user groups and assign permissions"
+        fi
+        echo ""
+        echo "Important:"
+        echo "  - CSRF auto-configured, no manual changes needed"
+        echo "  - View config: cat ${INSTALL_DIR}/.env"
         echo "  3. Create user groups and assign permissions"
         echo ""
         echo "Tip: To configure domain access, run the Nginx setup script"
@@ -1023,24 +1052,12 @@ uninstall_all() {
     systemctl daemon-reload
     print_success "Service file removed"
     
-    # 3. Remove Nginx configuration
+    # 3. Backup database (optional)
     if [ "$LANG_CHOICE" = "zh" ]; then
-        print_info "步骤 3/5: 删除 Nginx 配置..."
-    else
-        print_info "Step 3/5: Removing Nginx configuration..."
-    fi
-    
-    rm -f /etc/nginx/sites-enabled/mc-rcon
-    rm -f /etc/nginx/sites-available/mc-rcon
-    nginx -t && systemctl reload nginx 2>/dev/null || true
-    print_success "Nginx configuration removed"
-    
-    # 4. Backup database (optional)
-    if [ "$LANG_CHOICE" = "zh" ]; then
-        print_info "步骤 4/5: 备份数据库..."
+        print_info "步骤 3/4: 备份数据库..."
         read -p "是否备份数据库? (y/n) [y]: " backup_choice
     else
-        print_info "Step 4/5: Backing up database..."
+        print_info "Step 3/4: Backing up database..."
         read -p "Backup database? (y/n) [y]: " backup_choice
     fi
     
@@ -1057,11 +1074,11 @@ uninstall_all() {
         fi
     fi
     
-    # 5. Remove project directory
+    # 4. Remove project directory
     if [ "$LANG_CHOICE" = "zh" ]; then
-        print_info "步骤 5/5: 删除项目文件..."
+        print_info "步骤 4/4: 删除项目文件..."
     else
-        print_info "Step 5/5: Removing project files..."
+        print_info "Step 4/4: Removing project files..."
     fi
     
     rm -rf "$INSTALL_DIR"

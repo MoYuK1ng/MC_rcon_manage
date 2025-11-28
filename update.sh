@@ -167,10 +167,16 @@ fi
 print_info "步骤 10/10: 重启服务..."
 print_info "Step 10/10: Restarting services..."
 if command_exists systemctl; then
-    sudo systemctl start "$SERVICE_NAME"
-    sudo systemctl restart nginx 2>/dev/null || print_warning "Nginx 重启失败或未安装"
-    print_success "服务已重启"
-    print_success "Services restarted"
+    # Restart application service
+    if systemctl is-active --quiet "$SERVICE_NAME" 2>/dev/null; then
+        sudo systemctl restart "$SERVICE_NAME"
+        print_success "应用服务已重启 / Application service restarted"
+    else
+        sudo systemctl start "$SERVICE_NAME"
+        print_success "应用服务已启动 / Application service started"
+    fi
+    
+    print_success "服务已重启 / Services restarted"
 else
     print_warning "systemd 不可用，请手动重启服务"
     print_warning "systemd not available, please restart services manually"
