@@ -3,7 +3,7 @@
 ## 🤔 为什么删除了程序目录，应用还能访问？
 
 ### 现象
-删除 `/opt/mc_rcon` 目录后，访问 `https://mc.moyuu.online` 仍然可以正常使用。
+删除 `/opt/mc_rcon` 目录后，访问 `https://yourdomain.com` 仍然可以正常使用。
 
 ### 原因
 
@@ -119,7 +119,7 @@ ps aux | grep gunicorn
 
 2. **CSRF_TRUSTED_ORIGINS 配置**
    ```ini
-   CSRF_TRUSTED_ORIGINS=https://mc.moyuu.online,http://localhost:47777,http://127.0.0.1:47777
+   CSRF_TRUSTED_ORIGINS=https://yourdomain.com,http://localhost:47777,http://127.0.0.1:47777
    ```
    必须包含你访问的完整 URL（包括协议）
 
