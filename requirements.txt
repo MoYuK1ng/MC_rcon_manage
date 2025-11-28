@@ -1,0 +1,19 @@
+# Django Framework
+Django>=5.0,<5.1
+
+# RCON Client for Minecraft
+mcrcon>=0.7.0
+
+# Encryption Library
+cryptography>=41.0.0
+
+# Environment Variable Management
+python-dotenv>=1.0.0
+
+# HTMX Integration for Django
+django-htmx>=1.17.0
+
+# Testing Frameworks
+hypothesis>=6.92.0
+pytest>=7.4.0
+pytest-django>=4.7.0

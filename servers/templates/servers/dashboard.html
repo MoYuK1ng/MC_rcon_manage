@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Dashboard" %} - IronGate{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1>{% trans "Server Dashboard" %}</h1>
+        <p class="text-muted">{% trans "Manage your Minecraft servers" %}</p>
+    </div>
+</div>
+
+{% if servers %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for server in servers %}
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <!-- Server Header -->
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-server"></i> {{ server.name }}
+                        </h5>
+                        <small>{{ server.ip_address }}:{{ server.rcon_port }}</small>
+                    </div>
+                    
+                    <div class="card-body">
+                        <!-- Player List Section (HTMX Polling) -->
+                        <div class="mb-3">
+                            <h6 class="text-muted">{% trans "Online Players" %}</h6>
+                            <div 
+                                id="player-list-{{ server.id }}"
+                                hx-get="{% url 'player_list' server.id %}"
+                                hx-trigger="load, every 30s"
+                                hx-swap="innerHTML"
+                            >
+                                <div class="text-center">
+                                    <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                        <span class="visually-hidden">{% trans "Loading..." %}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <!-- Whitelist Form -->
+                        <div>
+                            <h6 class="text-muted">{% trans "Add to Whitelist" %}</h6>
+                            <form method="post" action="{% url 'whitelist_add' server.id %}">
+                                {% csrf_token %}
+                                <div class="input-group input-group-sm">
+                                    <input 
+                                        type="text" 
+                                        name="minecraft_username" 
+                                        class="form-control" 
+                                        placeholder="{% trans 'Minecraft Username' %}"
+                                        pattern="[a-zA-Z0-9_]{3,16}"
+                                        title="{% trans '3-16 characters, letters, numbers, and underscores only' %}"
+                                        required
+                                    >
+                                    <button type="submit" class="btn btn-success">
+                                        {% trans "Add" %}
+                                    </button>
+                                </div>
+                                <small class="form-text text-muted">
+                                    {% trans "3-16 characters, alphanumeric and underscores only" %}
+                                </small>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- Server Footer -->
+                    <div class="card-footer text-muted">
+                        <small>
+                            {% trans "Groups" %}: 
+                            {% for group in server.groups.all %}
+                                <span class="badge bg-secondary">{{ group.name }}</span>
+                            {% endfor %}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <!-- No Servers Available -->
+    <div class="alert alert-info" role="alert">
+        <h4 class="alert-heading">{% trans "No Servers Available" %}</h4>
+        <p>{% trans "You don't have access to any servers yet. Please contact your administrator to be added to a server group." %}</p>
+    </div>
+{% endif %}
+{% endblock %}

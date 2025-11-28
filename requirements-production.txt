@@ -1,0 +1,14 @@
+# Production Requirements for IronGate
+# Install with: pip install -r requirements-production.txt
+
+# Base requirements
+-r requirements.txt
+
+# Production WSGI Server
+gunicorn>=21.2.0
+
+# PostgreSQL Database Adapter
+psycopg2-binary>=2.9.9
+
+# Production-grade static file serving (optional)
+whitenoise>=6.6.0

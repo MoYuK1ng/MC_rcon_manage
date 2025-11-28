@@ -1,0 +1,39 @@
+{% load i18n %}
+
+{% if success %}
+    {% if players %}
+        <!-- Players Online -->
+        <ul class="list-group list-group-flush">
+            {% for player in players %}
+                <li class="list-group-item py-1 px-2">
+                    <i class="bi bi-person-fill text-success"></i> {{ player }}
+                </li>
+            {% endfor %}
+        </ul>
+        <div class="text-end mt-2">
+            <small class="text-muted">
+                {% trans "Last updated" %}: {% now "H:i:s" %}
+            </small>
+        </div>
+    {% else %}
+        <!-- No Players Online -->
+        <div class="text-center text-muted py-2">
+            <i class="bi bi-person-x"></i>
+            <p class="mb-0">{% trans "No players online" %}</p>
+            <small>{% trans "Last updated" %}: {% now "H:i:s" %}</small>
+        </div>
+    {% endif %}
+{% else %}
+    <!-- Error State -->
+    <div class="alert alert-danger alert-sm mb-0" role="alert">
+        <small>
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <strong>{% trans "Error" %}:</strong> {{ message }}
+        </small>
+    </div>
+    <div class="text-end mt-2">
+        <small class="text-muted">
+            {% trans "Last updated" %}: {% now "H:i:s" %}
+        </small>
+    </div>
+{% endif %}
