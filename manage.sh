@@ -350,7 +350,14 @@ install_fresh() {
     fi
     
     python manage.py collectstatic --noinput
-    python manage.py compilemessages
+    
+    # Compile translations (ignore errors if gettext not installed or translations incomplete)
+    if command_exists msgfmt; then
+        python manage.py compilemessages 2>/dev/null || print_warning "Translation compilation skipped (non-critical)"
+    else
+        print_warning "gettext not installed, skipping translation compilation"
+    fi
+    
     print_success "Static files collected"
     
     # 10. Configure systemd service
@@ -546,7 +553,12 @@ update_code() {
     fi
     
     python manage.py collectstatic --noinput
-    python manage.py compilemessages 2>/dev/null || true
+    
+    # Compile translations (ignore errors)
+    if command_exists msgfmt; then
+        python manage.py compilemessages 2>/dev/null || print_warning "Translation compilation skipped (non-critical)"
+    fi
+    
     print_success "Static files collected"
     
     # Restart service

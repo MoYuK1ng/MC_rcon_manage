@@ -154,9 +154,10 @@ print_success "Static files collected"
 print_info "步骤 9/10: 编译翻译文件..."
 print_info "Step 9/10: Compiling translations..."
 if command_exists msgfmt; then
-    python manage.py compilemessages 2>/dev/null || print_warning "翻译编译失败（可能没有翻译文件）"
-    print_success "翻译文件已编译"
-    print_success "Translations compiled"
+    python manage.py compilemessages 2>/dev/null || {
+        print_warning "翻译编译失败（非关键错误，可忽略）"
+        print_warning "Translation compilation failed (non-critical, can be ignored)"
+    }
 else
     print_warning "gettext 未安装，跳过翻译编译"
     print_warning "gettext not installed, skipping translation compilation"
