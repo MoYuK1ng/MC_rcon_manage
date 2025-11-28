@@ -98,6 +98,22 @@ python manage.py runserver        # Traditional Django command
 
 Visit http://localhost:8000/admin to configure servers and groups.
 
+### 🔐 Setting RCON Passwords
+
+RCON passwords are encrypted and cannot be set through the admin interface. Use the provided script:
+
+```bash
+# Set RCON password for a server
+python set_rcon_password.py
+
+# Or use Django shell
+python manage.py shell
+>>> from servers.models import Server
+>>> server = Server.objects.get(name="Your Server Name")
+>>> server.set_password("your_rcon_password")
+>>> server.save()
+```
+
 ### 📖 Documentation
 
 - **[Server Launcher Guide](SERVER_LAUNCHER.md)** - Flexible server startup options
