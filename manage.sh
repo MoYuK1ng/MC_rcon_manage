@@ -461,7 +461,7 @@ install_fresh() {
         print_info "Step 5/10: Generating encryption key..."
     fi
     
-    python generate_key.py
+    python generate_key.py --auto-yes
     print_success "Encryption key generated"
     
     # 6. Configure .env file

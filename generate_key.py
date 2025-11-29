@@ -13,8 +13,12 @@ from datetime import datetime
 # Add the project directory to the path so we can import from servers
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-def generate_and_save_key():
-    """Generate a Fernet key and save it to .env file with validation and backup"""
+def generate_and_save_key(auto_yes=False):
+    """Generate a Fernet key and save it to .env file with validation and backup
+    
+    Args:
+        auto_yes: If True, automatically answer 'yes' to prompts (for automated installation)
+    """
     
     # Generate a new Fernet key
     key = Fernet.generate_key()
@@ -44,7 +48,12 @@ def generate_and_save_key():
     
     if env_exists:
         print(f"⚠️  Warning: {env_file} already exists!")
-        response = input("Do you want to update it? (yes/no): ").strip().lower()
+        if auto_yes:
+            response = 'yes'
+            print("Auto-mode: Updating existing .env file...")
+        else:
+            response = input("Do you want to update it? (yes/no): ").strip().lower()
+        
         if response not in ['yes', 'y']:
             print("\n❌ Operation cancelled. Your existing .env file was not modified.")
             print(f"\nIf you want to use this key, manually add this line to your .env file:")
@@ -134,5 +143,7 @@ def generate_and_save_key():
         return False
 
 if __name__ == '__main__':
-    success = generate_and_save_key()
+    # Check for --auto-yes flag for automated installation
+    auto_yes = '--auto-yes' in sys.argv or '-y' in sys.argv
+    success = generate_and_save_key(auto_yes=auto_yes)
     sys.exit(0 if success else 1)
