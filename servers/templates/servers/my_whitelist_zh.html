@@ -1,81 +1,78 @@
-{% extends 'base_zh.html' %}
+{% extends 'base.html' %}
+{% load i18n %}
 
 {% block title %}我的白名单 - MC RCON Manager{% endblock %}
+{% block page_title %}我的白名单请求{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="mb-8 animate-fade-in">
-        <div class="flex items-center justify-between">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-900 mb-2 flex items-center">
-                    <i data-lucide="list-checks" class="w-8 h-8 mr-3 text-primary-600"></i>
-                    我的白名单申请
-                </h1>
-                <p class="text-gray-600">查看您的白名单申请历史</p>
-            </div>
-            <a href="/dashboard/" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200">
-                <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>
-                返回仪表板
-            </a>
-        </div>
-    </div>
-
+<div class="animate-fade-in">
+    <!-- Whitelist Requests Table -->
     {% if whitelist_requests %}
-        <div class="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden animate-slide-up">
+        <div class="bg-gray-950 rounded-2xl border border-gray-800 overflow-hidden animate-slide-up">
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+                <table class="min-w-full divide-y divide-gray-800">
+                    <thead class="bg-gray-900">
                         <tr>
-                            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">服务器</th>
-                            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">MC用户名</th>
-                            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
-                            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">提交时间</th>
-                            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">响应</th>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                服务器
+                            </th>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                Minecraft 用户名
+                            </th>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                状态
+                            </th>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                提交时间
+                            </th>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                响应
+                            </th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
+                    <tbody class="bg-gray-950 divide-y divide-gray-800">
                         {% for request in whitelist_requests %}
-                        <tr class="hover:bg-gray-50 transition-colors duration-150">
+                        <tr class="hover:bg-gray-900 transition-colors duration-150">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
-                                    <i data-lucide="server" class="w-5 h-5 text-gray-400 mr-2"></i>
-                                    <span class="text-sm font-medium text-gray-900">{{ request.server.name }}</span>
+                                    <i data-lucide="server" class="w-5 h-5 text-gray-500 mr-3"></i>
+                                    <span class="text-sm font-medium text-gray-200">{{ request.server.name }}</span>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="text-sm text-gray-900 font-mono">{{ request.minecraft_username }}</span>
+                                <span class="text-sm text-gray-200 font-mono">{{ request.minecraft_username }}</span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 {% if request.status == 'PROCESSED' %}
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        <i data-lucide="check-circle" class="w-3 h-3 mr-1"></i>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/10 text-green-300">
+                                        <i data-lucide="check-circle" class="w-3 h-3 mr-1.5"></i>
                                         已处理
                                     </span>
                                 {% elif request.status == 'PENDING' %}
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                        <i data-lucide="clock" class="w-3 h-3 mr-1"></i>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-500/10 text-yellow-300">
+                                        <i data-lucide="clock" class="w-3 h-3 mr-1.5"></i>
                                         待处理
                                     </span>
                                 {% elif request.status == 'FAILED' %}
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                        <i data-lucide="x-circle" class="w-3 h-3 mr-1"></i>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-500/10 text-red-300">
+                                        <i data-lucide="x-circle" class="w-3 h-3 mr-1.5"></i>
                                         失败
                                     </span>
                                 {% else %}
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                        <i data-lucide="info" class="w-3 h-3 mr-1"></i>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-300">
+                                        <i data-lucide="info" class="w-3 h-3 mr-1.5"></i>
                                         {{ request.get_status_display }}
                                     </span>
                                 {% endif %}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ request.created_at|date:"Y年m月d日 H:i" }}
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                                {{ request.created_at|date:"Y-m-d H:i" }}
                             </td>
                             <td class="px-6 py-4">
                                 {% if request.response_log %}
-                                    <span class="text-sm text-gray-600">{{ request.response_log|truncatewords:10 }}</span>
+                                    <span class="text-sm text-gray-400 font-mono">{{ request.response_log|truncatewords:10 }}</span>
                                 {% else %}
-                                    <span class="text-sm text-gray-400 italic">暂无响应</span>
+                                    <span class="text-sm text-gray-500 italic">暂无响应</span>
                                 {% endif %}
                             </td>
                         </tr>
@@ -84,54 +81,21 @@
                 </table>
             </div>
         </div>
-
-        <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="bg-white rounded-lg border border-gray-200 p-4">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 bg-blue-100 rounded-lg p-3">
-                        <i data-lucide="list" class="w-6 h-6 text-blue-600"></i>
-                    </div>
-                    <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-500">总申请数</p>
-                        <p class="text-2xl font-bold text-gray-900">{{ whitelist_requests|length }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white rounded-lg border border-gray-200 p-4">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 bg-green-100 rounded-lg p-3">
-                        <i data-lucide="check-circle" class="w-6 h-6 text-green-600"></i>
-                    </div>
-                    <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-500">已处理</p>
-                        <p class="text-2xl font-bold text-gray-900">{{ whitelist_requests|length }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white rounded-lg border border-gray-200 p-4">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 bg-yellow-100 rounded-lg p-3">
-                        <i data-lucide="clock" class="w-6 h-6 text-yellow-600"></i>
-                    </div>
-                    <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-500">待处理</p>
-                        <p class="text-2xl font-bold text-gray-900">0</p>
-                    </div>
-                </div>
-            </div>
-        </div>
     {% else %}
-        <div class="text-center py-16 bg-white rounded-2xl shadow-lg border border-gray-200 animate-fade-in">
-            <div class="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-6">
-                <i data-lucide="inbox" class="w-10 h-10 text-gray-400"></i>
+        <!-- Empty State -->
+        <div class="text-center py-16 bg-gray-950 rounded-2xl border border-gray-800 animate-fade-in">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-gray-900 rounded-full mb-6">
+                <i data-lucide="inbox" class="w-10 h-10 text-gray-500"></i>
             </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-2">暂无白名单申请</h3>
-            <p class="text-gray-600 max-w-md mx-auto mb-6">
-                您还没有提交任何白名单申请。前往仪表板将您的Minecraft用户名添加到服务器。
+            <h3 class="text-xl font-display font-semibold text-white mb-2">
+                暂无白名单请求
+            </h3>
+            <p class="text-gray-400 max-w-md mx-auto">
+                您还没有提交任何白名单请求。请前往仪表盘添加您的 Minecraft 用户名到服务器。
             </p>
-            <a href="/dashboard/" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 transition-colors duration-200">
+            <a href="{% url 'dashboard' %}" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-primary hover:bg-primary-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-950 focus:ring-primary">
                 <i data-lucide="arrow-right" class="w-5 h-5 mr-2"></i>
-                前往仪表板
+                前往仪表盘
             </a>
         </div>
     {% endif %}

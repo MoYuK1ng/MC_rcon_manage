@@ -266,10 +266,13 @@ JAZZMIN_SETTINGS = {
     "welcome_sign": "Welcome to the MC RCON Manager Control Panel",
 
     # Copyright on footer
-    "copyright": "MC RCON Manager by MoYuK1ng",
+    "copyright": "MC RCON Manager by <a href='https://github.com/MoYuK1ng/MC_rcon_manage' target='_blank'>MoYuK1ng</a>",
 
     # Whether to show the UI customizer on the admin login page
     "show_ui_builder": True,
+
+    # Hide version number
+    "show_version": False,
 }
 
 JAZZMIN_UI_TWEAKS = {
