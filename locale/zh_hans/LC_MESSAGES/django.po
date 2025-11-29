@@ -98,6 +98,97 @@ msgstr "用户名必须为3-16个字符，只能包含字母、数字和下划�
 msgid "Pending"
 msgstr "待处理"
 
+# Templates translations
+msgid "Dashboard"
+msgstr "仪表板"
+
+msgid "Server Dashboard"
+msgstr "服务器仪表板"
+
+msgid "Manage your Minecraft servers"
+msgstr "管理您的 Minecraft 服务器"
+
+msgid "Players"
+msgstr "玩家"
+
+msgid "Status"
+msgstr "状态"
+
+msgid "Online Players"
+msgstr "在线玩家"
+
+msgid "Loading..."
+msgstr "加载中..."
+
+msgid "Add to Whitelist"
+msgstr "添加到白名单"
+
+msgid "Minecraft Username"
+msgstr "Minecraft 用户名"
+
+msgid "3-16 characters, letters, numbers, and underscores only"
+msgstr "3-16个字符，仅限字母、数字和下划线"
+
+msgid "Add"
+msgstr "添加"
+
+msgid "3-16 characters, alphanumeric and underscores only"
+msgstr "3-16个字符，仅限字母数字和下划线"
+
+msgid "No Servers Available"
+msgstr "没有可用的服务器"
+
+msgid "You don't have access to any servers yet. Please contact your administrator to be added to a server group."
+msgstr "您还没有访问任何服务器的权限。请联系管理员将您添加到服务器组。"
+
+msgid "Login"
+msgstr "登录"
+
+msgid "Welcome back"
+msgstr "欢迎回来"
+
+msgid "Sign in to manage your Minecraft servers"
+msgstr "登录以管理您的 Minecraft 服务器"
+
+msgid "Invalid username or password. Please try again."
+msgstr "用户名或密码无效。请重试。"
+
+msgid "Username"
+msgstr "用户名"
+
+msgid "Enter your username"
+msgstr "输入您的用户名"
+
+msgid "Password"
+msgstr "密码"
+
+msgid "Enter your password"
+msgstr "输入您的密码"
+
+msgid "Sign in"
+msgstr "登录"
+
+msgid "Contact your administrator for access"
+msgstr "请联系管理员获取访问权限"
+
+msgid "Logout"
+msgstr "退出登录"
+
+msgid "Documentation"
+msgstr "文档"
+
+msgid "Support"
+msgstr "支持"
+
+msgid "Last updated"
+msgstr "最后更新"
+
+msgid "No players online"
+msgstr "没有在线玩家"
+
+msgid "Error"
+msgstr "错误"
+
 msgid "Approved"
 msgstr "已批准"
 

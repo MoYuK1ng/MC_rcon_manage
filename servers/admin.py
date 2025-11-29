@@ -40,7 +40,7 @@ class ServerAdminForm(forms.ModelForm):
     
     class Meta:
         model = Server
-        fields = '__all__'
+        exclude = ['rcon_password_encrypted']  # Exclude encrypted field, we use rcon_password instead
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
