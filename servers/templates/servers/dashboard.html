@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load i18n %}
+{% load custom_filters %}
 
 {% block title %}{% trans "Dashboard" %} - MC RCON Manager{% endblock %}
 {% block page_title %}{% trans "Server Dashboard" %}{% endblock %}
@@ -86,7 +87,7 @@
                                 {% for key, value in server.custom_fields.items %}
                                     {% if value %}
                                     <div class="flex flex-col">
-                                        <span class="text-xs text-gray-500 uppercase tracking-wide">{{ key|title|replace:"_":" " }}</span>
+                                        <span class="text-xs text-gray-500 uppercase tracking-wide">{{ key|title|replace:"_, " }}</span>
                                         <span class="text-sm font-medium text-gray-900 mt-0.5">{{ value }}</span>
                                     </div>
                                     {% endif %}
