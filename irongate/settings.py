@@ -322,6 +322,15 @@ JAZZMIN_SETTINGS = {
     
     # Language chooser (disabled - use site-wide language setting)
     "language_chooser": False,
+    
+    # Custom CSS
+    "custom_css": None,
+    
+    # Custom JS
+    "custom_js": None,
+    
+    # Related modal
+    "related_modal_active": False,
 }
 
 JAZZMIN_UI_TWEAKS = {
