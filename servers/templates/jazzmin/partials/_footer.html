@@ -4,21 +4,6 @@
     <div class="float-right d-none d-sm-inline-block"></div>
 </footer>
 
-<!-- Sidebar Project Info -->
-<div class="sidebar-project-info">
-    <a href="https://github.com/MoYuK1ng/MC_rcon_manage" target="_blank" rel="noopener noreferrer" title="MC RCON Manager on GitHub">
-        <div class="project-icon">
-            <i class="fab fa-github"></i>
-        </div>
-        <div class="project-text">
-            <div class="project-name">MC RCON Manager</div>
-            <div class="project-link">
-                <i class="fas fa-external-link-alt"></i> View on GitHub
-            </div>
-        </div>
-    </a>
-</div>
-
 <style>
 /* Completely hide any version info */
 .main-footer .float-right {
@@ -127,6 +112,35 @@
 (function() {
     'use strict';
     
+    // Add project info to sidebar
+    function addProjectInfo() {
+        const sidebar = document.querySelector('.main-sidebar');
+        if (!sidebar) return;
+        
+        // Check if already added
+        if (document.querySelector('.sidebar-project-info')) return;
+        
+        // Create project info element
+        const projectInfo = document.createElement('div');
+        projectInfo.className = 'sidebar-project-info';
+        projectInfo.innerHTML = `
+            <a href="https://github.com/MoYuK1ng/MC_rcon_manage" target="_blank" rel="noopener noreferrer" title="MC RCON Manager on GitHub">
+                <div class="project-icon">
+                    <i class="fab fa-github"></i>
+                </div>
+                <div class="project-text">
+                    <div class="project-name">MC RCON Manager</div>
+                    <div class="project-link">
+                        <i class="fas fa-external-link-alt"></i> View on GitHub
+                    </div>
+                </div>
+            </a>
+        `;
+        
+        // Append to sidebar
+        sidebar.appendChild(projectInfo);
+    }
+    
     function cleanFooter() {
         const footer = document.querySelector('.main-footer');
         if (!footer) return;
@@ -151,9 +165,13 @@
     
     // Run immediately if DOM is ready
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', cleanFooter);
+        document.addEventListener('DOMContentLoaded', function() {
+            cleanFooter();
+            addProjectInfo();
+        });
     } else {
         cleanFooter();
+        addProjectInfo();
     }
     
     // Run multiple times to catch dynamic updates
@@ -161,6 +179,11 @@
     setTimeout(cleanFooter, 200);
     setTimeout(cleanFooter, 500);
     setTimeout(cleanFooter, 1000);
+    
+    // Add project info multiple times to ensure it appears
+    setTimeout(addProjectInfo, 100);
+    setTimeout(addProjectInfo, 300);
+    setTimeout(addProjectInfo, 600);
     
     // Watch for changes to the footer
     const observer = new MutationObserver(cleanFooter);
