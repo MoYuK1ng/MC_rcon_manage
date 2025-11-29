@@ -283,12 +283,26 @@ JAZZMIN_SETTINGS = {
     
     # Custom links in sidebar
     "custom_links": {
-        "servers": [{
-            "name": "Ungrouped Users / 未分组用户", 
-            "url": "admin:ungrouped_users", 
-            "icon": "fas fa-user-slash",
-            "permissions": ["auth.change_user"]
-        }]
+        "servers": [
+            {
+                "name": "Ungrouped Users / 未分组用户", 
+                "url": "admin:ungrouped_users", 
+                "icon": "fas fa-user-slash",
+                "permissions": ["auth.change_user"]
+            },
+            {
+                "name": "━━━━━━━━━━━━━━━━━━━━",
+                "url": "#",
+                "icon": "",
+                "permissions": []
+            },
+            {
+                "name": "🐙 MC RCON Manager",
+                "url": "https://github.com/MoYuK1ng/MC_rcon_manage",
+                "icon": "fab fa-github",
+                "new_window": True
+            }
+        ]
     },
     
     # User menu
