@@ -242,13 +242,17 @@
     </h1>
 
     <div class="info-banner" style="display: block; width: 100%; clear: both;">
-        <h2><i class="fas fa-info-circle"></i> {% trans "Quick Access Management" %}</h2>
+        <h2><i class="fas fa-info-circle"></i> {% trans "Quick Access Management" %} / 快速权限管理</h2>
         <p>
-            {% blocktrans count counter=user_count %}
-            {{ counter }} user needs group assignment to access servers.
-            {% plural %}
-            {{ counter }} users need group assignments to access servers.
-            {% endblocktrans %}
+            {% if LANGUAGE_CODE == 'zh-hans' %}
+                找到 {{ user_count }} 个需要分配组的用户，分配组以授予服务器访问权限。
+            {% else %}
+                {% blocktrans count counter=user_count %}
+                {{ counter }} user needs group assignment to access servers.
+                {% plural %}
+                {{ counter }} users need group assignments to access servers.
+                {% endblocktrans %}
+            {% endif %}
         </p>
     </div>
 </div>
@@ -307,7 +311,7 @@
                         </span>
                     </td>
                     <td class="group-select-cell">
-                        <form method="post" action="{% url 'admin:ungrouped_users' %}" id="form_{{ user.id }}">
+                        <form method="post" action="" id="form_{{ user.id }}">
                             {% csrf_token %}
                             <input type="hidden" name="user_id" value="{{ user.id }}">
                             {% if available_groups %}
@@ -328,7 +332,7 @@
                     </td>
                     <td class="action-cell">
                         {% if available_groups %}
-                        <button type="submit" form="form_{{ user.id }}" class="btn-assign">
+                        <button type="submit" form="form_{{ user.id }}" class="btn-assign" onclick="return validateForm('form_{{ user.id }}');">
                             <i class="fas fa-check"></i> {% trans "Assign" %}
                         </button>
                         {% endif %}
@@ -345,5 +349,19 @@
         <p>{% trans "There are no users without group assignments." %}</p>
     </div>
 {% endif %}
+
+<script>
+function validateForm(formId) {
+    var form = document.getElementById(formId);
+    var checkboxes = form.querySelectorAll('input[name="groups"]:checked');
+    
+    if (checkboxes.length === 0) {
+        alert('{% trans "Please select at least one group" %} / 请至少选择一个组');
+        return false;
+    }
+    
+    return true;
+}
+</script>
 
 {% endblock %}
