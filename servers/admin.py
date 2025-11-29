@@ -421,12 +421,17 @@ from django.urls import path
 from servers.admin_views import ungrouped_users_view
 
 
-def get_admin_urls(urls):
-    """Add custom admin URLs"""
+# Store the original get_urls method
+_original_get_urls = admin.site.get_urls
+
+
+def get_custom_admin_urls():
+    """Add custom admin URLs to the default admin URLs"""
     custom_urls = [
         path('ungrouped-users/', ungrouped_users_view, name='ungrouped_users'),
     ]
-    return custom_urls + urls
+    return custom_urls + _original_get_urls()
 
 
-admin.site.get_urls = lambda: get_admin_urls(admin.site.get_urls())
+# Override the get_urls method
+admin.site.get_urls = get_custom_admin_urls
