@@ -38,18 +38,15 @@
     </script>
     
     <style>
-        /* Minecraft-inspired pixelated background */
+        /* Light theme with subtle gradient background */
         body {
-            background: #0a0e1a;
-            background-image: 
-                linear-gradient(rgba(16, 185, 129, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(16, 185, 129, 0.03) 1px, transparent 1px);
-            background-size: 20px 20px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%);
+            background-attachment: fixed;
         }
         
-        /* Custom scrollbar */
+        /* Custom scrollbar - light theme */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #1a1f2e; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; }
         ::-webkit-scrollbar-thumb { 
             background: linear-gradient(180deg, #10b981, #059669);
             border-radius: 4px;
@@ -76,51 +73,50 @@
             animation: status-pulse 2s ease-in-out infinite;
         }
         
-        /* Card hover effect */
+        /* Card hover effect - light theme */
         .card-hover {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white;
+            border: 1px solid #e2e8f0;
         }
         
         .card-hover:hover {
             transform: translateY(-4px);
-            box-shadow: 0 20px 25px -5px rgba(16, 185, 129, 0.1), 0 10px 10px -5px rgba(16, 185, 129, 0.04);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: #10b981;
         }
         
-        /* Minecraft-style button */
+        /* Modern button style */
         .mc-button {
             position: relative;
             background: linear-gradient(180deg, #10b981 0%, #059669 100%);
-            box-shadow: 
-                inset 0 1px 0 rgba(255,255,255,0.2),
-                inset 0 -1px 0 rgba(0,0,0,0.3),
-                0 2px 0 #047857,
-                0 4px 8px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
         }
         
         .mc-button:hover {
             background: linear-gradient(180deg, #34d399 0%, #10b981 100%);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            transform: translateY(-1px);
         }
         
         .mc-button:active {
-            transform: translateY(2px);
-            box-shadow: 
-                inset 0 1px 0 rgba(255,255,255,0.2),
-                inset 0 -1px 0 rgba(0,0,0,0.3),
-                0 1px 0 #047857;
+            transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
     </style>
 
     {% block extra_css %}{% endblock %}
 </head>
-<body class="h-full font-sans text-gray-100 antialiased">
+<body class="h-full font-sans text-gray-900 antialiased">
     <div class="min-h-full flex flex-col">
         <!-- Top Navigation Bar -->
-        <nav class="bg-gray-900/95 backdrop-blur-md border-b border-emerald-500/20 sticky top-0 z-50">
+        <nav class="bg-white/95 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50 shadow-sm">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-16">
                     <!-- Logo & Brand -->
                     <div class="flex items-center space-x-8">
-                        <a href="{% url 'dashboard' %}" class="flex items-center space-x-3 group">
+                        <a href="https://github.com/MoYuK1ng/MC_rcon_manage" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 group">
                             <div class="relative">
                                 <div class="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-200">
                                     <i data-lucide="server" class="w-6 h-6 text-white"></i>
@@ -128,23 +124,23 @@
                                 <div class="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full status-pulse"></div>
                             </div>
                             <div class="hidden sm:block">
-                                <div class="text-lg font-bold text-white font-mono">MC RCON Manager</div>
-                                <div class="text-xs text-emerald-400 font-mono -mt-1">v1.0.0</div>
+                                <div class="text-lg font-bold text-gray-900 font-mono">MC RCON Manager</div>
+                                <div class="text-xs text-emerald-600 font-mono -mt-1">v{{ app_version }}</div>
                             </div>
                         </a>
                         
                         <!-- Main Navigation -->
                         <div class="hidden md:flex items-center space-x-1">
-                            <a href="{% url 'dashboard' %}" class="flex items-center space-x-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-emerald-500/10 rounded-lg transition-all duration-200">
+                            <a href="{% url 'dashboard' %}" class="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-emerald-50 rounded-lg transition-all duration-200">
                                 <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
                                 <span class="font-medium">{% trans "Dashboard" %}</span>
                             </a>
-                            <a href="{% url 'my_whitelist' %}" class="flex items-center space-x-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-emerald-500/10 rounded-lg transition-all duration-200">
+                            <a href="{% url 'my_whitelist' %}" class="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-emerald-50 rounded-lg transition-all duration-200">
                                 <i data-lucide="list-checks" class="w-4 h-4"></i>
                                 <span class="font-medium">{% trans "Whitelist" %}</span>
                             </a>
                             {% if user.is_superuser %}
-                            <a href="/admin/" class="flex items-center space-x-2 px-4 py-2 text-amber-400 hover:text-amber-300 hover:bg-amber-500/10 rounded-lg transition-all duration-200">
+                            <a href="/admin/" class="flex items-center space-x-2 px-4 py-2 text-amber-600 hover:text-amber-700 hover:bg-amber-50 rounded-lg transition-all duration-200">
                                 <i data-lucide="shield" class="w-4 h-4"></i>
                                 <span class="font-medium">{% trans "Admin" %}</span>
                             </a>
@@ -155,29 +151,29 @@
                     <!-- Right Side -->
                     <div class="flex items-center space-x-4">
                         <!-- Status Indicator -->
-                        <div class="hidden lg:flex items-center space-x-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/30 rounded-full">
-                            <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-                            <span class="text-xs font-medium text-emerald-400">{% trans "Online" %}</span>
+                        <div class="hidden lg:flex items-center space-x-2 px-3 py-1.5 bg-emerald-50 border border-emerald-200 rounded-full">
+                            <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                            <span class="text-xs font-medium text-emerald-700">{% trans "Online" %}</span>
                         </div>
                         
                         <!-- Time -->
-                        <div class="hidden xl:flex items-center space-x-2 text-sm text-gray-400 font-mono">
+                        <div class="hidden xl:flex items-center space-x-2 text-sm text-gray-600 font-mono">
                             <i data-lucide="clock" class="w-4 h-4"></i>
                             <span id="current-time"></span>
                         </div>
                         
                         <!-- Language Switcher -->
                         <div class="relative group">
-                            <button class="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200">
+                            <button class="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200">
                                 <i data-lucide="globe" class="w-4 h-4"></i>
                                 <span class="hidden sm:inline text-sm">{{ LANGUAGE_CODE|upper }}</span>
                             </button>
-                            <div class="absolute right-0 mt-2 w-48 bg-gray-900 border border-emerald-500/20 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                            <div class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                                 <div class="p-2">
-                                    <a href="{% url 'set_language' %}?lang=en" class="flex items-center px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-colors">
+                                    <a href="{% url 'set_language' %}?lang=en" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
                                         <span class="mr-2">🇬🇧</span> English
                                     </a>
-                                    <a href="{% url 'set_language' %}?lang=zh-hans" class="flex items-center px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-colors">
+                                    <a href="{% url 'set_language' %}?lang=zh-hans" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
                                         <span class="mr-2">🇨🇳</span> 简体中文
                                     </a>
                                 </div>
@@ -186,22 +182,22 @@
                         
                         <!-- User Menu -->
                         <div class="relative group">
-                            <button class="flex items-center space-x-3 px-3 py-2 hover:bg-gray-800 rounded-lg transition-all duration-200">
+                            <button class="flex items-center space-x-3 px-3 py-2 hover:bg-gray-100 rounded-lg transition-all duration-200">
                                 <div class="w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center font-bold text-white text-sm">
                                     {{ user.username|slice:":1"|upper }}
                                 </div>
-                                <span class="hidden sm:inline text-sm font-medium text-white">{{ user.username }}</span>
-                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
+                                <span class="hidden sm:inline text-sm font-medium text-gray-900">{{ user.username }}</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-600"></i>
                             </button>
-                            <div class="absolute right-0 mt-2 w-56 bg-gray-900 border border-emerald-500/20 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                            <div class="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                                 <div class="p-2">
-                                    <div class="px-3 py-2 border-b border-gray-800">
-                                        <div class="text-sm font-semibold text-white">{{ user.username }}</div>
-                                        <div class="text-xs text-gray-400">{{ user.email|default:"User" }}</div>
+                                    <div class="px-3 py-2 border-b border-gray-200">
+                                        <div class="text-sm font-semibold text-gray-900">{{ user.username }}</div>
+                                        <div class="text-xs text-gray-600">{{ user.email|default:"User" }}</div>
                                     </div>
                                     <form method="post" action="{% url 'logout' %}" class="mt-2">
                                         {% csrf_token %}
-                                        <button type="submit" class="w-full flex items-center px-3 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors">
+                                        <button type="submit" class="w-full flex items-center px-3 py-2 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
                                             <i data-lucide="log-out" class="w-4 h-4 mr-2"></i>
                                             {% trans "Logout" %}
                                         </button>
@@ -217,10 +213,10 @@
         <!-- Main Content -->
         <div class="flex-1">
             <!-- Page Header -->
-            <header class="bg-gray-900/30 backdrop-blur-sm border-b border-gray-800/50">
+            <header class="bg-white/80 backdrop-blur-sm border-b border-gray-200">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                    <h1 class="text-3xl font-bold text-white">{% block page_title %}{% trans "Dashboard" %}{% endblock %}</h1>
-                    <p class="mt-1 text-sm text-gray-400">{% block page_subtitle %}{% trans "Manage your Minecraft servers" %}{% endblock %}</p>
+                    <h1 class="text-3xl font-bold text-gray-900">{% block page_title %}{% trans "Dashboard" %}{% endblock %}</h1>
+                    <p class="mt-1 text-sm text-gray-600">{% block page_subtitle %}{% trans "Manage your Minecraft servers" %}{% endblock %}</p>
                 </div>
             </header>
 
@@ -231,20 +227,20 @@
                     {% if messages %}
                         <div class="mb-6 space-y-3">
                             {% for message in messages %}
-                                <div class="flex items-start p-4 rounded-xl border {% if message.tags == 'success' %}bg-emerald-500/10 border-emerald-500/30{% elif message.tags == 'error' %}bg-red-500/10 border-red-500/30{% elif message.tags == 'warning' %}bg-yellow-500/10 border-yellow-500/30{% else %}bg-blue-500/10 border-blue-500/30{% endif %} animate-slide-up">
+                                <div class="flex items-start p-4 rounded-xl border {% if message.tags == 'success' %}bg-emerald-50 border-emerald-200{% elif message.tags == 'error' %}bg-red-50 border-red-200{% elif message.tags == 'warning' %}bg-yellow-50 border-yellow-200{% else %}bg-blue-50 border-blue-200{% endif %} animate-slide-up">
                                     <div class="flex-shrink-0">
                                         {% if message.tags == 'success' %}
-                                            <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>
+                                            <i data-lucide="check-circle" class="w-5 h-5 text-emerald-600"></i>
                                         {% elif message.tags == 'error' %}
-                                            <i data-lucide="x-circle" class="w-5 h-5 text-red-400"></i>
+                                            <i data-lucide="x-circle" class="w-5 h-5 text-red-600"></i>
                                         {% elif message.tags == 'warning' %}
-                                            <i data-lucide="alert-triangle" class="w-5 h-5 text-yellow-400"></i>
+                                            <i data-lucide="alert-triangle" class="w-5 h-5 text-yellow-600"></i>
                                         {% else %}
-                                            <i data-lucide="info" class="w-5 h-5 text-blue-400"></i>
+                                            <i data-lucide="info" class="w-5 h-5 text-blue-600"></i>
                                         {% endif %}
                                     </div>
                                     <div class="ml-3 flex-1">
-                                        <p class="text-sm font-medium {% if message.tags == 'success' %}text-emerald-300{% elif message.tags == 'error' %}text-red-300{% elif message.tags == 'warning' %}text-yellow-300{% else %}text-blue-300{% endif %}">
+                                        <p class="text-sm font-medium {% if message.tags == 'success' %}text-emerald-800{% elif message.tags == 'error' %}text-red-800{% elif message.tags == 'warning' %}text-yellow-800{% else %}text-blue-800{% endif %}">
                                             {{ message }}
                                         </p>
                                     </div>

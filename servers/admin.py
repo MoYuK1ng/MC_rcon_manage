@@ -29,7 +29,7 @@ from django import forms
 
 
 class ServerAdminForm(forms.ModelForm):
-    """Custom form for Server admin with password field"""
+    """Custom form for Server admin with password field and custom fields editor"""
     
     rcon_password = forms.CharField(
         label=_('RCON Password / RCON 密码'),
@@ -38,9 +38,39 @@ class ServerAdminForm(forms.ModelForm):
         help_text=_('输入新密码以更新，留空则不修改 / Enter new password to update, leave blank to keep current')
     )
     
+    # Custom fields as individual form fields for easier editing
+    modpack_name = forms.CharField(
+        label=_('Modpack Name / 整合包名称'),
+        required=False,
+        max_length=100,
+        help_text=_('Name of the modpack (e.g., "All the Mods 9") / 整合包名称（例如："All the Mods 9"）')
+    )
+    
+    modpack_version = forms.CharField(
+        label=_('Modpack Version / 整合包版本'),
+        required=False,
+        max_length=50,
+        help_text=_('Version of the modpack (e.g., "0.2.45") / 整合包版本（例如："0.2.45"）')
+    )
+    
+    game_version = forms.CharField(
+        label=_('Game Version / 游戏版本'),
+        required=False,
+        max_length=50,
+        help_text=_('Minecraft version (e.g., "1.20.1") / Minecraft版本（例如："1.20.1"）')
+    )
+    
+    description = forms.CharField(
+        label=_('Description / 描述'),
+        required=False,
+        max_length=200,
+        widget=forms.Textarea(attrs={'rows': 3}),
+        help_text=_('Server description / 服务器描述')
+    )
+    
     class Meta:
         model = Server
-        exclude = ['rcon_password_encrypted']  # Exclude encrypted field, we use rcon_password instead
+        exclude = ['rcon_password_encrypted', 'custom_fields']  # We handle custom_fields separately
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -50,6 +80,13 @@ class ServerAdminForm(forms.ModelForm):
                 '✅ 密码已设置。输入新密码以更新，留空则保持不变。<br>'
                 '✅ Password is set. Enter new password to update, leave blank to keep current.'
             )
+        
+        # Load custom fields into form fields
+        if self.instance.pk and self.instance.custom_fields:
+            self.fields['modpack_name'].initial = self.instance.custom_fields.get('modpack_name', '')
+            self.fields['modpack_version'].initial = self.instance.custom_fields.get('modpack_version', '')
+            self.fields['game_version'].initial = self.instance.custom_fields.get('game_version', '')
+            self.fields['description'].initial = self.instance.custom_fields.get('description', '')
     
     def save(self, commit=True):
         server = super().save(commit=False)
@@ -61,6 +98,19 @@ class ServerAdminForm(forms.ModelForm):
         elif not server.pk and not server.rcon_password_encrypted:
             # New server without password - set a placeholder
             server.set_password('CHANGE_ME_IMMEDIATELY')
+        
+        # Build custom_fields dict from form fields
+        custom_fields = {}
+        if self.cleaned_data.get('modpack_name'):
+            custom_fields['modpack_name'] = self.cleaned_data['modpack_name']
+        if self.cleaned_data.get('modpack_version'):
+            custom_fields['modpack_version'] = self.cleaned_data['modpack_version']
+        if self.cleaned_data.get('game_version'):
+            custom_fields['game_version'] = self.cleaned_data['game_version']
+        if self.cleaned_data.get('description'):
+            custom_fields['description'] = self.cleaned_data['description']
+        
+        server.custom_fields = custom_fields
         
         if commit:
             server.save()
@@ -88,6 +138,13 @@ class ServerAdmin(admin.ModelAdmin):
         (_('Game Server (Shown to Users)'), {
             'fields': ('game_ip', 'game_port'),
             'description': _('玩家连接游戏服务器的地址和端口 / IP and port for players to connect to the game server')
+        }),
+        (_('Custom Server Information (Shown to Users)'), {
+            'fields': ('modpack_name', 'modpack_version', 'game_version', 'description'),
+            'description': _(
+                '自定义服务器信息，将显示在服务器卡片上。留空则不显示。<br>'
+                'Custom server information displayed on server cards. Leave blank to hide.'
+            )
         }),
         (_('RCON Connection (Management Only)'), {
             'fields': ('ip_address', 'rcon_port'),

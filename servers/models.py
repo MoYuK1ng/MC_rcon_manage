@@ -58,6 +58,13 @@ class Server(models.Model):
         help_text=_('Encrypted RCON password (never stored in plaintext)')
     )
     
+    custom_fields = models.JSONField(
+        default=dict,
+        blank=True,
+        verbose_name=_('Custom Fields'),
+        help_text=_('Custom metadata (modpack name, game version, description, etc.)')
+    )
+    
     groups = models.ManyToManyField(
         Group,
         related_name='servers',
