@@ -1,0 +1,253 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    primary: {
+                        50: '#f0f9ff',
+                        100: '#e0f2fe',
+                        200: '#bae6fd',
+                        300: '#7dd3fc',
+                        400: '#38bdf8',
+                        500: '#0ea5e9',
+                        600: '#0284c7',
+                        700: '#0369a1',
+                        800: '#075985',
+                        900: '#0c4a6e',
+                    }
+                }
+            }
+        }
+    }
+</script>
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+    
+    #header, #content-related, .breadcrumbs {
+        display: none;
+    }
+    
+    #content {
+        padding: 0;
+        max-width: none;
+        margin: 0;
+    }
+    
+    .login-container {
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+        width: 100%;
+        max-width: 450px;
+    }
+    
+    .login-header {
+        background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
+        padding: 2.5rem 2rem;
+        text-align: center;
+        color: white;
+    }
+    
+    .login-icon {
+        width: 4rem;
+        height: 4rem;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        border-radius: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+    }
+    
+    .login-header h1 {
+        font-size: 1.875rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .login-header p {
+        font-size: 1rem;
+        opacity: 0.9;
+    }
+    
+    .login-form {
+        padding: 2rem;
+    }
+    
+    .form-row {
+        margin-bottom: 1.5rem;
+        padding: 0;
+        border: none;
+    }
+    
+    .form-row label {
+        display: block;
+        color: #475569;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+    }
+    
+    .form-row input[type="text"],
+    .form-row input[type="password"] {
+        width: 100%;
+        max-width: none;
+        padding: 0.75rem 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        transition: all 0.2s;
+    }
+    
+    .form-row input[type="text"]:focus,
+    .form-row input[type="password"]:focus {
+        outline: none;
+        border-color: #0ea5e9;
+        box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+    }
+    
+    .submit-row {
+        background: transparent;
+        padding: 0;
+        margin-top: 2rem;
+        border: none;
+    }
+    
+    .submit-row input[type="submit"] {
+        width: 100%;
+        padding: 0.875rem;
+        background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
+        color: white;
+        border: none;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .submit-row input[type="submit"]:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .errornote {
+        background: #fee2e2;
+        color: #dc2626;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid #ef4444;
+        font-weight: 500;
+    }
+    
+    .login-footer {
+        text-align: center;
+        padding: 1.5rem 2rem;
+        background: #f8fafc;
+        border-top: 1px solid #e2e8f0;
+    }
+    
+    .login-footer p {
+        color: #64748b;
+        font-size: 0.875rem;
+        margin: 0;
+    }
+    
+    .login-footer a {
+        color: #0ea5e9;
+        text-decoration: none;
+        font-weight: 600;
+    }
+    
+    .login-footer a:hover {
+        color: #0369a1;
+    }
+</style>
+{% endblock %}
+
+{% block branding %}{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-header">
+        <div class="login-icon">
+            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path>
+            </svg>
+        </div>
+        <h1>MC RCON Manager</h1>
+        <p>{% trans 'Admin Panel Login' %}</p>
+    </div>
+    
+    <form action="{{ app_path }}" method="post" id="login-form" class="login-form">
+        {% csrf_token %}
+        
+        {% if form.errors %}
+            <div class="errornote">
+                {% if form.errors.items|length == 1 %}
+                    {% trans "Please correct the error below." %}
+                {% else %}
+                    {% trans "Please correct the errors below." %}
+                {% endif %}
+            </div>
+        {% endif %}
+        
+        {% if user.is_authenticated %}
+            <div class="errornote">
+                {% blocktrans trimmed %}
+                    You are authenticated as {{ username }}, but are not authorized to
+                    access this page. Would you like to login to a different account?
+                {% endblocktrans %}
+            </div>
+        {% endif %}
+        
+        <div class="form-row">
+            {{ form.username.label_tag }}
+            {{ form.username }}
+            {% if form.username.errors %}
+                <div class="errornote" style="margin-top: 0.5rem;">{{ form.username.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-row">
+            {{ form.password.label_tag }}
+            {{ form.password }}
+            {% if form.password.errors %}
+                <div class="errornote" style="margin-top: 0.5rem;">{{ form.password.errors }}</div>
+            {% endif %}
+            <input type="hidden" name="next" value="{{ next }}">
+        </div>
+        
+        <div class="submit-row">
+            <input type="submit" value="{% trans 'Log in' %}">
+        </div>
+    </form>
+    
+    <div class="login-footer">
+        <p>
+            <a href="{% url 'dashboard' %}">
+                <svg class="w-4 h-4 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                {% trans 'Back to Dashboard' %}
+            </a>
+        </p>
+    </div>
+</div>
+{% endblock %}
