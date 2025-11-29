@@ -32,8 +32,48 @@ DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 # RCON Encryption Key (loaded from environment)
 RCON_ENCRYPTION_KEY = os.getenv('RCON_ENCRYPTION_KEY')
-if not RCON_ENCRYPTION_KEY:
-    raise ValueError("RCON_ENCRYPTION_KEY must be set in environment variables or .env file")
+
+# Validate encryption key on startup
+if RCON_ENCRYPTION_KEY:
+    # Import here to avoid circular imports
+    import sys
+    # Only validate if not running migrations or other management commands that don't need encryption
+    skip_validation_commands = ['makemigrations', 'migrate', 'collectstatic', 'compilemessages']
+    should_validate = not any(cmd in sys.argv for cmd in skip_validation_commands)
+    
+    if should_validate:
+        try:
+            from servers.utils.key_validator import KeyValidator
+            from servers.utils.file_security import check_env_file_permissions
+            
+            # Validate key format
+            is_valid, error_message = KeyValidator.validate_key(RCON_ENCRYPTION_KEY)
+            if not is_valid:
+                print("\n" + "=" * 80)
+                print("ENCRYPTION KEY VALIDATION FAILED")
+                print("=" * 80)
+                print(error_message)
+                print("=" * 80 + "\n")
+                raise ValueError("Invalid RCON_ENCRYPTION_KEY. See error message above.")
+            else:
+                # Only print success message in development
+                if DEBUG:
+                    print("✅ RCON encryption key validated successfully")
+            
+            # Check .env file permissions
+            is_secure, warning = check_env_file_permissions()
+            if not is_secure and warning:
+                print("\n" + warning)
+                # Don't fail startup, just warn
+                
+        except ImportError:
+            # During initial setup, the servers app might not be available yet
+            pass
+else:
+    raise ValueError(
+        "RCON_ENCRYPTION_KEY must be set in environment variables or .env file.\n"
+        "Run 'python generate_key.py' to generate a new encryption key."
+    )
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 

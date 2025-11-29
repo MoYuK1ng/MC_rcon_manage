@@ -114,8 +114,47 @@ python manage.py shell
 >>> server.save()
 ```
 
+### 🔑 Encryption Key Management
+
+IronGate uses Fernet symmetric encryption to protect RCON passwords. Proper key management is essential for security.
+
+#### Generate Encryption Key
+
+```bash
+# Generate a new encryption key (first-time setup)
+python generate_key.py
+```
+
+#### Verify Encryption Key
+
+```bash
+# Verify current key is valid
+python verify_key.py
+
+# Test all stored passwords can be decrypted
+python verify_key.py --test-passwords
+```
+
+#### Rotate Encryption Key
+
+```bash
+# Rotate to a new key (re-encrypts all passwords)
+python rotate_key.py --generate-new
+
+# Or specify keys manually
+python rotate_key.py --old-key OLD_KEY --new-key NEW_KEY
+```
+
+**Important Security Notes:**
+- Never commit encryption keys to version control
+- Store keys securely (`.env` file is in `.gitignore`)
+- Rotate keys periodically (every 6-12 months)
+- Create backups before key rotation
+- See [ENCRYPTION.md](ENCRYPTION.md) for detailed documentation
+
 ### 📖 Documentation
 
+- **[Encryption Guide](ENCRYPTION.md)** - Complete encryption key management documentation
 - **[Server Launcher Guide](SERVER_LAUNCHER.md)** - Flexible server startup options
 - **[Deployment Guide](DEPLOYMENT.md)** - Complete production deployment instructions (English & Chinese)
 - **[Getting Started](GETTING_STARTED.md)** - Quick start guide (English & Chinese)
@@ -315,8 +354,63 @@ python manage.py runserver        # 传统 Django 命令
 
 访问 http://localhost:8000/admin 配置服务器和组。
 
+### 🔐 设置 RCON 密码
+
+RCON 密码已加密，无法通过管理界面设置。请使用提供的脚本：
+
+```bash
+# 为服务器设置 RCON 密码
+python set_rcon_password.py
+
+# 或使用 Django shell
+python manage.py shell
+>>> from servers.models import Server
+>>> server = Server.objects.get(name="您的服务器名称")
+>>> server.set_password("your_rcon_password")
+>>> server.save()
+```
+
+### 🔑 加密密钥管理
+
+IronGate 使用 Fernet 对称加密保护 RCON 密码。正确的密钥管理对安全至关重要。
+
+#### 生成加密密钥
+
+```bash
+# 生成新的加密密钥（首次设置）
+python generate_key.py
+```
+
+#### 验证加密密钥
+
+```bash
+# 验证当前密钥是否有效
+python verify_key.py
+
+# 测试所有存储的密码是否可以解密
+python verify_key.py --test-passwords
+```
+
+#### 轮换加密密钥
+
+```bash
+# 轮换到新密钥（重新加密所有密码）
+python rotate_key.py --generate-new
+
+# 或手动指定密钥
+python rotate_key.py --old-key 旧密钥 --new-key 新密钥
+```
+
+**重要安全提示：**
+- 切勿将加密密钥提交到版本控制
+- 安全存储密钥（`.env` 文件已在 `.gitignore` 中）
+- 定期轮换密钥（每 6-12 个月）
+- 密钥轮换前创建备份
+- 详细文档请参阅 [ENCRYPTION.md](ENCRYPTION.md)
+
 ### 📖 文档
 
+- **[加密指南](ENCRYPTION.md)** - 完整的加密密钥管理文档
 - **[服务器启动指南](SERVER_LAUNCHER.md)** - 灵活的服务器启动选项
 - **[部署指南](DEPLOYMENT.md)** - 完整的生产环境部署说明（中英文）
 - **[快速开始](GETTING_STARTED.md)** - 快速入门指南（中英文）
