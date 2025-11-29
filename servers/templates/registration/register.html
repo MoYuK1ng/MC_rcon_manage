@@ -35,51 +35,51 @@
         {% endfor %}
         
         <div>
-            <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-400 mb-2">{% trans "Username" %}</label>
+            <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">{% trans "Username" %}</label>
             <input type="text" name="{{ form.username.name }}" id="{{ form.username.id_for_label }}"
-                   class="block w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                   class="block w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
                    placeholder="{% trans 'Choose a username' %}" required>
             {% if form.username.help_text %}
-                <p class="mt-2 text-xs text-gray-500">{{ form.username.help_text|safe }}</p>
+                <p class="mt-2 text-xs text-gray-600">{{ form.username.help_text|safe }}</p>
             {% endif %}
         </div>
 
         <div>
-            <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-400 mb-2">{% trans "Email" %}</label>
+            <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">{% trans "Email" %}</label>
             <input type="email" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}"
-                   class="block w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                   class="block w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
                    placeholder="{% trans 'Enter your email' %}" required>
         </div>
         
         <div>
-            <label for="{{ form.password1.id_for_label }}" class="block text-sm font-medium text-gray-400 mb-2">{% trans "Password" %}</label>
+            <label for="{{ form.password1.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">{% trans "Password" %}</label>
             <input type="password" name="{{ form.password1.name }}" id="{{ form.password1.id_for_label }}"
-                   class="block w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                   class="block w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
                    placeholder="{% trans 'Create a password' %}" required>
         </div>
 
         <div>
-            <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium text-gray-400 mb-2">{% trans "Confirm Password" %}</label>
+            <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">{% trans "Confirm Password" %}</label>
             <input type="password" name="{{ form.password2.name }}" id="{{ form.password2.id_for_label }}"
-                   class="block w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                   class="block w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
                    placeholder="{% trans 'Confirm your password' %}" required>
         </div>
 
         <div>
-            <label class="block text-sm font-medium text-gray-400 mb-2">{{ form.captcha.label }}</label>
+            <label class="block text-sm font-medium text-gray-700 mb-2">{{ form.captcha.label }}</label>
             <div class="space-y-3">
-                <div class="bg-white border border-gray-700 rounded-lg p-3 inline-block">
+                <div class="bg-white border border-gray-300 rounded-lg p-3 inline-block">
                     {{ form.captcha }}
                 </div>
                 {% if form.captcha.help_text %}
-                <p class="text-xs text-gray-500">{{ form.captcha.help_text }}</p>
+                <p class="text-xs text-gray-600">{{ form.captcha.help_text }}</p>
                 {% endif %}
             </div>
         </div>
 
         <button 
             type="submit" 
-            class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-950 focus:ring-primary transition-colors duration-200"
+            class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-md text-sm font-medium text-white bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-200 hover:shadow-lg"
         >
             <i data-lucide="user-plus" class="w-5 h-5 mr-2"></i>
             {% trans "Create Account" %}
@@ -87,9 +87,9 @@
     </form>
 
     <div class="text-center mt-8">
-        <p class="text-sm text-gray-400">
+        <p class="text-sm text-gray-600">
             {% trans "Already have an account?" %}
-            <a href="{% url 'login' %}" class="text-primary-400 hover:text-primary-300 font-medium transition-colors duration-200">
+            <a href="{% url 'login' %}" class="text-emerald-600 hover:text-emerald-700 font-medium transition-colors duration-200">
                 {% trans "Sign in" %}
             </a>
         </p>

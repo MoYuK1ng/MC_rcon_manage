@@ -23,18 +23,18 @@
         {% endif %}
 
         <div>
-            <label for="id_username" class="block text-sm font-medium text-gray-400 mb-2">
+            <label for="id_username" class="block text-sm font-medium text-gray-700 mb-2">
                 {% trans "Username" %}
             </label>
             <div class="relative">
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                    <i data-lucide="user" class="w-5 h-5 text-gray-500"></i>
+                    <i data-lucide="user" class="w-5 h-5 text-gray-400"></i>
                 </div>
                 <input 
                     type="text" 
                     name="username" 
                     id="id_username"
-                    class="block w-full pl-11 pr-3 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+                    class="block w-full pl-11 pr-3 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
                     placeholder="{% trans 'Enter your username' %}"
                     required 
                     autofocus
@@ -43,18 +43,18 @@
         </div>
         
         <div>
-            <label for="id_password" class="block text-sm font-medium text-gray-400 mb-2">
+            <label for="id_password" class="block text-sm font-medium text-gray-700 mb-2">
                 {% trans "Password" %}
             </label>
             <div class="relative">
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                    <i data-lucide="lock" class="w-5 h-5 text-gray-500"></i>
+                    <i data-lucide="lock" class="w-5 h-5 text-gray-400"></i>
                 </div>
                 <input 
                     type="password" 
                     name="password" 
                     id="id_password"
-                    class="block w-full pl-11 pr-3 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+                    class="block w-full pl-11 pr-3 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
                     placeholder="{% trans 'Enter your password' %}"
                     required
                 >
@@ -65,7 +65,7 @@
         
         <button 
             type="submit" 
-            class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-950 focus:ring-primary transition-colors duration-200"
+            class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-md text-sm font-medium text-white bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-200 hover:shadow-lg"
         >
             <i data-lucide="log-in" class="w-5 h-5 mr-2"></i>
             {% trans "Sign in" %}
@@ -73,9 +73,9 @@
     </form>
 
     <div class="text-center mt-8">
-        <p class="text-sm text-gray-400">
+        <p class="text-sm text-gray-600">
             {% trans "Don't have an account?" %}
-            <a href="{% url 'register' %}" class="text-primary-400 hover:text-primary-300 font-medium transition-colors duration-200">
+            <a href="{% url 'register' %}" class="text-emerald-600 hover:text-emerald-700 font-medium transition-colors duration-200">
                 {% trans "Sign up" %}
             </a>
         </p>
