@@ -1,31 +1,34 @@
 # Django Framework
-Django>=5.0,<5.1
-
-# RCON Client for Minecraft
-mcrcon>=0.7.0
-
-# Encryption Library
-cryptography>=41.0.0
-
-# Environment Variable Management
-python-dotenv>=1.0.0
-
-# HTMX Integration for Django
-django-htmx>=1.17.0
-
-# WSGI Server for Production
-gunicorn>=21.2.0
-
-# Static File Serving
-whitenoise>=6.6.0
-
-# Testing Frameworks
-hypothesis>=6.92.0
-pytest>=7.4.0
-pytest-django>=4.7.0
-
-# Django Admin uses default interface
-
-# Captcha for Registration
-django-simple-captcha>=0.6.0
-Pillow>=10.0.0
+    2 Django>=5.0,<5.1
+    3 
+    4 # RCON Client for Minecraft
+    5 mcrcon>=0.7.0
+    6 
+    7 # Encryption Library
+    8 cryptography>=41.0.0
+    9 
+   10 # Environment Variable Management
+   11 python-dotenv>=1.0.0
+   12 
+   13 # HTMX Integration for Django
+   14 django-htmx>=1.17.0
+   15 
+   16 # WSGI Server for Production
+   17 gunicorn>=21.2.0
+   18
+   19 # Static File Serving
+   20 whitenoise>=6.6.0
+   21
+   22 # Translation file handling
+   23 polib>=1.2.0
+   24
+   25 # Testing Frameworks
+   26 hypothesis>=6.92.0
+   27 pytest>=7.4.0
+   28 pytest-django>=4.7.0
+   29
+   30 # Django Admin uses default interface
+   31
+   32 # Captcha for Registration
+   33 django-simple-captcha>=0.6.0
+   34 Pillow>=10.0.0
