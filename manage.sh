@@ -538,26 +538,20 @@ EOF
     
     print_success "Admin account created"
     
-    # Compile translations using our robust, dependency-free script
-    if [ "$LANG_CHOICE" = "zh" ]; then
-        print_info "步骤 8/10: 编译翻译文件..."
-    else
-        print_info "Step 8/10: Compiling translations..."
-    fi
-    python compile_mo.py
-
     # 9. Collect static files
     if [ "$LANG_CHOICE" = "zh" ]; then
-        print_info "步骤 9/10: 收集静态文件..."
+        print_info "步骤 8/9: 收集静态文件..."
     else
-        print_info "Step 9/10: Collecting static files..."
+        print_info "Step 8/9: Collecting static files..."
     fi
-    
+
+    python manage.py collectstatic --noinput
+
     # 10. Configure systemd service
     if [ "$LANG_CHOICE" = "zh" ]; then
-        print_info "步骤 10/10: 配置系统服务..."
+        print_info "步骤 9/9: 配置系统服务..."
     else
-        print_info "Step 10/10: Configuring system services..."
+        print_info "Step 9/9: Configuring system services..."
     fi
     
     # Create Gunicorn service file
@@ -844,19 +838,15 @@ update_code() {
         print_info "Step 7/8: Collecting static files..."
     fi
     
-        python manage.py collectstatic --noinput
-    
-        # Compile translations using our robust, dependency-free script
-        python compile_mo.py    
-    print_success "Static files collected"
-    
-    # Restart service
-    if [ "$LANG_CHOICE" = "zh" ]; then
-        print_info "步骤 8/8: 重启服务..."
-    else
-        print_info "Step 8/8: Restarting service..."
-    fi
-    
+            python manage.py collectstatic --noinput
+            print_success "Static files collected"
+        
+            # Restart service
+            if [ "$LANG_CHOICE" = "zh" ]; then
+                print_info "步骤 8/8: 重启服务..."
+            else
+                print_info "Step 8/8: Restarting service..."
+            fi    
     systemctl start mc-rcon
     print_success "Service restarted"
     
