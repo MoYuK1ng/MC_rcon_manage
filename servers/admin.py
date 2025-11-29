@@ -79,7 +79,7 @@ class ServerAdmin(admin.ModelAdmin):
     list_filter = ('created_at', 'groups')
     search_fields = ('name', 'ip_address')
     filter_horizontal = ('groups',)  # Nice multi-select widget for groups
-    readonly_fields = ('created_at', 'updated_at', 'rcon_password_encrypted')
+    readonly_fields = ('created_at', 'updated_at')
     
     fieldsets = (
         (_('Server Information'), {
@@ -94,11 +94,6 @@ class ServerAdmin(admin.ModelAdmin):
         }),
         (_('Access Control'), {
             'fields': ('groups',)
-        }),
-        (_('Security Info (Read Only)'), {
-            'fields': ('rcon_password_encrypted',),
-            'classes': ('collapse',),
-            'description': _('加密后的密码数据（仅供参考）/ Encrypted password data (for reference only)')
         }),
         (_('Timestamps'), {
             'fields': ('created_at', 'updated_at'),
