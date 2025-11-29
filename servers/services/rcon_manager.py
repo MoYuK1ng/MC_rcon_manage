@@ -168,4 +168,3 @@ class RconHandler:
                 'success': False,
                 'message': f'Unexpected error: {str(e)}'
             }
-```
