@@ -268,43 +268,10 @@ JAZZMIN_SETTINGS = {
     # Copyright on footer
     "copyright": "MC RCON Manager by MoYuK1ng",
 
-    # The model admin to search from the search bar, search bar omitted if excluded
-    "search_model": ["auth.User", "servers.Server"],
-
-    # Links to put along the top menu
-    "topmenu_links": [
-        {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
-        {"name": "User Site", "url": "/dashboard/", "new_window": True},
-        {"model": "auth.User"},
-    ],
-
-    # UI Customisation options
-    "ui_tweaks": {
-        "navbar_small_text": False,
-        "footer_small_text": False,
-        "body_small_text": False,
-        "brand_small_text": False,
-        "brand_colour": False,
-        "accent": "accent-primary",
-        "navbar": "navbar-white navbar-light",
-        "no_navbar_border": False,
-        "sidebar": "sidebar-light",
-        "sidebar_nav_small_text": False,
-        "sidebar_disable_expand": False,
-        "sidebar_nav_child_indent": False,
-        "sidebar_nav_compact_style": False,
-        "sidebar_nav_legacy_style": True,
-        "theme": "litera",
-    },
-
     # Whether to show the UI customizer on the admin login page
     "show_ui_builder": True,
 }
 
 JAZZMIN_UI_TWEAKS = {
     "theme": "litera",
-    "brand_colour": "navbar-light",
-    "accent": "accent-primary",
-    "navbar": "navbar-light",
-    "sidebar": "sidebar-light",
 }
