@@ -19,6 +19,9 @@ gunicorn>=21.2.0
 # Static File Serving
 whitenoise>=6.6.0
 
+# Translation file handling
+polib>=1.2.0
+
 # Admin Theme
 django-jazzmin>=2.6.0
 

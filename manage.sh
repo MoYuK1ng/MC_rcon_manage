@@ -538,49 +538,20 @@ EOF
     
     print_success "Admin account created"
     
+    # Compile translations using our robust, dependency-free script
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        print_info "步骤 8/10: 编译翻译文件..."
+    else
+        print_info "Step 8/10: Compiling translations..."
+    fi
+    python compile_mo.py
+
     # 9. Collect static files
     if [ "$LANG_CHOICE" = "zh" ]; then
         print_info "步骤 9/10: 收集静态文件..."
     else
         print_info "Step 9/10: Collecting static files..."
     fi
-    
-    python manage.py collectstatic --noinput
-    
-    # Compile translations
-    if [ "$LANG_CHOICE" = "zh" ]; then
-        print_info "编译翻译文件..."
-    else
-        print_info "Compiling translations..."
-    fi
-    
-    if command_exists msgfmt; then
-        if python manage.py compilemessages 2>&1 | tee /tmp/compile_messages.log; then
-            if [ "$LANG_CHOICE" = "zh" ]; then
-                print_success "翻译文件编译成功"
-            else
-                print_success "Translations compiled successfully"
-            fi
-        else
-            if [ "$LANG_CHOICE" = "zh" ]; then
-                print_warning "翻译编译失败，将使用英文界面"
-                print_info "查看日志: cat /tmp/compile_messages.log"
-            else
-                print_warning "Translation compilation failed, will use English interface"
-                print_info "View log: cat /tmp/compile_messages.log"
-            fi
-        fi
-    else
-        if [ "$LANG_CHOICE" = "zh" ]; then
-            print_warning "未安装 gettext，跳过翻译编译"
-            print_info "安装: apt install -y gettext"
-        else
-            print_warning "gettext not installed, skipping translation compilation"
-            print_info "Install: apt install -y gettext"
-        fi
-    fi
-    
-    print_success "Static files collected"
     
     # 10. Configure systemd service
     if [ "$LANG_CHOICE" = "zh" ]; then
@@ -873,13 +844,10 @@ update_code() {
         print_info "Step 7/8: Collecting static files..."
     fi
     
-    python manage.py collectstatic --noinput
+        python manage.py collectstatic --noinput
     
-    # Compile translations
-    if command_exists msgfmt; then
-        python manage.py compilemessages 2>&1 || true
-    fi
-    
+        # Compile translations using our robust, dependency-free script
+        python compile_mo.py    
     print_success "Static files collected"
     
     # Restart service
