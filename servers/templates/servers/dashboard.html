@@ -2,62 +2,43 @@
 {% load i18n %}
 
 {% block title %}{% trans "Dashboard" %} - MC RCON Manager{% endblock %}
+{% block page_title %}{% trans "Server Dashboard" %}{% endblock %}
 
 {% block extra_css %}
 <style>
+    /* Dark theme shimmer */
     @keyframes shimmer {
         0% { background-position: -1000px 0; }
         100% { background-position: 1000px 0; }
     }
-    
     .loading-shimmer {
         animation: shimmer 2s infinite linear;
-        background: linear-gradient(to right, #f3f4f6 4%, #e5e7eb 25%, #f3f4f6 36%);
+        background: linear-gradient(to right, #1f2937 4%, #374151 25%, #1f2937 36%);
         background-size: 1000px 100%;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Dashboard Header -->
-    <div class="mb-8 animate-fade-in">
-        <div class="flex items-center justify-between">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-900 mb-2">
-                    {% trans "Server Dashboard" %}
-                </h1>
-                <p class="text-gray-600">
-                    {% trans "Manage your Minecraft servers" %}
-                </p>
-            </div>
-            <div class="flex items-center space-x-3">
-                <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-primary-50 text-primary-700 border border-primary-200">
-                    <i data-lucide="tag" class="w-3.5 h-3.5 mr-1.5"></i>
-                    v{{ app_version }}
-                </span>
-            </div>
-        </div>
-    </div>
-
+<div class="animate-fade-in">
     <!-- Announcements Section -->
     {% if announcements %}
-    <div class="mb-8 space-y-4 animate-fade-in">
+    <div class="mb-8 space-y-4">
         {% for announcement in announcements %}
-        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 rounded-lg p-6 shadow-sm">
+        <div class="bg-gray-900 border-l-4 border-primary rounded-r-lg p-6 shadow-lg">
             <div class="flex items-start">
                 <div class="flex-shrink-0">
-                    <i data-lucide="megaphone" class="w-6 h-6 text-blue-600"></i>
+                    <i data-lucide="megaphone" class="w-6 h-6 text-primary"></i>
                 </div>
                 <div class="ml-4 flex-1">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2">
+                    <h3 class="text-lg font-display font-semibold text-white mb-2">
                         {{ announcement.title }}
                     </h3>
-                    <div class="text-gray-700 prose prose-sm max-w-none">
+                    <div class="text-gray-300 prose prose-sm max-w-none prose-invert">
                         {{ announcement.content|safe }}
                     </div>
                     <div class="mt-3 flex items-center text-sm text-gray-500">
-                        <i data-lucide="clock" class="w-4 h-4 mr-1"></i>
+                        <i data-lucide="clock" class="w-4 h-4 mr-1.5"></i>
                         {{ announcement.created_at|date:"Y-m-d H:i" }}
                     </div>
                 </div>
@@ -69,11 +50,11 @@
 
     <!-- Server Grid -->
     {% if servers %}
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 animate-slide-up">
+        <div class="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6 animate-slide-up">
             {% for server in servers %}
-                <div class="group bg-white rounded-2xl border border-gray-200 hover:border-primary-300 hover:shadow-xl transition-all duration-300 overflow-hidden">
+                <div class="group bg-gray-950 rounded-2xl border border-gray-800 hover:border-primary/50 transition-all duration-300 overflow-hidden flex flex-col">
                     <!-- Server Header -->
-                    <div class="relative bg-gradient-to-br from-primary-500 to-primary-700 p-6">
+                    <div class="relative p-6">
                         <!-- Status Indicator -->
                         <div class="absolute top-4 right-4">
                             <div class="relative">
@@ -82,16 +63,16 @@
                             </div>
                         </div>
                         
-                        <div class="flex items-start space-x-3">
-                            <div class="flex-shrink-0 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                                <i data-lucide="server" class="w-6 h-6 text-white"></i>
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0 w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center">
+                                <i data-lucide="server" class="w-6 h-6 text-primary"></i>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <h3 class="text-xl font-bold text-white truncate">
+                                <h3 class="text-xl font-display font-bold text-white truncate">
                                     {{ server.name }}
                                 </h3>
                                 {% if server.game_ip %}
-                                <p class="text-primary-100 text-sm font-mono mt-1">
+                                <p class="text-gray-400 text-sm font-mono mt-1">
                                     {{ server.game_ip }}{% if server.game_port %}:{{ server.game_port }}{% endif %}
                                 </p>
                                 {% endif %}
@@ -100,17 +81,17 @@
                     </div>
                     
                     <!-- Stats -->
-                    <div class="grid grid-cols-2 gap-4 p-6 bg-gray-50">
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-primary-600" id="player-count-{{ server.id }}">
+                    <div class="grid grid-cols-2 gap-px bg-gray-800">
+                        <div class="bg-gray-900/50 p-4 text-center">
+                            <div class="text-3xl font-bold text-primary" id="player-count-{{ server.id }}">
                                 <div class="w-8 h-8 mx-auto loading-shimmer rounded"></div>
                             </div>
                             <div class="text-xs text-gray-500 uppercase tracking-wide mt-1">
                                 {% trans "Players" %}
                             </div>
                         </div>
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-green-600">
+                        <div class="bg-gray-900/50 p-4 text-center">
+                            <div class="text-3xl font-bold text-green-400">
                                 <i data-lucide="check-circle" class="w-8 h-8 mx-auto"></i>
                             </div>
                             <div class="text-xs text-gray-500 uppercase tracking-wide mt-1">
@@ -120,23 +101,21 @@
                     </div>
                     
                     <!-- Player List -->
-                    <div class="p-6 border-t border-gray-200">
-                        <div class="flex items-center justify-between mb-4">
-                            <h4 class="text-sm font-semibold text-gray-900 flex items-center">
-                                <i data-lucide="users" class="w-4 h-4 mr-2 text-gray-400"></i>
-                                {% trans "Online Players" %}
-                            </h4>
-                        </div>
+                    <div class="p-6 border-t border-gray-800 flex-1 flex flex-col">
+                        <h4 class="text-sm font-semibold text-gray-200 flex items-center mb-4">
+                            <i data-lucide="users" class="w-4 h-4 mr-2 text-gray-400"></i>
+                            {% trans "Online Players" %}
+                        </h4>
                         <div 
                             id="player-list-{{ server.id }}"
                             hx-get="{% url 'player_list' server.id %}"
                             hx-trigger="load, every 30s"
                             hx-swap="innerHTML"
-                            class="min-h-[80px]"
+                            class="flex-1 min-h-[80px]"
                         >
-                            <div class="flex items-center justify-center py-8">
+                            <div class="flex items-center justify-center h-full">
                                 <div class="flex flex-col items-center space-y-2">
-                                    <div class="w-8 h-8 border-4 border-gray-200 border-t-primary-600 rounded-full animate-spin"></div>
+                                    <div class="w-8 h-8 border-4 border-gray-700 border-t-primary rounded-full animate-spin"></div>
                                     <span class="text-sm text-gray-500">{% trans "Loading..." %}</span>
                                 </div>
                             </div>
@@ -144,8 +123,8 @@
                     </div>
                     
                     <!-- Whitelist Section -->
-                    <div class="p-6 bg-gray-50 border-t border-gray-200">
-                        <h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center">
+                    <div class="p-6 bg-gray-900 border-t border-gray-800">
+                        <h4 class="text-sm font-semibold text-gray-200 mb-3 flex items-center">
                             <i data-lucide="user-plus" class="w-4 h-4 mr-2 text-gray-400"></i>
                             {% trans "Add to Whitelist" %}
                         </h4>
@@ -155,7 +134,7 @@
                                 <input 
                                     type="text" 
                                     name="minecraft_username" 
-                                    class="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-sm"
+                                    class="flex-1 px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 text-sm"
                                     placeholder="{% trans 'Minecraft Username' %}"
                                     pattern="[a-zA-Z0-9_]{3,16}"
                                     title="{% trans '3-16 characters, letters, numbers, and underscores only' %}"
@@ -163,16 +142,12 @@
                                 >
                                 <button 
                                     type="submit" 
-                                    class="px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2"
+                                    class="px-4 py-2.5 bg-primary hover:bg-primary-600 text-white rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-primary"
                                 >
                                     <i data-lucide="plus" class="w-4 h-4"></i>
                                     <span>{% trans "Add" %}</span>
                                 </button>
                             </div>
-                            <p class="text-xs text-gray-500 flex items-center">
-                                <i data-lucide="info" class="w-3.5 h-3.5 mr-1.5"></i>
-                                {% trans "3-16 characters, alphanumeric and underscores only" %}
-                            </p>
                         </form>
                     </div>
                 </div>
@@ -181,13 +156,13 @@
     {% else %}
         <!-- Empty State -->
         <div class="text-center py-16 animate-fade-in">
-            <div class="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-6">
-                <i data-lucide="inbox" class="w-10 h-10 text-gray-400"></i>
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-gray-800 rounded-full mb-6">
+                <i data-lucide="inbox" class="w-10 h-10 text-gray-500"></i>
             </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-2">
+            <h3 class="text-xl font-display font-semibold text-white mb-2">
                 {% trans "No Servers Available" %}
             </h3>
-            <p class="text-gray-600 max-w-md mx-auto">
+            <p class="text-gray-400 max-w-md mx-auto">
                 {% trans "You don't have access to any servers yet. Please contact your administrator to be added to a server group." %}
             </p>
         </div>
@@ -197,13 +172,27 @@
 <script>
 // Update player count dynamically
 document.addEventListener('htmx:afterSwap', function(event) {
-    const playerId = event.detail.target.id;
-    if (playerId.startsWith('player-list-')) {
-        const serverId = playerId.replace('player-list-', '');
-        const playerBadges = event.detail.target.querySelectorAll('.player-badge');
+    const targetEl = event.detail.target;
+    if (targetEl.id.startsWith('player-list-')) {
+        const serverId = targetEl.id.replace('player-list-', '');
+        const playerBadges = targetEl.querySelectorAll('.player-badge');
         const countElement = document.getElementById('player-count-' + serverId);
         if (countElement) {
-            countElement.textContent = playerBadges.length;
+            // Check if it's the initial load (still has shimmer)
+            const shimmer = countElement.querySelector('.loading-shimmer');
+            if (shimmer) {
+                // Replace shimmer with count
+                countElement.innerHTML = playerBadges.length;
+            } else {
+                // Smooth update
+                if (countElement.textContent !== playerBadges.length.toString()) {
+                    countElement.classList.add('animate-fade-in');
+                    countElement.textContent = playerBadges.length;
+                    countElement.addEventListener('animationend', () => {
+                        countElement.classList.remove('animate-fade-in');
+                    }, { once: true });
+                }
+            }
         }
     }
 });

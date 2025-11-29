@@ -1,21 +1,23 @@
 """
 RCON Manager Service for MC RCON Manager
-Handles RCON connections and command execution for Minecraft servers
+Handles RCON command execution for Minecraft servers using a connection pool.
 """
 
 import re
 import socket
-from contextlib import contextmanager
 from typing import Dict, List
-from mcrcon import MCRcon, MCRconException
+from mcrcon import MCRconException
+
+# Import the global connection pool for persistent connections.
+from .rcon_pool import rcon_pool
 
 
 class RconHandler:
     """
-    Handles RCON connections and command execution for a Minecraft server.
+    Handles RCON command execution for a Minecraft server.
     
-    Uses context managers to ensure connections are properly closed.
-    Provides methods for getting player lists and managing whitelists.
+    This class is a high-level interface that uses a shared RCON connection
+    pool for efficiency and performance.
     """
     
     def __init__(self, server):
@@ -23,107 +25,72 @@ class RconHandler:
         Initialize the RCON handler for a specific server.
         
         Args:
-            server: Server model instance with RCON credentials
+            server: Server model instance.
         """
         self.server = server
         self.host = str(server.ip_address)
         self.port = server.rcon_port
-        self.password = server.get_password()
-    
-    @contextmanager
-    def _connect(self):
+
+    def _execute_command(self, command: str) -> str:
         """
-        Context manager for RCON connections.
+        Retrieves a connection from the pool and executes a command.
         
-        Ensures connections are properly closed even if errors occur.
+        Args:
+            command: The RCON command string to execute.
         
-        Yields:
-            MCRcon: Connected RCON client
-        
-        Raises:
-            socket.timeout: If connection times out
-            ConnectionRefusedError: If server refuses connection
-            MCRconException: If RCON authentication fails or other RCON errors occur
+        Returns:
+            The response from the RCON server.
         """
-        rcon = None
-        try:
-            rcon = MCRcon(self.host, self.password, port=self.port, timeout=5)
-            rcon.connect()
-            yield rcon
-        except socket.timeout:
-            raise socket.timeout(f"Connection to {self.host}:{self.port} timed out")
-        except ConnectionRefusedError:
-            raise ConnectionRefusedError(f"Connection to {self.host}:{self.port} refused")
-        except MCRconException as e:
-            raise MCRconException(f"RCON error: {str(e)}")
-        finally:
-            if rcon:
-                try:
-                    rcon.disconnect()
-                except Exception:
-                    # Ignore errors during disconnect
-                    pass
-    
+        rcon_client = rcon_pool.get_connection(self.server)
+        return rcon_client.command(command)
+
     def _parse_player_list(self, response: str) -> List[str]:
         """
         Parse player names from RCON 'list' command response.
         
-        Handles various response formats:
-        - "There are 3/20 players online: Steve, Alex, Notch"
-        - "There are 0/20 players online"
-        - "There are 0 of a max of 20 players online:"
+        This implementation is more resilient to format changes than a
+        single, strict regex.
         
         Args:
-            response: Raw RCON response string
+            response: Raw RCON response string.
         
         Returns:
-            List[str]: List of player usernames (empty if no players online)
+            List of player usernames.
         """
-        if not response:
+        if not response or 'players online' not in response.lower():
             return []
         
-        # Pattern 1: "There are X/Y players online: Player1, Player2, Player3"
-        # Pattern 2: "There are X of a max of Y players online: Player1, Player2"
-        match = re.search(r'There are (\d+)(?:/| of a max of )(\d+) players online:?\s*(.*)', response, re.IGNORECASE)
-        
-        if match:
-            player_count = int(match.group(1))
-            player_names_str = match.group(3).strip()
+        try:
+            # Isolate the part of the string after the colon, where names are listed.
+            player_list_str = response.split(':', 1)[1]
+        except IndexError:
+            # Handles cases like "There are 0 of a max 20 players online:"
+            return []
             
-            # If no players online
-            if player_count == 0 or not player_names_str:
-                return []
+        player_names = player_list_str.strip()
+        if not player_names:
+            return []
             
-            # Split by comma and strip whitespace
-            players = [name.strip() for name in player_names_str.split(',') if name.strip()]
-            return players
-        
-        # If pattern doesn't match, return empty list
-        return []
+        # Split by comma and strip whitespace from each name, filtering out empties.
+        players = [name.strip() for name in player_names.split(',') if name.strip()]
+        return players
     
     def get_players(self) -> Dict[str, any]:
         """
         Get the list of online players from the server.
         
-        Executes the 'list' command via RCON and parses the response.
-        
         Returns:
-            dict: {
-                'success': bool,
-                'players': List[str],  # List of player usernames
-                'message': str         # Success message or error description
-            }
+            A dictionary with success status, player list, and a message.
         """
         try:
-            with self._connect() as rcon:
-                response = rcon.command('list')
-                players = self._parse_player_list(response)
-                
-                return {
-                    'success': True,
-                    'players': players,
-                    'message': f'Found {len(players)} player(s) online'
-                }
+            response = self._execute_command('list')
+            players = self._parse_player_list(response)
+            
+            return {
+                'success': True,
+                'players': players,
+                'message': f'Found {len(players)} player(s) online'
+            }
         
         except socket.timeout:
             return {
@@ -157,25 +124,26 @@ class RconHandler:
         """
         Add a username to the server's whitelist.
         
-        Executes the 'whitelist add <username>' command via RCON.
-        
         Args:
-            username: Minecraft username to whitelist
+            username: Minecraft username to whitelist.
         
         Returns:
-            dict: {
-                'success': bool,
-                'message': str  # Server response or error description
-            }
+            A dictionary with success status and a server response message.
         """
+        # Validate username format to prevent invalid characters.
+        if not re.match(r'^[a-zA-Z0-9_]{3,16}$', username):
+            return {
+                'success': False, 
+                'message': 'Invalid username format. Must be 3-16 characters, letters, numbers, and underscores.'
+            }
+
         try:
-            with self._connect() as rcon:
-                response = rcon.command(f'whitelist add {username}')
-                
-                return {
-                    'success': True,
-                    'message': response if response else f'Added {username} to whitelist'
-                }
+            response = self._execute_command(f'whitelist add {username}')
+            
+            return {
+                'success': True,
+                'message': response if response else f'Successfully added {username} to the whitelist.'
+            }
         
         except socket.timeout:
             return {
@@ -200,3 +168,4 @@ class RconHandler:
                 'success': False,
                 'message': f'Unexpected error: {str(e)}'
             }
+```
