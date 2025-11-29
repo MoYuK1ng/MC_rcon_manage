@@ -345,8 +345,13 @@
 {% else %}
     <div class="empty-state" style="display: block; width: 100%; clear: both;">
         <i class="fas fa-check-circle"></i>
+        {% if LANGUAGE_CODE == 'zh-hans' %}
+        <h2>所有用户都已分组！</h2>
+        <p>没有未分配组的用户。</p>
+        {% else %}
         <h2>{% trans "All Users Are Grouped!" %}</h2>
         <p>{% trans "There are no users without group assignments." %}</p>
+        {% endif %}
     </div>
 {% endif %}
 
