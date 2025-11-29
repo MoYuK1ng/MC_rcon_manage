@@ -1,41 +1,74 @@
 {% load i18n %}
 <footer class="main-footer">
-    <strong>© 2025 <a href="https://github.com/MoYuK1ng/MC_rcon_manage" target="_blank" rel="noopener noreferrer">MoYuK1ng</a> - MC RCON Manager</strong>
+    <strong>© 2025 <a href="https://github.com/MoYuK1ng/MC_rcon_manage" target="_blank" rel="noopener noreferrer" style="color: #007bff; text-decoration: none;">MoYuK1ng</a></strong>
+    <div class="float-right d-none d-sm-inline-block"></div>
 </footer>
 
 <style>
-/* Hide Jazzmin version completely */
+/* Completely hide any version info */
 .main-footer .float-right {
     display: none !important;
+}
+
+/* Ensure footer link is styled properly */
+.main-footer a {
+    color: #007bff !important;
+    text-decoration: none !important;
+}
+
+.main-footer a:hover {
+    color: #0056b3 !important;
+    text-decoration: underline !important;
 }
 </style>
 
 <script>
 (function() {
     'use strict';
+    
     function cleanFooter() {
         const footer = document.querySelector('.main-footer');
         if (!footer) return;
         
-        // Remove version div if exists
-        const versionDiv = footer.querySelector('.float-right');
-        if (versionDiv) {
-            versionDiv.remove();
-        }
+        // Remove all float-right divs (version info)
+        const floatRightDivs = footer.querySelectorAll('.float-right');
+        floatRightDivs.forEach(div => div.remove());
         
-        // If footer still contains "Jazzmin" or version number, rebuild it
-        if (footer.textContent.includes('Jazzmin') || footer.textContent.includes('版本') || footer.textContent.includes('3.0')) {
-            footer.innerHTML = '<strong>© 2025 <a href="https://github.com/MoYuK1ng/MC_rcon_manage" target="_blank" rel="noopener noreferrer">MoYuK1ng</a> - MC RCON Manager</strong>';
+        // Get the strong tag
+        const strong = footer.querySelector('strong');
+        if (!strong) return;
+        
+        // Check if we need to rebuild the footer content
+        const footerText = footer.textContent.trim();
+        
+        // If footer contains duplicate copyright symbols or unwanted text
+        if (footerText.match(/©.*©/) || footerText.includes('Jazzmin') || footerText.includes('版本') || footerText.includes('3.0') || footerText.includes('保留所有权利')) {
+            // Completely rebuild footer
+            footer.innerHTML = '<strong>© 2025 <a href="https://github.com/MoYuK1ng/MC_rcon_manage" target="_blank" rel="noopener noreferrer" style="color: #007bff; text-decoration: none;">MoYuK1ng</a></strong><div class="float-right d-none d-sm-inline-block"></div>';
         }
     }
     
-    // Run multiple times to ensure it works
+    // Run immediately if DOM is ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', cleanFooter);
     } else {
         cleanFooter();
     }
-    setTimeout(cleanFooter, 100);
+    
+    // Run multiple times to catch dynamic updates
+    setTimeout(cleanFooter, 50);
+    setTimeout(cleanFooter, 200);
     setTimeout(cleanFooter, 500);
+    setTimeout(cleanFooter, 1000);
+    
+    // Watch for changes to the footer
+    const observer = new MutationObserver(cleanFooter);
+    const checkFooter = setInterval(() => {
+        const footer = document.querySelector('.main-footer');
+        if (footer) {
+            observer.observe(footer, { childList: true, subtree: true });
+            clearInterval(checkFooter);
+        }
+    }, 100);
 })();
 </script>

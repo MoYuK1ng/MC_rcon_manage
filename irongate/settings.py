@@ -266,8 +266,8 @@ JAZZMIN_SETTINGS = {
     # Welcome text
     "welcome_sign": "Manage your Minecraft servers",
     
-    # Copyright (no version number)
-    "copyright": "© 2025 MoYuK1ng",
+    # Copyright (no version number) - will be overridden by custom footer template
+    "copyright": "MoYuK1ng",
     
     # Hide version number completely
     "show_version": False,
