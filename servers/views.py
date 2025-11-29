@@ -28,7 +28,7 @@ class CustomLoginView(LoginView):
     def get(self, request, *args, **kwargs):
         """Handle GET requests: render the login form."""
         lang = request.COOKIES.get('user_lang', 'en')
-        if lang == 'zh':
+        if lang == 'zh-hans':
             self.template_name = 'registration/login_zh.html'
         
         return super().get(request, *args, **kwargs)
@@ -36,7 +36,7 @@ class CustomLoginView(LoginView):
     def post(self, request, *args, **kwargs):
         """Handle POST requests: authenticate user."""
         lang = request.COOKIES.get('user_lang', 'en')
-        if lang == 'zh':
+        if lang == 'zh-hans':
             self.template_name = 'registration/login_zh.html'
         
         return super().post(request, *args, **kwargs)
@@ -64,7 +64,7 @@ class DashboardView(View):
         }
         
         lang = request.COOKIES.get('user_lang', 'en')
-        template = 'servers/dashboard_zh.html' if lang == 'zh' else self.template_name
+        template = 'servers/dashboard_zh.html' if lang == 'zh-hans' else self.template_name
         return render(request, template, context)
 
 
@@ -144,7 +144,7 @@ class RegisterView(View):
         form = UserRegistrationForm()
         context = {'form': form}
         lang = request.COOKIES.get('user_lang', 'en')
-        template = 'registration/register_zh.html' if lang == 'zh' else self.template_name
+        template = 'registration/register_zh.html' if lang == 'zh-hans' else self.template_name
         return render(request, template, context)
     
     def post(self, request):
@@ -160,7 +160,7 @@ class RegisterView(View):
         
         context = {'form': form}
         lang = request.COOKIES.get('user_lang', 'en')
-        template = 'registration/register_zh.html' if lang == 'zh' else self.template_name
+        template = 'registration/register_zh.html' if lang == 'zh-hans' else self.template_name
         return render(request, template, context)
 
 
@@ -176,5 +176,5 @@ class MyWhitelistView(View):
         whitelist_requests = WhitelistRequest.objects.filter(user=request.user).select_related('server').order_by('-created_at')
         context = {'whitelist_requests': whitelist_requests}
         lang = request.COOKIES.get('user_lang', 'en')
-        template = 'servers/my_whitelist_zh.html' if lang == 'zh' else self.template_name
+        template = 'servers/my_whitelist_zh.html' if lang == 'zh-hans' else self.template_name
         return render(request, template, context)

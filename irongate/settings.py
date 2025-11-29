@@ -88,9 +88,6 @@ INSTALLED_APPS = [
     # Local apps must be first to override other app templates
     'servers',
     
-    # Jazzmin admin theme
-    'jazzmin',
-    
     # Django apps
     'django.contrib.admin',
     'django.contrib.auth',
