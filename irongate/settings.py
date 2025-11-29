@@ -288,21 +288,7 @@ JAZZMIN_SETTINGS = {
             "url": "admin:ungrouped_users", 
             "icon": "fas fa-user-slash",
             "permissions": ["auth.change_user"]
-        }],
-        "auth": [
-            {
-                "name": "━━━━━━━━━━━━━━━━━━━━",
-                "url": "#",
-                "icon": "",
-                "permissions": []
-            },
-            {
-                "name": "🐙 MC RCON Manager",
-                "url": "https://github.com/MoYuK1ng/MC_rcon_manage",
-                "icon": "fab fa-github",
-                "new_window": True
-            }
-        ]
+        }]
     },
     
     # User menu

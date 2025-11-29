@@ -112,33 +112,44 @@
 (function() {
     'use strict';
     
-    // Add project info to sidebar
+    // Add project info to sidebar - FIXED VERSION
     function addProjectInfo() {
-        const sidebar = document.querySelector('.main-sidebar');
-        if (!sidebar) return;
-        
         // Check if already added
-        if (document.querySelector('.sidebar-project-info')) return;
+        if (document.querySelector('.sidebar-project-info')) {
+            console.log('Project info already exists');
+            return;
+        }
+        
+        const sidebar = document.querySelector('.main-sidebar');
+        if (!sidebar) {
+            console.log('Sidebar not found, retrying...');
+            return;
+        }
+        
+        console.log('Adding project info to sidebar...');
         
         // Create project info element
         const projectInfo = document.createElement('div');
         projectInfo.className = 'sidebar-project-info';
+        projectInfo.style.cssText = 'position: fixed; bottom: 0; left: 0; width: 250px; z-index: 9999;';
         projectInfo.innerHTML = `
-            <a href="https://github.com/MoYuK1ng/MC_rcon_manage" target="_blank" rel="noopener noreferrer" title="MC RCON Manager on GitHub">
-                <div class="project-icon">
+            <a href="https://github.com/MoYuK1ng/MC_rcon_manage" target="_blank" rel="noopener noreferrer" title="MC RCON Manager on GitHub" style="display: flex; align-items: center; gap: 10px; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-top: 1px solid rgba(255,255,255,0.1);">
+                <div class="project-icon" style="width: 32px; height: 32px; background: rgba(255,255,255,0.2); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">
                     <i class="fab fa-github"></i>
                 </div>
-                <div class="project-text">
-                    <div class="project-name">MC RCON Manager</div>
-                    <div class="project-link">
+                <div class="project-text" style="flex: 1;">
+                    <div class="project-name" style="font-weight: 600; font-size: 14px; margin-bottom: 2px; line-height: 1.2; color: white;">MC RCON Manager</div>
+                    <div class="project-link" style="font-size: 11px; opacity: 0.9; color: white;">
                         <i class="fas fa-external-link-alt"></i> View on GitHub
                     </div>
                 </div>
             </a>
         `;
         
-        // Append to sidebar
-        sidebar.appendChild(projectInfo);
+        // Append to body (not sidebar) to ensure it's always visible
+        document.body.appendChild(projectInfo);
+        
+        console.log('Project info added successfully!');
     }
     
     function cleanFooter() {
@@ -180,10 +191,12 @@
     setTimeout(cleanFooter, 500);
     setTimeout(cleanFooter, 1000);
     
-    // Add project info multiple times to ensure it appears
-    setTimeout(addProjectInfo, 100);
-    setTimeout(addProjectInfo, 300);
-    setTimeout(addProjectInfo, 600);
+    // Add project info multiple times with delays to ensure it appears
+    setTimeout(addProjectInfo, 50);
+    setTimeout(addProjectInfo, 200);
+    setTimeout(addProjectInfo, 500);
+    setTimeout(addProjectInfo, 1000);
+    setTimeout(addProjectInfo, 1500);
     
     // Watch for changes to the footer
     const observer = new MutationObserver(cleanFooter);
