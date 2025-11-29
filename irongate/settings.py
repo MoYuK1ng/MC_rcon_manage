@@ -87,10 +87,12 @@ CSRF_TRUSTED_ORIGINS = os.getenv(
 # Application definition
 
 INSTALLED_APPS = [
+    # Local apps must be first to override other app templates
+    'servers',
+    
     # Jazzmin admin theme
     'jazzmin',
-    # Local apps (must be before django.contrib.admin for template override)
-    'servers',
+    
     # Django apps
     'django.contrib.admin',
     'django.contrib.auth',
@@ -98,6 +100,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
     # Third-party apps
     'django_htmx',
     'captcha',  # django-simple-captcha
