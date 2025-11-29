@@ -1,3 +1,4 @@
+"
 """
 Django settings for irongate project.
 
@@ -223,9 +224,9 @@ LOGOUT_REDIRECT_URL = '/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# ============================================================================
+# ============================================================================ 
 # Captcha Configuration
-# ============================================================================
+# ============================================================================ 
 
 CAPTCHA_IMAGE_SIZE = (120, 50)
 CAPTCHA_FONT_SIZE = 32
@@ -251,30 +252,17 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'optional'  # Can be 'mandatory', 'optional', or 'none'
 
 
-# ============================================================================
+# ============================================================================ 
 # Django Jazzmin Configuration
-# ============================================================================
+# ============================================================================ 
 
 JAZZMIN_SETTINGS = {
-    # title of the window (Will default to current_admin_site.site_title if absent or None)
     "site_title": "MC RCON Admin",
-
-    # Title on the login screen (19 chars max) (defaults to current_admin_site.site_header if absent or None)
     "site_header": "MC RCON Manager",
-
-    # Title on the brand (19 chars max) (defaults to current_admin_site.site_header if absent or None)
     "site_brand": "MC RCON",
-
-    # Welcome text on the login screen
     "welcome_sign": "Welcome to the MC RCON Manager Control Panel",
-
-    # Copyright on footer
     "copyright": "MC RCON Manager by <a href='https://github.com/MoYuK1ng/MC_rcon_manage' target='_blank'>MoYuK1ng</a>",
-
-    # Whether to show the UI customizer on the admin login page
     "show_ui_builder": True,
-
-    # Hide version number
     "show_version": False,
 }
 
