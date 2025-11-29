@@ -86,12 +86,20 @@
                                 </button>
                                 
                                 <!-- Dropdown -->
-                                <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
+                                <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right z-50">
                                     <div class="py-1">
-                                        <a href="/accounts/logout/" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150">
-                                            <i data-lucide="log-out" class="w-4 h-4 mr-3 text-gray-400"></i>
-                                            退出登录
+                                        <a href="/my-whitelist/" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150">
+                                            <i data-lucide="list-checks" class="w-4 h-4 mr-3 text-gray-400"></i>
+                                            我的白名单
                                         </a>
+                                        <div class="border-t border-gray-100 my-1"></div>
+                                        <form method="post" action="/accounts/logout/" class="m-0">
+                                            {% csrf_token %}
+                                            <button type="submit" class="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150">
+                                                <i data-lucide="log-out" class="w-4 h-4 mr-3 text-gray-400"></i>
+                                                退出登录
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>

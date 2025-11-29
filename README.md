@@ -26,11 +26,13 @@ Developed by **MoYuK1ng**
 - 👥 **Real-Time Player Monitoring** - Auto-refreshing player lists (30-second polling)
 - ✅ **Whitelist Management** - Add players to server whitelists via RCON
 - 🔒 **Encrypted Credentials** - RCON passwords encrypted with Fernet symmetric encryption
+- 🔧 **Display Settings** - Control visibility of server IP/port information for users
+- 📢 **Announcement System** - Post system announcements visible to all users
 - 🌍 **Internationalization** - Full support for English and Simplified Chinese
 - 📱 **Responsive Design** - Modern Tailwind CSS UI works seamlessly on all devices
 - ⚡ **Modern Tech Stack** - HTMX for dynamic updates without page reloads
 - 🎨 **Beautiful UI** - Inspired by Vercel, Linear, and Stripe dashboards
-- 🧪 **Comprehensive Testing** - 70 tests including property-based testing with Hypothesis
+- 🧪 **Comprehensive Testing** - 70+ tests including property-based testing with Hypothesis
 
 ### 📸 Screenshots
 
@@ -151,6 +153,46 @@ python rotate_key.py --old-key OLD_KEY --new-key NEW_KEY
 - Rotate keys periodically (every 6-12 months)
 - Create backups before key rotation
 - See [ENCRYPTION.md](ENCRYPTION.md) for detailed documentation
+
+### 🔧 Display Settings & Announcements
+
+#### Display Settings
+
+Control what server information is visible to regular users:
+
+1. Navigate to **Admin Panel** → **Display Settings**
+2. Configure visibility options:
+   - **Show IP Address to Users**: Toggle to show/hide server IP addresses
+   - **Show Port to Users**: Toggle to show/hide server ports
+3. Changes apply immediately (no restart required)
+
+**Default**: Both IP and port are hidden for security
+
+**Note**: Administrators always see all information in the admin panel
+
+#### Announcement System
+
+Post system-wide announcements visible to all users:
+
+1. Navigate to **Admin Panel** → **Announcements**
+2. Click **Add Announcement**
+3. Fill in:
+   - **Title**: Announcement headline
+   - **Content**: Message body (supports HTML formatting)
+   - **Active**: Toggle to show/hide announcement
+4. Save
+
+**Features**:
+- Supports HTML formatting (bold, links, line breaks)
+- Supports Chinese and English content
+- Multiple announcements displayed in reverse chronological order
+- Only active announcements are visible to users
+
+**Example Use Cases**:
+- Maintenance notifications
+- Server update announcements
+- Usage guidelines
+- Community events
 
 ### 📖 Documentation
 

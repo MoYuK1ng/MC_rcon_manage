@@ -166,6 +166,101 @@ class WhitelistRequest(models.Model):
         verbose_name = _('Whitelist Request')
         verbose_name_plural = _('Whitelist Requests')
         ordering = ['-created_at']
+        # Prevent duplicate whitelist requests for same server+username
+        unique_together = [['server', 'minecraft_username']]
     
     def __str__(self):
         return f"{self.minecraft_username} on {self.server.name} ({self.status})"
+
+
+class DisplaySettings(models.Model):
+    """
+    Singleton model for controlling what information is visible to users.
+    Only one instance should exist in the database (pk=1).
+    
+    This allows administrators to control whether regular users can see
+    server IP addresses and ports in the dashboard.
+    """
+    
+    show_ip_to_users = models.BooleanField(
+        default=False,
+        verbose_name=_('Show IP Address to Users'),
+        help_text=_('If enabled, users will see server IP addresses in the dashboard')
+    )
+    
+    show_port_to_users = models.BooleanField(
+        default=False,
+        verbose_name=_('Show Port to Users'),
+        help_text=_('If enabled, users will see server ports in the dashboard')
+    )
+    
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_('Updated At')
+    )
+    
+    class Meta:
+        verbose_name = _('Display Settings')
+        verbose_name_plural = _('Display Settings')
+    
+    def save(self, *args, **kwargs):
+        """Ensure only one instance exists (singleton pattern)"""
+        self.pk = 1
+        super().save(*args, **kwargs)
+    
+    def delete(self, *args, **kwargs):
+        """Prevent deletion of the singleton instance"""
+        pass
+    
+    @classmethod
+    def get_settings(cls):
+        """Get or create the singleton instance"""
+        obj, created = cls.objects.get_or_create(pk=1)
+        return obj
+    
+    def __str__(self):
+        return "Display Settings"
+
+
+class Announcement(models.Model):
+    """
+    System announcements displayed to all users on the dashboard.
+    
+    Administrators can create announcements to communicate important
+    information, maintenance schedules, or usage instructions to users.
+    """
+    
+    title = models.CharField(
+        max_length=200,
+        verbose_name=_('Title'),
+        help_text=_('Announcement title (supports Chinese and English)')
+    )
+    
+    content = models.TextField(
+        verbose_name=_('Content'),
+        help_text=_('Announcement content (supports HTML formatting)')
+    )
+    
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name=_('Active'),
+        help_text=_('Only active announcements are displayed to users')
+    )
+    
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_('Created At')
+    )
+    
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_('Updated At')
+    )
+    
+    class Meta:
+        verbose_name = _('Announcement')
+        verbose_name_plural = _('Announcements')
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return self.title

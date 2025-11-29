@@ -323,3 +323,76 @@ msgstr "无法将{username}添加到白名单：{error}"
 #: servers/decorators.py
 msgid "You do not have permission to access this server."
 msgstr "您没有访问此服务器的权限。"
+
+
+# DisplaySettings model translations
+msgid "Display Settings"
+msgstr "显示设置"
+
+msgid "Show IP Address to Users"
+msgstr "向用户显示IP地址"
+
+msgid "If enabled, users will see server IP addresses in the dashboard"
+msgstr "如果启用，用户将在仪表板中看到服务器IP地址"
+
+msgid "Show Port to Users"
+msgstr "向用户显示端口"
+
+msgid "If enabled, users will see server ports in the dashboard"
+msgstr "如果启用，用户将在仪表板中看到服务器端口"
+
+msgid "Updated At"
+msgstr "更新时间"
+
+# Announcement model translations
+msgid "Announcement"
+msgstr "公告"
+
+msgid "Announcements"
+msgstr "公告"
+
+msgid "Title"
+msgstr "标题"
+
+msgid "Announcement title (supports Chinese and English)"
+msgstr "公告标题（支持中英文）"
+
+msgid "Content"
+msgstr "内容"
+
+msgid "Announcement content (supports HTML formatting)"
+msgstr "公告内容（支持HTML格式）"
+
+msgid "Active"
+msgstr "活跃"
+
+msgid "Only active announcements are displayed to users"
+msgstr "只有活跃的公告会显示给用户"
+
+msgid "Created At"
+msgstr "创建时间"
+
+# Admin interface translations
+msgid "Visibility Settings / 可见性设置"
+msgstr "可见性设置"
+
+msgid "Control what server information is visible to regular users."
+msgstr "控制普通用户可以看到哪些服务器信息。"
+
+msgid "Administrators always see all information in the admin panel."
+msgstr "管理员在管理面板中始终可以看到所有信息。"
+
+msgid "Last Updated / 最后更新"
+msgstr "最后更新"
+
+msgid "Announcement Content / 公告内容"
+msgstr "公告内容"
+
+msgid "Create announcements to communicate with users."
+msgstr "创建公告以与用户沟通。"
+
+msgid "Supports HTML formatting. Only active announcements are displayed."
+msgstr "支持HTML格式。只有活跃的公告会被显示。"
+
+msgid "Timestamps / 时间戳"
+msgstr "时间戳"

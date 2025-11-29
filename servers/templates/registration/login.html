@@ -88,9 +88,19 @@
             </form>
         </div>
         
-        <!-- Footer -->
+        <!-- Register Link -->
         <div class="text-center">
             <p class="text-sm text-gray-600">
+                {% trans "Don't have an account?" %}
+                <a href="{% url 'register' %}" class="text-primary-600 hover:text-primary-700 font-medium transition-colors duration-200">
+                    {% trans "Sign up" %}
+                </a>
+            </p>
+        </div>
+        
+        <!-- Footer -->
+        <div class="mt-4 text-center">
+            <p class="text-sm text-gray-500">
                 {% trans "Contact your administrator for access" %}
             </p>
         </div>

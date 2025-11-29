@@ -23,3 +23,10 @@ whitenoise>=6.6.0
 hypothesis>=6.92.0
 pytest>=7.4.0
 pytest-django>=4.7.0
+
+# Django Admin UI Enhancement
+django-jazzmin>=2.6.0
+
+# Captcha for Registration
+django-simple-captcha>=0.6.0
+Pillow>=10.0.0

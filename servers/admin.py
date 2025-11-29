@@ -7,7 +7,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User, Group
 from django.utils.translation import gettext_lazy as _
-from servers.models import Server, WhitelistRequest
+from servers.models import Server, WhitelistRequest, DisplaySettings, Announcement
 
 
 def is_default_group(group_name: str) -> bool:
@@ -148,6 +148,20 @@ class WhitelistRequestAdmin(admin.ModelAdmin):
         return True
 
 
+# Inline for User Admin to show whitelist requests
+class WhitelistRequestInline(admin.TabularInline):
+    """Inline display of user's whitelist requests in User admin"""
+    model = WhitelistRequest
+    extra = 0
+    readonly_fields = ('server', 'minecraft_username', 'status', 'created_at')
+    fields = ('server', 'minecraft_username', 'status', 'created_at')
+    can_delete = False
+    
+    def has_add_permission(self, request, obj=None):
+        """Prevent adding whitelist requests from user admin"""
+        return False
+
+
 # Simplified User Admin - Only Administrator and Regular User roles
 class UserAdmin(BaseUserAdmin):
     """
@@ -156,10 +170,11 @@ class UserAdmin(BaseUserAdmin):
     - Regular User (is_superuser=False): Only access assigned servers
     """
     
-    list_display = ('username', 'role_display', 'is_active', 'server_access_display', 'last_login')
+    list_display = ('username', 'role_display', 'is_active', 'server_access_display', 'whitelist_count', 'last_login')
     list_filter = ('is_superuser', 'is_active', 'groups')
     search_fields = ('username',)
     ordering = ('-is_superuser', 'username')
+    inlines = [WhitelistRequestInline]
     
     fieldsets = (
         (_('Basic Information'), {
@@ -217,6 +232,15 @@ class UserAdmin(BaseUserAdmin):
             return _('No Access')
         return _(f'{group_count} Server(s)')
     server_access_display.short_description = _('Server Access')
+    
+    def whitelist_count(self, obj):
+        """Display count of whitelist requests"""
+        total = obj.whitelistrequest_set.count()
+        approved = obj.whitelistrequest_set.filter(status='PROCESSED').count()
+        if total == 0:
+            return '0'
+        return f'{total} ({approved} ✓)'
+    whitelist_count.short_description = _('Whitelist Requests')
     
     def save_model(self, request, obj, form, change):
         """
@@ -280,3 +304,85 @@ admin.site.register(User, UserAdmin)
 
 admin.site.unregister(Group)
 admin.site.register(Group, GroupAdmin)
+
+
+# Display Settings Admin
+@admin.register(DisplaySettings)
+class DisplaySettingsAdmin(admin.ModelAdmin):
+    """
+    Admin interface for DisplaySettings model (singleton).
+    
+    Controls what server information is visible to regular users in the dashboard.
+    """
+    
+    list_display = ('show_ip_to_users', 'show_port_to_users', 'updated_at')
+    
+    fieldsets = (
+        (_('Visibility Settings / 可见性设置'), {
+            'fields': ('show_ip_to_users', 'show_port_to_users'),
+            'description': _(
+                '<strong>Control what server information is visible to regular users.</strong><br>'
+                'Administrators always see all information in the admin panel.<br><br>'
+                '<strong>控制普通用户可以看到哪些服务器信息。</strong><br>'
+                '管理员在管理面板中始终可以看到所有信息。'
+            )
+        }),
+        (_('Last Updated / 最后更新'), {
+            'fields': ('updated_at',),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    readonly_fields = ('updated_at',)
+    
+    def has_add_permission(self, request):
+        """
+        Only allow one instance (singleton pattern).
+        Prevent adding if instance already exists.
+        """
+        return not DisplaySettings.objects.exists()
+    
+    def has_delete_permission(self, request, obj=None):
+        """
+        Prevent deletion of the singleton instance.
+        """
+        return False
+
+
+# Announcement Admin
+@admin.register(Announcement)
+class AnnouncementAdmin(admin.ModelAdmin):
+    """
+    Admin interface for Announcement model.
+    
+    Allows administrators to create and manage system announcements
+    that are displayed to all users on the dashboard.
+    """
+    
+    list_display = ('title', 'is_active', 'created_at', 'updated_at')
+    list_filter = ('is_active', 'created_at')
+    search_fields = ('title', 'content')
+    readonly_fields = ('created_at', 'updated_at')
+    
+    fieldsets = (
+        (_('Announcement Content / 公告内容'), {
+            'fields': ('title', 'content', 'is_active'),
+            'description': _(
+                '<strong>Create announcements to communicate with users.</strong><br>'
+                'Supports HTML formatting. Only active announcements are displayed.<br><br>'
+                '<strong>创建公告以与用户沟通。</strong><br>'
+                '支持HTML格式。只有活跃的公告会被显示。'
+            )
+        }),
+        (_('Timestamps / 时间戳'), {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def get_queryset(self, request):
+        """
+        Order announcements by creation date (newest first).
+        """
+        qs = super().get_queryset(request)
+        return qs.order_by('-created_at')

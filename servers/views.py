@@ -11,7 +11,7 @@ from django.utils.translation import gettext as _
 from django.views import View
 from django.core.exceptions import ValidationError
 
-from servers.models import Server, WhitelistRequest
+from servers.models import Server, WhitelistRequest, DisplaySettings, Announcement
 from servers.services.rcon_manager import RconHandler
 from servers.decorators import user_has_server_access
 from django.http import HttpResponse
@@ -43,8 +43,16 @@ class DashboardView(View):
                 groups__in=request.user.groups.all()
             ).distinct()
         
+        # Get display settings
+        display_settings = DisplaySettings.get_settings()
+        
+        # Get active announcements
+        announcements = Announcement.objects.filter(is_active=True)
+        
         context = {
             'servers': servers,
+            'display_settings': display_settings,
+            'announcements': announcements,
         }
         
         # Check language preference from cookie
@@ -119,6 +127,23 @@ class WhitelistAddView(View):
             messages.error(request, _('Please enter a Minecraft username.'))
             return redirect('dashboard')
         
+        # Check if whitelist request already exists
+        existing_request = WhitelistRequest.objects.filter(
+            server=server,
+            minecraft_username=minecraft_username
+        ).first()
+        
+        if existing_request:
+            messages.warning(
+                request,
+                _('Username {username} has already been added to {server}. Status: {status}').format(
+                    username=minecraft_username,
+                    server=server.name,
+                    status=existing_request.get_status_display()
+                )
+            )
+            return redirect('dashboard')
+        
         # Create whitelist request
         whitelist_request = WhitelistRequest(
             user=request.user,
@@ -169,3 +194,86 @@ class WhitelistAddView(View):
             )
         
         return redirect('dashboard')
+
+
+
+class RegisterView(View):
+    """
+    User registration view with captcha verification
+    """
+    template_name = 'registration/register.html'
+    
+    def get(self, request):
+        """Display registration form"""
+        if request.user.is_authenticated:
+            return redirect('dashboard')
+        
+        from servers.forms import UserRegistrationForm
+        form = UserRegistrationForm()
+        
+        # Check language preference
+        lang = request.COOKIES.get('user_lang', 'en')
+        
+        context = {'form': form}
+        
+        if lang == 'zh':
+            return render(request, 'registration/register_zh.html', context)
+        
+        return render(request, self.template_name, context)
+    
+    def post(self, request):
+        """Process registration"""
+        from servers.forms import UserRegistrationForm
+        from django.contrib.auth import login
+        
+        form = UserRegistrationForm(request.POST)
+        
+        if form.is_valid():
+            user = form.save()
+            # Auto login after registration
+            login(request, user)
+            messages.success(
+                request,
+                _('Registration successful! Welcome to IronGate.')
+            )
+            return redirect('dashboard')
+        
+        # Check language preference
+        lang = request.COOKIES.get('user_lang', 'en')
+        
+        context = {'form': form}
+        
+        if lang == 'zh':
+            return render(request, 'registration/register_zh.html', context)
+        
+        return render(request, self.template_name, context)
+
+
+class MyWhitelistView(View):
+    """
+    View for users to see their whitelist request history
+    """
+    template_name = 'servers/my_whitelist.html'
+    
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+    
+    def get(self, request):
+        """Display user's whitelist requests"""
+        # Get all whitelist requests for current user
+        whitelist_requests = WhitelistRequest.objects.filter(
+            user=request.user
+        ).select_related('server').order_by('-created_at')
+        
+        context = {
+            'whitelist_requests': whitelist_requests,
+        }
+        
+        # Check language preference
+        lang = request.COOKIES.get('user_lang', 'en')
+        
+        if lang == 'zh':
+            return render(request, 'servers/my_whitelist_zh.html', context)
+        
+        return render(request, self.template_name, context)
