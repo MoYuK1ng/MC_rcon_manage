@@ -38,6 +38,19 @@ Thumbs.db
 .coverage
 htmlcov/
 .hypothesis/
+pytest.ini
+servers/tests/
+
+# Development files
+.kiro/
+AUTHORS.md
+CHANGELOG.md
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+IMPLEMENTATION_STATUS.md
+TESTING_GUIDE.md
+SECURITY_AUDIT.md
+start_server.bat
 
 # Translations
 # *.mo  # Keep compiled translations in repo for production
