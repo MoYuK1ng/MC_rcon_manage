@@ -1,0 +1,38 @@
+{% load i18n %}
+<!-- Custom Top Menu with Language Switcher -->
+<ul class="navbar-nav ml-auto">
+    {% if jazzmin_settings.topmenu_links %}
+        {% for link in jazzmin_settings.topmenu_links %}
+            {% if link.url %}
+                <li class="nav-item">
+                    <a href="{{ link.url }}" class="nav-link" {% if link.new_window %}target="_blank" rel="noopener"{% endif %}>
+                        {% if link.icon %}<i class="{{ link.icon }}"></i>{% endif %}
+                        {{ link.name }}
+                    </a>
+                </li>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    
+    <!-- Language Switcher -->
+    <li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#" aria-expanded="false">
+            <i class="fas fa-language"></i>
+            {% if LANGUAGE_CODE == 'zh-hans' %}
+                <span class="d-none d-md-inline">简体中文</span>
+            {% else %}
+                <span class="d-none d-md-inline">English</span>
+            {% endif %}
+        </a>
+        <div class="dropdown-menu dropdown-menu-right">
+            <a href="{% url 'set_language' %}?lang=en&next={{ request.path }}" class="dropdown-item {% if LANGUAGE_CODE == 'en' %}active{% endif %}">
+                <i class="fas fa-check mr-2 {% if LANGUAGE_CODE != 'en' %}invisible{% endif %}"></i>
+                English
+            </a>
+            <a href="{% url 'set_language' %}?lang=zh-hans&next={{ request.path }}" class="dropdown-item {% if LANGUAGE_CODE == 'zh-hans' %}active{% endif %}">
+                <i class="fas fa-check mr-2 {% if LANGUAGE_CODE != 'zh-hans' %}invisible{% endif %}"></i>
+                简体中文
+            </a>
+        </div>
+    </li>
+</ul>

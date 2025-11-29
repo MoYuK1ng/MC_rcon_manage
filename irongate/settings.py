@@ -269,16 +269,16 @@ JAZZMIN_SETTINGS = {
     # Copyright (no version number)
     "copyright": "© 2025 MoYuK1ng",
     
-    # Hide version number
+    # Hide version number completely
     "show_version": False,
+    "version": "",  # Empty version string
     
     # Search
     "search_model": ["auth.User", "servers.Server", "servers.WhitelistRequest"],
     
     # Top menu links
     "topmenu_links": [
-        {"name": "Dashboard", "url": "dashboard", "permissions": ["auth.view_user"]},
-        {"name": "User Site", "url": "/", "new_window": False},
+        {"name": "User Dashboard", "url": "dashboard", "permissions": ["auth.view_user"], "icon": "fas fa-home"},
     ],
     
     # User menu
