@@ -22,7 +22,7 @@ def generate_and_save_key(auto_yes=False):
     
     # Generate a new Fernet key
     key = Fernet.generate_key()
-    key_string = key.decode('utf-8')
+    key_string = key.decode('utf-8').strip()  # Remove any whitespace/newlines
     
     print("=" * 60)
     print("IronGate - Fernet Encryption Key Generator")
@@ -89,7 +89,10 @@ def generate_and_save_key(auto_yes=False):
             if existing_content:
                 f.writelines(existing_content)
                 if not key_exists:
-                    f.write(f'\nRCON_ENCRYPTION_KEY={key_string}\n')
+                    # Ensure file ends with newline before appending
+                    if existing_content and not existing_content[-1].endswith('\n'):
+                        f.write('\n')
+                    f.write(f'RCON_ENCRYPTION_KEY={key_string}\n')
             else:
                 # Create new .env file with Django secret key and RCON key
                 f.write('# Django Settings\n')
