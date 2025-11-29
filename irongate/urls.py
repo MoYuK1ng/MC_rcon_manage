@@ -20,7 +20,6 @@ from django.views.generic import RedirectView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('django.contrib.auth.urls')),
     path('captcha/', include('captcha.urls')),  # Captcha URLs
     path('i18n/', include('django.conf.urls.i18n')),
     path('', include('servers.urls')),

@@ -14,7 +14,31 @@ from django.core.exceptions import ValidationError
 from servers.models import Server, WhitelistRequest, Announcement
 from servers.services.rcon_manager import RconHandler
 from servers.decorators import user_has_server_access
-from django.http import HttpResponse
+from django.contrib.auth.views import LoginView
+from servers.forms import UserRegistrationForm
+
+
+class CustomLoginView(LoginView):
+    """
+    Custom login view to handle template switching for Chinese language.
+    """
+    template_name = 'registration/login.html'
+
+    def get(self, request, *args, **kwargs):
+        """Handle GET requests: render the login form."""
+        lang = request.COOKIES.get('user_lang', 'en')
+        if lang == 'zh':
+            self.template_name = 'registration/login_zh.html'
+        
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        """Handle POST requests: authenticate user."""
+        lang = request.COOKIES.get('user_lang', 'en')
+        if lang == 'zh':
+            self.template_name = 'registration/login_zh.html'
+        
+        return super().post(request, *args, **kwargs)
 
 
 @method_decorator(login_required, name='dispatch')
