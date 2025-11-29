@@ -1,22 +1,14 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# Chinese (Simplified) translations for IronGate
 msgid ""
 msgstr ""
 "Project-Id-Version: IronGate 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-28 15:00+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: zh_Hans\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
-# Common translations
 msgid "Add"
 msgstr "添加"
 
@@ -56,7 +48,9 @@ msgstr "支持"
 msgid "Groups"
 msgstr "组"
 
-# Server model translations
+msgid "Users"
+msgstr "用户"
+
 msgid "Server Name"
 msgstr "服务器名称"
 
@@ -99,7 +93,21 @@ msgstr "服务器"
 msgid "Servers"
 msgstr "服务器"
 
-# User roles
+msgid "Password Status"
+msgstr "密码状态"
+
+msgid "Server Information"
+msgstr "服务器信息"
+
+msgid "RCON Password"
+msgstr "RCON密码"
+
+msgid "Access Control"
+msgstr "访问控制"
+
+msgid "Timestamps"
+msgstr "时间戳"
+
 msgid "Administrator"
 msgstr "管理员"
 
@@ -118,7 +126,9 @@ msgstr "全部服务器"
 msgid "No Access"
 msgstr "无权限"
 
-# Admin sections
+msgid "Whitelist Requests"
+msgstr "白名单请求"
+
 msgid "Basic Information"
 msgstr "基本信息"
 
@@ -128,13 +138,12 @@ msgstr "角色和权限"
 msgid "Server Access (Regular Users Only)"
 msgstr "服务器权限（仅普通用户）"
 
-msgid "Important Dates"
-msgstr "重要日期"
-
 msgid "Assign user groups to grant access to specific servers"
 msgstr "分配用户组以授予特定服务器的访问权限"
 
-# Whitelist request model
+msgid "Important Dates"
+msgstr "重要日期"
+
 msgid "Username must be 3-16 characters long and contain only letters, numbers, and underscores"
 msgstr "用户名必须为3-16个字符，只能包含字母、数字和下划线"
 
@@ -177,10 +186,51 @@ msgstr "RCON服务器响应或错误消息"
 msgid "Whitelist Request"
 msgstr "白名单请求"
 
-msgid "Whitelist Requests"
-msgstr "白名单请求"
+msgid "Request Information"
+msgstr "请求信息"
 
-# Dashboard templates
+msgid "Response"
+msgstr "响应"
+
+msgid "Display Settings"
+msgstr "显示设置"
+
+msgid "Show IP Address to Users"
+msgstr "向用户显示IP地址"
+
+msgid "If enabled, users will see server IP addresses in the dashboard"
+msgstr "如果启用，用户将在仪表板中看到服务器IP地址"
+
+msgid "Show Port to Users"
+msgstr "向用户显示端口"
+
+msgid "If enabled, users will see server ports in the dashboard"
+msgstr "如果启用，用户将在仪表板中看到服务器端口"
+
+msgid "Announcement"
+msgstr "公告"
+
+msgid "Announcements"
+msgstr "公告"
+
+msgid "Title"
+msgstr "标题"
+
+msgid "Announcement title (supports Chinese and English)"
+msgstr "公告标题（支持中英文）"
+
+msgid "Content"
+msgstr "内容"
+
+msgid "Announcement content (supports HTML formatting)"
+msgstr "公告内容（支持HTML格式）"
+
+msgid "Active"
+msgstr "活跃"
+
+msgid "Only active announcements are displayed to users"
+msgstr "只有活跃的公告会显示给用户"
+
 msgid "Server Dashboard"
 msgstr "服务器仪表板"
 
@@ -214,7 +264,6 @@ msgstr "没有玩家在线"
 msgid "Last updated"
 msgstr "最后更新"
 
-# Login templates
 msgid "Login to IronGate"
 msgstr "登录到IronGate"
 
@@ -245,81 +294,8 @@ msgstr "Minecraft RCON管理门户"
 msgid "Welcome"
 msgstr "欢迎"
 
-# Views messages
 msgid "Please enter a Minecraft username."
 msgstr "请输入Minecraft用户名。"
 
-msgid "Successfully added {username} to {server} whitelist."
-msgstr "成功将{username}添加到{server}白名单。"
-
-msgid "Failed to add {username} to whitelist: {error}"
-msgstr "无法将{username}添加到白名单：{error}"
-
 msgid "You do not have permission to access this server."
 msgstr "您没有访问此服务器的权限。"
-
-# DisplaySettings model
-msgid "Display Settings"
-msgstr "显示设置"
-
-msgid "Show IP Address to Users"
-msgstr "向用户显示IP地址"
-
-msgid "If enabled, users will see server IP addresses in the dashboard"
-msgstr "如果启用，用户将在仪表板中看到服务器IP地址"
-
-msgid "Show Port to Users"
-msgstr "向用户显示端口"
-
-msgid "If enabled, users will see server ports in the dashboard"
-msgstr "如果启用，用户将在仪表板中看到服务器端口"
-
-# Announcement model
-msgid "Announcement"
-msgstr "公告"
-
-msgid "Announcements"
-msgstr "公告"
-
-msgid "Title"
-msgstr "标题"
-
-msgid "Announcement title (supports Chinese and English)"
-msgstr "公告标题（支持中英文）"
-
-msgid "Content"
-msgstr "内容"
-
-msgid "Announcement content (supports HTML formatting)"
-msgstr "公告内容（支持HTML格式）"
-
-msgid "Active"
-msgstr "活跃"
-
-msgid "Only active announcements are displayed to users"
-msgstr "只有活跃的公告会显示给用户"
-
-# Admin interface
-msgid "Visibility Settings / 可见性设置"
-msgstr "可见性设置"
-
-msgid "Control what server information is visible to regular users."
-msgstr "控制普通用户可以看到哪些服务器信息。"
-
-msgid "Administrators always see all information in the admin panel."
-msgstr "管理员在管理面板中始终可以看到所有信息。"
-
-msgid "Last Updated / 最后更新"
-msgstr "最后更新"
-
-msgid "Announcement Content / 公告内容"
-msgstr "公告内容"
-
-msgid "Create announcements to communicate with users."
-msgstr "创建公告以与用户沟通。"
-
-msgid "Supports HTML formatting. Only active announcements are displayed."
-msgstr "支持HTML格式。只有活跃的公告会被显示。"
-
-msgid "Timestamps / 时间戳"
-msgstr "时间戳"
