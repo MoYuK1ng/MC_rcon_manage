@@ -324,10 +324,10 @@ JAZZMIN_SETTINGS = {
     "language_chooser": False,
     
     # Custom CSS
-    "custom_css": None,
+    "custom_css": "admin/css/custom_admin.css",
     
     # Custom JS
-    "custom_js": None,
+    "custom_js": "admin/js/custom_admin.js",
     
     # Related modal
     "related_modal_active": False,
