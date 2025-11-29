@@ -3,6 +3,39 @@
 from django.db import migrations
 
 
+def remove_duplicate_whitelist_requests(apps, schema_editor):
+    """
+    Remove duplicate whitelist requests before adding unique constraint.
+    Keep only the most recent request for each server+username combination.
+    """
+    WhitelistRequest = apps.get_model('servers', 'WhitelistRequest')
+    
+    # Get all whitelist requests
+    all_requests = WhitelistRequest.objects.all().order_by('server_id', 'minecraft_username', '-created_at')
+    
+    seen = set()
+    to_delete = []
+    
+    for request in all_requests:
+        key = (request.server_id, request.minecraft_username)
+        if key in seen:
+            # This is a duplicate, mark for deletion
+            to_delete.append(request.id)
+        else:
+            # First occurrence (most recent due to ordering), keep it
+            seen.add(key)
+    
+    # Delete duplicates
+    if to_delete:
+        WhitelistRequest.objects.filter(id__in=to_delete).delete()
+        print(f"Removed {len(to_delete)} duplicate whitelist request(s)")
+
+
+def reverse_remove_duplicates(apps, schema_editor):
+    """No need to reverse duplicate removal"""
+    pass
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -10,6 +43,12 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        # First, remove any duplicate entries
+        migrations.RunPython(
+            remove_duplicate_whitelist_requests,
+            reverse_remove_duplicates
+        ),
+        # Then add the unique constraint
         migrations.AlterUniqueTogether(
             name='whitelistrequest',
             unique_together={('server', 'minecraft_username')},
