@@ -454,28 +454,15 @@ install_fresh() {
     pip install -r requirements.txt
     print_success "Python dependencies installed"
     
-    # 5. Generate encryption key
+    # 5. Configure environment variables FIRST
     if [ "$LANG_CHOICE" = "zh" ]; then
-        print_info "步骤 5/10: 生成加密密钥..."
+        print_info "步骤 5/10: 配置环境变量..."
     else
-        print_info "Step 5/10: Generating encryption key..."
-    fi
-    
-    python generate_key.py --auto-yes
-    print_success "Encryption key generated"
-    
-    # 6. Configure .env file
-    if [ "$LANG_CHOICE" = "zh" ]; then
-        print_info "步骤 6/10: 配置环境变量..."
-    else
-        print_info "Step 6/10: Configuring environment variables..."
+        print_info "Step 5/10: Configuring environment variables..."
     fi
     
     # Generate Django SECRET_KEY
     SECRET_KEY=$(python3 -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())")
-    
-    # Read the encryption key that was just generated
-    ENCRYPTION_KEY=$(grep '^RCON_ENCRYPTION_KEY=' .env | cut -d'=' -f2 | tr -d '\n\r')
     
     # Configure ALLOWED_HOSTS and CSRF based on access method
     if [ "$ACCESS_METHOD" = "1" ]; then
@@ -492,14 +479,11 @@ install_fresh() {
         fi
     fi
     
-    # Create new .env file with proper formatting
+    # Create .env file WITHOUT encryption key first
     cat > .env << EOF
 # Django Settings
 SECRET_KEY=${SECRET_KEY}
 DEBUG=False
-
-# RCON Encryption Key (DO NOT SHARE OR COMMIT THIS)
-RCON_ENCRYPTION_KEY=${ENCRYPTION_KEY}
 
 # Allowed Hosts (comma-separated, no spaces)
 ALLOWED_HOSTS=${ALLOWED_HOSTS}
@@ -513,6 +497,17 @@ CSRF_TRUSTED_ORIGINS=${CSRF_ORIGINS}
 EOF
     
     print_success "Environment configured"
+    
+    # 6. Generate and append encryption key
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        print_info "步骤 6/10: 生成加密密钥..."
+    else
+        print_info "Step 6/10: Generating encryption key..."
+    fi
+    
+    # Generate key and let it append to existing .env
+    python generate_key.py --auto-yes
+    print_success "Encryption key generated"
     
     # 7. Initialize database
     if [ "$LANG_CHOICE" = "zh" ]; then
