@@ -24,16 +24,33 @@ class Server(models.Model):
         help_text=_('Display name for the Minecraft server')
     )
     
+    # RCON connection info (for management, hidden from users)
     ip_address = models.GenericIPAddressField(
         protocol='IPv4',
-        verbose_name=_('IP Address'),
-        help_text=_('IPv4 address of the Minecraft server')
+        verbose_name=_('RCON IP Address'),
+        help_text=_('IPv4 address for RCON connection (management only)')
     )
     
     rcon_port = models.IntegerField(
         default=25575,
         verbose_name=_('RCON Port'),
-        help_text=_('RCON port number (default: 25575)')
+        help_text=_('RCON port number (default: 25575, management only)')
+    )
+    
+    # Game server info (for players to connect, shown to users)
+    game_ip = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name=_('Game Server IP'),
+        help_text=_('IP or domain for players to connect (e.g., play.example.com)')
+    )
+    
+    game_port = models.IntegerField(
+        blank=True,
+        null=True,
+        default=25565,
+        verbose_name=_('Game Server Port'),
+        help_text=_('Port for players to connect (default: 25565)')
     )
     
     rcon_password_encrypted = models.BinaryField(
@@ -171,55 +188,6 @@ class WhitelistRequest(models.Model):
     
     def __str__(self):
         return f"{self.minecraft_username} on {self.server.name} ({self.status})"
-
-
-class DisplaySettings(models.Model):
-    """
-    Singleton model for controlling what information is visible to users.
-    Only one instance should exist in the database (pk=1).
-    
-    This allows administrators to control whether regular users can see
-    server IP addresses and ports in the dashboard.
-    """
-    
-    show_ip_to_users = models.BooleanField(
-        default=False,
-        verbose_name=_('Show IP Address to Users'),
-        help_text=_('If enabled, users will see server IP addresses in the dashboard')
-    )
-    
-    show_port_to_users = models.BooleanField(
-        default=False,
-        verbose_name=_('Show Port to Users'),
-        help_text=_('If enabled, users will see server ports in the dashboard')
-    )
-    
-    updated_at = models.DateTimeField(
-        auto_now=True,
-        verbose_name=_('Updated At')
-    )
-    
-    class Meta:
-        verbose_name = _('Display Settings')
-        verbose_name_plural = _('Display Settings')
-    
-    def save(self, *args, **kwargs):
-        """Ensure only one instance exists (singleton pattern)"""
-        self.pk = 1
-        super().save(*args, **kwargs)
-    
-    def delete(self, *args, **kwargs):
-        """Prevent deletion of the singleton instance"""
-        pass
-    
-    @classmethod
-    def get_settings(cls):
-        """Get or create the singleton instance"""
-        obj, created = cls.objects.get_or_create(pk=1)
-        return obj
-    
-    def __str__(self):
-        return "Display Settings"
 
 
 class Announcement(models.Model):

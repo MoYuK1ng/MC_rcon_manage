@@ -11,7 +11,7 @@ from django.utils.translation import gettext as _
 from django.views import View
 from django.core.exceptions import ValidationError
 
-from servers.models import Server, WhitelistRequest, DisplaySettings, Announcement
+from servers.models import Server, WhitelistRequest, Announcement
 from servers.services.rcon_manager import RconHandler
 from servers.decorators import user_has_server_access
 from django.http import HttpResponse
@@ -43,15 +43,11 @@ class DashboardView(View):
                 groups__in=request.user.groups.all()
             ).distinct()
         
-        # Get display settings
-        display_settings = DisplaySettings.get_settings()
-        
         # Get active announcements
         announcements = Announcement.objects.filter(is_active=True)
         
         context = {
             'servers': servers,
-            'display_settings': display_settings,
             'announcements': announcements,
         }
         

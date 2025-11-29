@@ -90,9 +90,9 @@
                                 <h3 class="text-xl font-bold text-white truncate">
                                     {{ server.name }}
                                 </h3>
-                                {% if display_settings.show_ip_to_users or display_settings.show_port_to_users %}
+                                {% if server.game_ip %}
                                 <p class="text-primary-100 text-sm font-mono mt-1">
-                                    {% if display_settings.show_ip_to_users %}{{ server.ip_address }}{% endif %}{% if display_settings.show_ip_to_users and display_settings.show_port_to_users %}:{% endif %}{% if display_settings.show_port_to_users %}{{ server.rcon_port }}{% endif %}
+                                    {{ server.game_ip }}{% if server.game_port %}:{{ server.game_port }}{% endif %}
                                 </p>
                                 {% endif %}
                             </div>

@@ -7,7 +7,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User, Group
 from django.utils.translation import gettext_lazy as _
-from servers.models import Server, WhitelistRequest, DisplaySettings, Announcement
+from servers.models import Server, WhitelistRequest, Announcement
 
 
 def is_default_group(group_name: str) -> bool:
@@ -82,8 +82,16 @@ class ServerAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at', 'updated_at')
     
     fieldsets = (
-        (_('Server Information'), {
-            'fields': ('name', 'ip_address', 'rcon_port')
+        (_('Basic Information'), {
+            'fields': ('name',)
+        }),
+        (_('Game Server (Shown to Users)'), {
+            'fields': ('game_ip', 'game_port'),
+            'description': _('玩家连接游戏服务器的地址和端口 / IP and port for players to connect to the game server')
+        }),
+        (_('RCON Connection (Management Only)'), {
+            'fields': ('ip_address', 'rcon_port'),
+            'description': _('RCON管理连接信息，用户不可见 / RCON management connection, hidden from users')
         }),
         (_('RCON Password'), {
             'fields': ('rcon_password',),
@@ -304,49 +312,6 @@ admin.site.register(User, UserAdmin)
 
 admin.site.unregister(Group)
 admin.site.register(Group, GroupAdmin)
-
-
-# Display Settings Admin
-@admin.register(DisplaySettings)
-class DisplaySettingsAdmin(admin.ModelAdmin):
-    """
-    Admin interface for DisplaySettings model (singleton).
-    
-    Controls what server information is visible to regular users in the dashboard.
-    """
-    
-    list_display = ('show_ip_to_users', 'show_port_to_users', 'updated_at')
-    
-    fieldsets = (
-        (_('Visibility Settings / 可见性设置'), {
-            'fields': ('show_ip_to_users', 'show_port_to_users'),
-            'description': _(
-                '<strong>Control what server information is visible to regular users.</strong><br>'
-                'Administrators always see all information in the admin panel.<br><br>'
-                '<strong>控制普通用户可以看到哪些服务器信息。</strong><br>'
-                '管理员在管理面板中始终可以看到所有信息。'
-            )
-        }),
-        (_('Last Updated / 最后更新'), {
-            'fields': ('updated_at',),
-            'classes': ('collapse',)
-        }),
-    )
-    
-    readonly_fields = ('updated_at',)
-    
-    def has_add_permission(self, request):
-        """
-        Only allow one instance (singleton pattern).
-        Prevent adding if instance already exists.
-        """
-        return not DisplaySettings.objects.exists()
-    
-    def has_delete_permission(self, request, obj=None):
-        """
-        Prevent deletion of the singleton instance.
-        """
-        return False
 
 
 # Announcement Admin
