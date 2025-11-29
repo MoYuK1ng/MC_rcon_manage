@@ -7,10 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}MC RCON Manager{% endblock %}</title>
     
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -27,72 +25,12 @@
                 extend: {
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
-                        display: ['Space Grotesk', 'sans-serif'],
-                    },
-                    colors: {
-                        primary: {
-                            DEFAULT: '#6366f1',
-                            50: '#eef2ff',
-                            100: '#e0e7ff',
-                            200: '#c7d2fe',
-                            300: '#a5b4fc',
-                            400: '#818cf8',
-                            500: '#6366f1',
-                            600: '#4f46e5',
-                            700: '#4338ca',
-                            800: '#3730a3',
-                            900: '#312e81',
-                        },
-                        accent: {
-                            DEFAULT: '#ec4899',
-                            50: '#fdf2f8',
-                            100: '#fce7f3',
-                            200: '#fbcfe8',
-                            300: '#f9a8d4',
-                            400: '#f472b6',
-                            500: '#ec4899',
-                            600: '#db2777',
-                            700: '#be185d',
-                            800: '#9d174d',
-                            900: '#831843',
-                        },
+                        mono: ['JetBrains Mono', 'monospace'],
                     },
                     animation: {
-                        'fade-in': 'fadeIn 0.6s ease-out',
-                        'slide-up': 'slideUp 0.6s ease-out',
-                        'slide-down': 'slideDown 0.4s ease-out',
-                        'scale-in': 'scaleIn 0.4s ease-out',
-                        'gradient': 'gradient 8s ease infinite',
-                        'float': 'float 6s ease-in-out infinite',
-                    },
-                    keyframes: {
-                        fadeIn: {
-                            '0%': { opacity: '0' },
-                            '100%': { opacity: '1' }
-                        },
-                        slideUp: {
-                            '0%': { transform: 'translateY(20px)', opacity: '0' },
-                            '100%': { transform: 'translateY(0)', opacity: '1' }
-                        },
-                        slideDown: {
-                            '0%': { transform: 'translateY(-10px)', opacity: '0' },
-                            '100%': { transform: 'translateY(0)', opacity: '1' }
-                        },
-                        scaleIn: {
-                            '0%': { transform: 'scale(0.95)', opacity: '0' },
-                            '100%': { transform: 'scale(1)', opacity: '1' }
-                        },
-                        gradient: {
-                            '0%, 100%': { backgroundPosition: '0% 50%' },
-                            '50%': { backgroundPosition: '100% 50%' }
-                        },
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0px)' },
-                            '50%': { transform: 'translateY(-20px)' }
-                        }
-                    },
-                    backdropBlur: {
-                        xs: '2px',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'bounce-slow': 'bounce 2s infinite',
+                        'ping-slow': 'ping 2s cubic-bezier(0, 0, 0.2, 1) infinite',
                     }
                 }
             }
@@ -100,140 +38,158 @@
     </script>
     
     <style>
-        /* Animated gradient background */
+        /* Minecraft-inspired pixelated background */
         body {
-            background: linear-gradient(-45deg, #0f172a, #1e1b4b, #312e81, #1e293b);
-            background-size: 400% 400%;
-            animation: gradient 15s ease infinite;
+            background: #0a0e1a;
+            background-image: 
+                linear-gradient(rgba(16, 185, 129, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(16, 185, 129, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
         }
         
         /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 10px;
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #1a1f2e; }
+        ::-webkit-scrollbar-thumb { 
+            background: linear-gradient(180deg, #10b981, #059669);
+            border-radius: 4px;
         }
-        ::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.5);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, #6366f1, #ec4899);
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(180deg, #818cf8, #f472b6);
+        ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #34d399, #10b981); }
+        
+        /* Glowing border animation */
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(16, 185, 129, 0.5), 0 0 10px rgba(16, 185, 129, 0.3); }
+            50% { box-shadow: 0 0 10px rgba(16, 185, 129, 0.8), 0 0 20px rgba(16, 185, 129, 0.5); }
         }
         
-        /* Glassmorphism effect */
-        .glass {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .glow-border {
+            animation: glow 2s ease-in-out infinite;
         }
         
-        .glass-strong {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+        /* Status indicator pulse */
+        @keyframes status-pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
         }
         
-        /* Glow effects */
-        .glow-primary {
-            box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+        .status-pulse {
+            animation: status-pulse 2s ease-in-out infinite;
         }
         
-        .glow-accent {
-            box-shadow: 0 0 20px rgba(236, 72, 153, 0.3);
+        /* Card hover effect */
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        /* Hover glow */
-        .hover-glow:hover {
-            box-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
-            transform: translateY(-2px);
-            transition: all 0.3s ease;
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(16, 185, 129, 0.1), 0 10px 10px -5px rgba(16, 185, 129, 0.04);
+        }
+        
+        /* Minecraft-style button */
+        .mc-button {
+            position: relative;
+            background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+            box-shadow: 
+                inset 0 1px 0 rgba(255,255,255,0.2),
+                inset 0 -1px 0 rgba(0,0,0,0.3),
+                0 2px 0 #047857,
+                0 4px 8px rgba(0,0,0,0.3);
+        }
+        
+        .mc-button:hover {
+            background: linear-gradient(180deg, #34d399 0%, #10b981 100%);
+        }
+        
+        .mc-button:active {
+            transform: translateY(2px);
+            box-shadow: 
+                inset 0 1px 0 rgba(255,255,255,0.2),
+                inset 0 -1px 0 rgba(0,0,0,0.3),
+                0 1px 0 #047857;
         }
     </style>
 
     {% block extra_css %}{% endblock %}
 </head>
-<body class="h-full font-sans text-white antialiased">
-    <!-- Floating orbs for visual interest -->
-    <div class="fixed inset-0 overflow-hidden pointer-events-none">
-        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-500/20 rounded-full blur-3xl animate-float"></div>
-        <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent-500/20 rounded-full blur-3xl animate-float" style="animation-delay: 2s;"></div>
-    </div>
-    
-    <div class="min-h-full flex relative z-10">
-        <!-- Sidebar Navigation -->
-        <nav class="w-64 flex-shrink-0 glass-strong flex flex-col border-r border-white/10">
+<body class="h-full font-sans text-gray-100 antialiased">
+    <div class="min-h-full flex">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gradient-to-b from-gray-900 to-gray-950 border-r border-emerald-500/20 flex flex-col">
             <!-- Logo -->
-            <div class="h-20 flex items-center justify-center px-6 border-b border-white/10">
-                 <a href="{% url 'dashboard' %}" class="flex items-center space-x-3 group">
-                    <div class="w-12 h-12 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 glow-primary">
-                        <i data-lucide="server" class="w-7 h-7 text-white"></i>
+            <div class="h-16 flex items-center px-6 border-b border-emerald-500/20">
+                <a href="{% url 'dashboard' %}" class="flex items-center space-x-3 group">
+                    <div class="relative">
+                        <div class="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center transform group-hover:scale-110 transition-transform duration-200">
+                            <i data-lucide="server" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <div class="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full status-pulse"></div>
                     </div>
-                    <div class="flex flex-col">
-                        <span class="text-xl font-display font-bold bg-gradient-to-r from-primary-400 to-accent-400 bg-clip-text text-transparent">
-                            MC RCON
-                        </span>
-                        <span class="text-xs text-white/60 font-medium">Manager</span>
+                    <div>
+                        <div class="text-lg font-bold text-white font-mono">MC RCON</div>
+                        <div class="text-xs text-emerald-400 font-mono">v{{ APP_VERSION|default:"1.0.0" }}</div>
                     </div>
                 </a>
             </div>
 
-            <!-- Nav Links -->
-            <div class="flex-1 overflow-y-auto py-6">
-                <ul class="space-y-2 px-4">
-                    <li>
-                        <a href="{% url 'dashboard' %}" class="flex items-center px-4 py-3 text-white/80 hover:text-white rounded-xl hover:bg-white/10 transition-all duration-200 group">
-                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-500/20 to-primary-600/20 flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-200">
-                                <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
-                            </div>
-                            <span class="font-medium">{% trans "Dashboard" %}</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'my_whitelist' %}" class="flex items-center px-4 py-3 text-white/80 hover:text-white rounded-xl hover:bg-white/10 transition-all duration-200 group">
-                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-accent-500/20 to-accent-600/20 flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-200">
-                                <i data-lucide="list-checks" class="w-5 h-5"></i>
-                            </div>
-                            <span class="font-medium">{% trans "My Whitelist" %}</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            
-            <!-- Sidebar Footer / User & Lang Menu -->
-            <div class="p-4 border-t border-white/10">
-                <div class="relative group">
-                    <div class="flex items-center justify-between w-full p-3 rounded-xl glass cursor-pointer transition-all duration-200 hover:bg-white/10">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-accent-500 rounded-full flex items-center justify-center ring-2 ring-white/20">
-                                <span class="text-white text-sm font-bold">{{ user.username|slice:":1"|upper }}</span>
-                            </div>
-                            <div class="flex flex-col">
-                                <span class="text-sm font-semibold text-white">{{ user.username }}</span>
-                                <span class="text-xs text-white/60">{% trans "User" %}</span>
-                            </div>
-                        </div>
-                        <i data-lucide="chevron-up" class="w-5 h-5 text-white/60 group-hover:text-white transition-all duration-200 group-hover:translate-y-[-2px]"></i>
+            <!-- Navigation -->
+            <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+                <a href="{% url 'dashboard' %}" class="flex items-center px-3 py-2.5 text-gray-300 hover:text-white hover:bg-emerald-500/10 rounded-lg transition-all duration-200 group">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3 text-emerald-400"></i>
+                    <span class="font-medium">{% trans "Dashboard" %}</span>
+                    <i data-lucide="chevron-right" class="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                </a>
+                
+                <a href="{% url 'my_whitelist' %}" class="flex items-center px-3 py-2.5 text-gray-300 hover:text-white hover:bg-emerald-500/10 rounded-lg transition-all duration-200 group">
+                    <i data-lucide="list-checks" class="w-5 h-5 mr-3 text-emerald-400"></i>
+                    <span class="font-medium">{% trans "My Whitelist" %}</span>
+                    <i data-lucide="chevron-right" class="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                </a>
+                
+                {% if user.is_superuser %}
+                <div class="pt-4 mt-4 border-t border-gray-800">
+                    <div class="px-3 mb-2">
+                        <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">{% trans "Admin" %}</span>
                     </div>
+                    <a href="/admin/" class="flex items-center px-3 py-2.5 text-gray-300 hover:text-white hover:bg-emerald-500/10 rounded-lg transition-all duration-200 group">
+                        <i data-lucide="shield" class="w-5 h-5 mr-3 text-amber-400"></i>
+                        <span class="font-medium">{% trans "Admin Panel" %}</span>
+                        <i data-lucide="external-link" class="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                    </a>
+                </div>
+                {% endif %}
+            </nav>
+
+            <!-- User Menu -->
+            <div class="p-3 border-t border-emerald-500/20">
+                <div class="relative group">
+                    <button class="w-full flex items-center px-3 py-2.5 rounded-lg hover:bg-gray-800 transition-all duration-200">
+                        <div class="w-9 h-9 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center font-bold text-white text-sm">
+                            {{ user.username|slice:":1"|upper }}
+                        </div>
+                        <div class="ml-3 flex-1 text-left">
+                            <div class="text-sm font-semibold text-white">{{ user.username }}</div>
+                            <div class="text-xs text-gray-400">{% trans "Online" %}</div>
+                        </div>
+                        <i data-lucide="chevron-up" class="w-4 h-4 text-gray-400"></i>
+                    </button>
                     
-                    <!-- Pop-up Menu -->
-                    <div class="absolute bottom-full left-0 mb-2 w-full glass-strong rounded-2xl shadow-2xl border border-white/20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 animate-slide-down">
-                        <div class="p-3">
-                            <span class="px-3 py-1 text-xs font-bold text-white/60 uppercase tracking-wider">{% trans "Language" %}</span>
-                            <a href="{% url 'set_language' %}?lang=en" class="flex items-center w-full text-left mt-2 px-3 py-2.5 text-sm text-white/80 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-150">
+                    <!-- Dropdown -->
+                    <div class="absolute bottom-full left-0 right-0 mb-2 bg-gray-900 border border-emerald-500/20 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                        <div class="p-2">
+                            <div class="px-3 py-1 text-xs font-semibold text-gray-500 uppercase">{% trans "Language" %}</div>
+                            <a href="{% url 'set_language' %}?lang=en" class="flex items-center px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded-md transition-colors">
                                 <span class="mr-2">🇬🇧</span> English
                             </a>
-                            <a href="{% url 'set_language' %}?lang=zh-hans" class="flex items-center w-full text-left px-3 py-2.5 text-sm text-white/80 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-150">
+                            <a href="{% url 'set_language' %}?lang=zh-hans" class="flex items-center px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded-md transition-colors">
                                 <span class="mr-2">🇨🇳</span> 简体中文
                             </a>
                         </div>
-                        <div class="border-t border-white/10 my-1"></div>
-                        <div class="p-3">
-                            <form method="post" action="{% url 'logout' %}" class="m-0">
+                        <div class="border-t border-gray-800 p-2">
+                            <form method="post" action="{% url 'logout' %}">
                                 {% csrf_token %}
-                                <button type="submit" class="flex items-center w-full text-left px-3 py-2.5 text-sm text-red-400 hover:bg-red-500/20 hover:text-red-300 rounded-lg transition-all duration-150 group/logout">
-                                    <i data-lucide="log-out" class="w-4 h-4 mr-3 group-hover/logout:translate-x-[-2px] transition-transform"></i>
+                                <button type="submit" class="w-full flex items-center px-3 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-md transition-colors">
+                                    <i data-lucide="log-out" class="w-4 h-4 mr-2"></i>
                                     {% trans "Logout" %}
                                 </button>
                             </form>
@@ -241,51 +197,52 @@
                     </div>
                 </div>
             </div>
-        </nav>
-        
-        <div class="flex-1 flex flex-col">
-             <!-- Top Bar -->
-            <header class="glass-strong border-b border-white/10 h-20 flex-shrink-0 flex items-center justify-between px-6 lg:px-8">
-                 <div>
-                     <h1 class="text-2xl font-display font-bold bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
-                         {% block page_title %}{% trans "Dashboard" %}{% endblock %}
-                     </h1>
-                     <p class="text-sm text-white/50 mt-0.5">{% block page_subtitle %}{% trans "Welcome back" %}{% endblock %}</p>
-                 </div>
-                 <div class="flex items-center space-x-3">
-                     <div class="hidden sm:flex items-center space-x-2 glass px-4 py-2 rounded-xl">
-                         <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                         <span class="text-sm text-white/80 font-medium">{% trans "Online" %}</span>
-                     </div>
-                 </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col min-w-0">
+            <!-- Top Bar -->
+            <header class="h-16 bg-gray-900/50 backdrop-blur-sm border-b border-emerald-500/20 flex items-center justify-between px-6">
+                <div>
+                    <h1 class="text-xl font-bold text-white">{% block page_title %}{% trans "Dashboard" %}{% endblock %}</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <!-- System Status -->
+                    <div class="flex items-center space-x-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/30 rounded-full">
+                        <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                        <span class="text-sm font-medium text-emerald-400">{% trans "System Online" %}</span>
+                    </div>
+                    
+                    <!-- Current Time -->
+                    <div class="hidden md:flex items-center space-x-2 text-sm text-gray-400 font-mono">
+                        <i data-lucide="clock" class="w-4 h-4"></i>
+                        <span id="current-time"></span>
+                    </div>
+                </div>
             </header>
 
-            <!-- Main Content -->
-            <main class="flex-1 p-6 lg:p-8 overflow-y-auto">
-                <!-- Django Messages -->
+            <!-- Content Area -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <!-- Messages -->
                 {% if messages %}
-                    <div class="space-y-3 mb-8">
+                    <div class="mb-6 space-y-3">
                         {% for message in messages %}
-                            <div class="glass-strong rounded-2xl p-5 animate-slide-down border {% if message.tags == 'success' %}border-green-500/30 glow-primary{% elif message.tags == 'error' %}border-red-500/30{% elif message.tags == 'warning' %}border-yellow-500/30{% else %}border-primary-500/30{% endif %}">
-                                <div class="flex items-start">
-                                    <div class="flex-shrink-0">
-                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center {% if message.tags == 'success' %}bg-green-500/20{% elif message.tags == 'error' %}bg-red-500/20{% elif message.tags == 'warning' %}bg-yellow-500/20{% else %}bg-primary-500/20{% endif %}">
-                                            {% if message.tags == 'success' %}
-                                                <i data-lucide="check-circle" class="w-5 h-5 text-green-400"></i>
-                                            {% elif message.tags == 'error' %}
-                                                <i data-lucide="alert-circle" class="w-5 h-5 text-red-400"></i>
-                                            {% elif message.tags == 'warning' %}
-                                                <i data-lucide="alert-triangle" class="w-5 h-5 text-yellow-400"></i>
-                                            {% else %}
-                                                <i data-lucide="info" class="w-5 h-5 text-primary-400"></i>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                    <div class="ml-4 flex-1">
-                                        <p class="text-sm font-semibold {% if message.tags == 'success' %}text-green-300{% elif message.tags == 'error' %}text-red-300{% elif message.tags == 'warning' %}text-yellow-300{% else %}text-primary-300{% endif %}">
-                                            {{ message }}
-                                        </p>
-                                    </div>
+                            <div class="flex items-start p-4 rounded-lg border {% if message.tags == 'success' %}bg-emerald-500/10 border-emerald-500/30{% elif message.tags == 'error' %}bg-red-500/10 border-red-500/30{% elif message.tags == 'warning' %}bg-yellow-500/10 border-yellow-500/30{% else %}bg-blue-500/10 border-blue-500/30{% endif %} animate-slide-up">
+                                <div class="flex-shrink-0">
+                                    {% if message.tags == 'success' %}
+                                        <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>
+                                    {% elif message.tags == 'error' %}
+                                        <i data-lucide="x-circle" class="w-5 h-5 text-red-400"></i>
+                                    {% elif message.tags == 'warning' %}
+                                        <i data-lucide="alert-triangle" class="w-5 h-5 text-yellow-400"></i>
+                                    {% else %}
+                                        <i data-lucide="info" class="w-5 h-5 text-blue-400"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <p class="text-sm font-medium {% if message.tags == 'success' %}text-emerald-300{% elif message.tags == 'error' %}text-red-300{% elif message.tags == 'warning' %}text-yellow-300{% else %}text-blue-300{% endif %}">
+                                        {{ message }}
+                                    </p>
                                 </div>
                             </div>
                         {% endfor %}
@@ -297,20 +254,28 @@
         </div>
     </div>
     
-    <!-- HTMX CSRF Token Configuration -->
+    <!-- Scripts -->
     <script>
-        // Configure HTMX to send CSRF token with every request
+        // HTMX CSRF Token
         document.body.addEventListener('htmx:configRequest', function(event) {
             event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
         });
         
         // Initialize Lucide icons
         lucide.createIcons();
-        
-        // Re-initialize icons after HTMX swaps
         document.body.addEventListener('htmx:afterSwap', function() {
             lucide.createIcons();
         });
+        
+        // Update current time
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { hour12: false });
+            const timeEl = document.getElementById('current-time');
+            if (timeEl) timeEl.textContent = timeStr;
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
     </script>
     
     {% block extra_js %}{% endblock %}
