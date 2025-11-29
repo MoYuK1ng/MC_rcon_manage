@@ -475,7 +475,7 @@ install_fresh() {
     SECRET_KEY=$(python3 -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())")
     
     # Read the encryption key that was just generated
-    ENCRYPTION_KEY=$(grep '^RCON_ENCRYPTION_KEY=' .env | cut -d'=' -f2)
+    ENCRYPTION_KEY=$(grep '^RCON_ENCRYPTION_KEY=' .env | cut -d'=' -f2 | tr -d '\n\r')
     
     # Configure ALLOWED_HOSTS and CSRF based on access method
     if [ "$ACCESS_METHOD" = "1" ]; then
