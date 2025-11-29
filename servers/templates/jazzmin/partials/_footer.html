@@ -1,79 +1,18 @@
 {% load i18n %}
-<!-- Custom Footer - Copyright © 2025 MoYuK1ng -->
 <footer class="main-footer">
-    <strong>© 2025 <a href="https://github.com/MoYuK1ng/MC_rcon_manage" target="_blank" rel="noopener noreferrer" style="color: #007bff; text-decoration: none;">MoYuK1ng</a> - MC RCON Manager</strong>
+    <strong>© 2025 <a href="https://github.com/MoYuK1ng/MC_rcon_manage" target="_blank" rel="noopener noreferrer">MoYuK1ng</a> - MC RCON Manager</strong>
 </footer>
 
-<style>
-/* Completely hide Jazzmin version and any extra content */
-.main-footer .float-right,
-.main-footer small,
-.main-footer .text-muted,
-.main-footer b,
-.main-footer [class*="version"],
-.main-footer div:not(:first-child) {
-    display: none !important;
-    visibility: hidden !important;
-}
-
-/* Ensure our footer is clean */
-.main-footer {
-    padding: 1rem;
-    text-align: center;
-}
-
-.main-footer a:hover {
-    color: #0056b3 !important;
-    text-decoration: underline !important;
-}
-</style>
-
 <script>
-// JavaScript to completely remove Jazzmin version text
-(function() {
-    'use strict';
-    
-    function cleanFooter() {
-        const footer = document.querySelector('.main-footer');
-        if (!footer) return;
-        
-        // Remove all child nodes
-        while (footer.firstChild) {
-            footer.removeChild(footer.firstChild);
+// Clean Jazzmin version from footer
+document.addEventListener('DOMContentLoaded', function() {
+    const footer = document.querySelector('.main-footer');
+    if (footer) {
+        // Remove version div
+        const versionDiv = footer.querySelector('.float-right');
+        if (versionDiv) {
+            versionDiv.remove();
         }
-        
-        // Add our custom content
-        const content = document.createElement('strong');
-        content.innerHTML = '© 2025 <a href="https://github.com/MoYuK1ng/MC_rcon_manage" target="_blank" rel="noopener noreferrer" style="color: #007bff; text-decoration: none;">MoYuK1ng</a> - MC RCON Manager';
-        footer.appendChild(content);
     }
-    
-    // Run on load
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', cleanFooter);
-    } else {
-        cleanFooter();
-    }
-    
-    // Watch for any changes
-    const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if (mutation.target.classList && mutation.target.classList.contains('main-footer')) {
-                cleanFooter();
-            }
-        });
-    });
-    
-    // Start observing
-    setTimeout(function() {
-        const footer = document.querySelector('.main-footer');
-        if (footer) {
-            observer.observe(footer, {
-                childList: true,
-                subtree: true,
-                characterData: true
-            });
-        }
-    }, 100);
-})();
+});
 </script>
