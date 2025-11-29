@@ -64,6 +64,9 @@ class ServerAdminForm(forms.ModelForm):
         
         if commit:
             server.save()
+            # Save many-to-many relationships
+            self.save_m2m()
+        
         return server
 
 
