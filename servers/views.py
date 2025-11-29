@@ -25,9 +25,12 @@ class DashboardView(View):
     """
     template_name = 'servers/dashboard.html'
     
-    def get(self, request):
+    def get(self, request, lang=None):
         """
         Display dashboard with accessible servers.
+        
+        Args:
+            lang: Language code ('zh' for Chinese, None for English)
         
         Returns:
             Rendered dashboard template with server list
@@ -45,6 +48,10 @@ class DashboardView(View):
         context = {
             'servers': servers,
         }
+        
+        # Use Chinese template if lang=zh
+        if lang == 'zh':
+            return render(request, 'servers/dashboard_zh.html', context)
         
         return render(request, self.template_name, context)
 

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" class="h-full bg-gray-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MC RCON Manager{% endblock %}</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="h-full antialiased">
+    <div class="min-h-full flex flex-col">
+        <!-- Navigation Bar -->
+        <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 backdrop-blur-sm bg-white/95">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <!-- Logo -->
+                    <div class="flex items-center">
+                        <a href="/dashboard/" class="flex items-center space-x-3 group">
+                            <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center transform group-hover:scale-105 transition-transform duration-200">
+                                <i data-lucide="server" class="w-6 h-6 text-white"></i>
+                            </div>
+                            <span class="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+                                MC RCON Manager
+                            </span>
+                        </a>
+                    </div>
+                    
+                    <!-- Right Side -->
+                    <div class="flex items-center space-x-4">
+                        {% if user.is_authenticated %}
+                            <!-- User Menu -->
+                            <div class="relative group">
+                                <button class="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                                    <div class="w-8 h-8 bg-gradient-to-br from-primary-400 to-primary-600 rounded-full flex items-center justify-center">
+                                        <span class="text-white text-sm font-medium">{{ user.username|slice:":1"|upper }}</span>
+                                    </div>
+                                    <span class="text-sm font-medium text-gray-700">{{ user.username }}</span>
+                                    <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
+                                </button>
+                                
+                                <!-- Dropdown -->
+                                <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
+                                    <div class="py-1">
+                                        <a href="/accounts/logout/" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150">
+                                            <i data-lucide="log-out" class="w-4 h-4 mr-3 text-gray-400"></i>
+                                            退出登录
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <a href="/accounts/login/" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
+                                登录
+                            </a>
+                        {% endif %}
+                        
+                        <!-- Language Switcher -->
+                        <div class="relative group">
+                            <button class="p-2 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                                <i data-lucide="globe" class="w-5 h-5 text-gray-600"></i>
+                            </button>
+                            
+                            <div class="absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                                <div class="py-1">
+                                    <a href="/dashboard/" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150">
+                                        English
+                                    </a>
+                                    <a href="/dashboard/zh/" class="block px-4 py-2 text-sm text-primary-600 bg-primary-50 font-medium">
+                                        简体中文
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Django Messages -->
+        {% if messages %}
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+                {% for message in messages %}
+                    <div class="rounded-lg p-4 mb-4 animate-slide-up {% if message.tags == 'success' %}bg-green-50 border border-green-200{% elif message.tags == 'error' %}bg-red-50 border border-red-200{% elif message.tags == 'warning' %}bg-yellow-50 border border-yellow-200{% else %}bg-blue-50 border border-blue-200{% endif %}">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                {% if message.tags == 'success' %}
+                                    <i data-lucide="check-circle" class="w-5 h-5 text-green-600"></i>
+                                {% elif message.tags == 'error' %}
+                                    <i data-lucide="alert-circle" class="w-5 h-5 text-red-600"></i>
+                                {% elif message.tags == 'warning' %}
+                                    <i data-lucide="alert-triangle" class="w-5 h-5 text-yellow-600"></i>
+                                {% else %}
+                                    <i data-lucide="info" class="w-5 h-5 text-blue-600"></i>
+                                {% endif %}
+                            </div>
+                            <div class="ml-3 flex-1">
+                                <p class="text-sm font-medium {% if message.tags == 'success' %}text-green-800{% elif message.tags == 'error' %}text-red-800{% elif message.tags == 'warning' %}text-yellow-800{% else %}text-blue-800{% endif %}">
+                                    {{ message }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <!-- Main Content -->
+        <main class="flex-1">
+            {% block content %}{% endblock %}
+        </main>
+        
+        <!-- Footer -->
+        <footer class="bg-white border-t border-gray-200 mt-auto">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <div class="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
+                    <div class="flex flex-col items-center sm:items-start">
+                        <p class="text-sm text-gray-500">
+                            MC RCON Manager &copy; 2025
+                        </p>
+                        <p class="text-xs text-gray-400 mt-1">
+                            Powered by <a href="https://github.com/MoYuK1ng" target="_blank" class="text-primary-600 hover:text-primary-700 font-medium transition-colors duration-200">MoYuK1ng</a>
+                        </p>
+                    </div>
+                    <div class="flex items-center space-x-6">
+                        <a href="https://github.com/MoYuK1ng/MC_rcon_manage" target="_blank" class="text-sm text-gray-500 hover:text-gray-700 transition-colors duration-200">
+                            文档
+                        </a>
+                        <a href="https://github.com/MoYuK1ng/MC_rcon_manage/issues" target="_blank" class="text-sm text-gray-500 hover:text-gray-700 transition-colors duration-200">
+                            支持
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- HTMX CSRF Token Configuration -->
+    <script>
+        // Configure HTMX to send CSRF token with every request
+        document.body.addEventListener('htmx:configRequest', function(event) {
+            event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+        });
+        
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Re-initialize icons after HTMX swaps
+        document.body.addEventListener('htmx:afterSwap', function() {
+            lucide.createIcons();
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
