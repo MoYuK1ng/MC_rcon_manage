@@ -53,5 +53,5 @@ SECURITY_AUDIT.md
 start_server.bat
 
 # Translations
-# *.mo  # Keep compiled translations in repo for production
+*.mo  # Compiled translations (generated from .po files)
 *.pot
