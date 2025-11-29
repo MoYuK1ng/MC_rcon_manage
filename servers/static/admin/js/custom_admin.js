@@ -16,16 +16,9 @@
         const projectInfo = document.createElement('div');
         projectInfo.className = 'sidebar-project-info';
         projectInfo.innerHTML = `
-            <a href="https://github.com/MoYuK1ng/MC_rcon_manage" target="_blank" rel="noopener noreferrer" title="MC RCON Manager on GitHub">
-                <div class="project-icon">
-                    <i class="fab fa-github"></i>
-                </div>
-                <div class="project-text">
-                    <div class="project-name">MC RCON Manager</div>
-                    <div class="project-link">
-                        <i class="fas fa-external-link-alt"></i> View on GitHub
-                    </div>
-                </div>
+            <a href="https://github.com/MoYuK1ng/MC_rcon_manage" target="_blank" rel="noopener noreferrer" title="View on GitHub">
+                <i class="nav-icon fab fa-github"></i>
+                <span class="project-name">MC RCON Manager</span>
             </a>
         `;
         

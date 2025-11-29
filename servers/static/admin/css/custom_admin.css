@@ -4,60 +4,73 @@
     bottom: 0;
     left: 0;
     width: 250px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 15px;
+    background: #343a40;
     border-top: 1px solid rgba(255,255,255,0.1);
     z-index: 9999;
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    transition: width 0.3s ease-in-out;
 }
 
 .sidebar-project-info a {
     display: flex;
     align-items: center;
-    gap: 10px;
-    color: white !important;
+    padding: 12px 16px;
+    color: #c2c7d0 !important;
     text-decoration: none !important;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
 }
 
 .sidebar-project-info a:hover {
-    transform: translateX(5px);
-    color: white !important;
+    background: rgba(255,255,255,0.05);
+    color: #ffffff !important;
 }
 
-.sidebar-project-info .project-icon {
-    width: 32px;
-    height: 32px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.sidebar-project-info .nav-icon {
+    width: 20px;
+    height: 20px;
     font-size: 16px;
+    text-align: center;
+    margin-right: 12px;
     flex-shrink: 0;
+    color: #c2c7d0;
+    transition: all 0.2s ease;
 }
 
-.sidebar-project-info .project-text {
-    flex: 1;
+.sidebar-project-info a:hover .nav-icon {
+    color: #ffffff;
 }
 
 .sidebar-project-info .project-name {
-    font-weight: 600;
     font-size: 14px;
-    margin-bottom: 2px;
-    line-height: 1.2;
-    color: white;
-}
-
-.sidebar-project-info .project-link {
-    font-size: 11px;
-    opacity: 0.9;
-    color: white;
+    font-weight: 400;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: opacity 0.3s ease-in-out;
 }
 
 /* Adjust main sidebar to make room for project info */
 .main-sidebar .sidebar {
-    padding-bottom: 80px !important;
+    padding-bottom: 50px !important;
+}
+
+/* When sidebar is collapsed */
+.sidebar-collapse .sidebar-project-info {
+    width: 4.6rem;
+}
+
+.sidebar-collapse .sidebar-project-info a {
+    justify-content: center;
+    padding: 12px 0;
+}
+
+.sidebar-collapse .sidebar-project-info .nav-icon {
+    margin-right: 0;
+}
+
+.sidebar-collapse .sidebar-project-info .project-name {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
 }
 
 /* Responsive adjustments */
@@ -68,18 +81,4 @@
     .main-sidebar .sidebar {
         padding-bottom: 0 !important;
     }
-}
-
-/* When sidebar is collapsed */
-.sidebar-collapse .sidebar-project-info {
-    width: 60px;
-    padding: 10px;
-}
-
-.sidebar-collapse .sidebar-project-info .project-text {
-    display: none;
-}
-
-.sidebar-collapse .sidebar-project-info a {
-    justify-content: center;
 }
