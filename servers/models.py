@@ -1,6 +1,6 @@
 """
-Models for MC RCON Manager
-Defines Server and WhitelistRequest models with encryption and validation
+mc rcon 管理器的数据模型
+定义了带有加密和验证功能的服务器和白名单请求模型
 """
 
 from django.db import models
@@ -12,10 +12,10 @@ from servers.utils.encryption import get_encryption_utility
 
 class Server(models.Model):
     """
-    Represents a Minecraft server with RCON access.
+    表示一个具有rcon访问权限的minecraft服务器
     
-    Passwords are encrypted using Fernet symmetric encryption before storage.
-    Access control is managed through Django Groups.
+    密码在存储前使用fernet对称加密进行加密
+    访问控制通过django组进行管理
     """
     
     name = models.CharField(
@@ -24,7 +24,7 @@ class Server(models.Model):
         help_text=_('Display name for the Minecraft server')
     )
     
-    # RCON connection info (for management, hidden from users)
+    # rcon连接信息（用于管理，对用户隐藏）
     ip_address = models.GenericIPAddressField(
         protocol='IPv4',
         verbose_name=_('RCON IP Address'),
@@ -37,7 +37,7 @@ class Server(models.Model):
         help_text=_('RCON port number (default: 25575, management only)')
     )
     
-    # Game server info (for players to connect, shown to users)
+    # 游戏服务器信息（供玩家连接，向用户显示）
     game_ip = models.CharField(
         max_length=255,
         blank=True,
@@ -93,13 +93,13 @@ class Server(models.Model):
     
     def set_password(self, raw_password: str) -> None:
         """
-        Encrypt and store the RCON password.
+        加密并存储rcon密码
         
-        Args:
-            raw_password: The plaintext RCON password
+        参数:
+            raw_password: 明文rcon密码
         
-        Raises:
-            ValueError: If password is empty or None
+        异常:
+            ValueError: 如果密码为空或无效
         """
         if not raw_password:
             raise ValueError("RCON password cannot be empty")
@@ -109,14 +109,14 @@ class Server(models.Model):
     
     def get_password(self) -> str:
         """
-        Decrypt and return the RCON password.
+        解密并返回rcon密码
         
-        Returns:
-            str: The decrypted plaintext RCON password
+        返回:
+            str: 解密后的明文rcon密码
         
-        Raises:
-            ValueError: If no password is stored
-            InvalidToken: If decryption fails
+        异常:
+            ValueError: 如果没有存储密码
+            InvalidToken: 如果解密失败
         """
         if not self.rcon_password_encrypted:
             raise ValueError("No RCON password stored for this server")
@@ -125,7 +125,7 @@ class Server(models.Model):
         return encryption_util.decrypt(self.rcon_password_encrypted)
 
 
-# Minecraft username validator
+# minecraft用户名验证器
 minecraft_username_validator = RegexValidator(
     regex=r'^[a-zA-Z0-9_]{3,16}$',
     message=_('Username must be 3-16 characters long and contain only letters, numbers, and underscores'),
@@ -135,9 +135,9 @@ minecraft_username_validator = RegexValidator(
 
 class WhitelistRequest(models.Model):
     """
-    Represents a request to add a Minecraft username to a server's whitelist.
+    表示将minecraft用户名添加到服务器白名单的请求
     
-    Tracks the status of the request and stores RCON response logs.
+    跟踪请求状态并存储rcon响应日志
     """
     
     class Status(models.TextChoices):
@@ -190,7 +190,7 @@ class WhitelistRequest(models.Model):
         verbose_name = _('Whitelist Request')
         verbose_name_plural = _('Whitelist Requests')
         ordering = ['-created_at']
-        # Prevent duplicate whitelist requests for same server+username
+        # 防止同一服务器和用户名的重复白名单请求
         unique_together = [['server', 'minecraft_username']]
     
     def __str__(self):
@@ -199,10 +199,9 @@ class WhitelistRequest(models.Model):
 
 class Announcement(models.Model):
     """
-    System announcements displayed to all users on the dashboard.
+    在仪表板上向所有用户显示的系统公告
     
-    Administrators can create announcements to communicate important
-    information, maintenance schedules, or usage instructions to users.
+    管理员可以创建公告来向用户传达重要信息、维护计划或使用说明
     """
     
     title = models.CharField(
