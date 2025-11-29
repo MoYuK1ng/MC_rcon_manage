@@ -14,6 +14,7 @@ from django.core.exceptions import ValidationError
 from servers.models import Server, WhitelistRequest
 from servers.services.rcon_manager import RconHandler
 from servers.decorators import user_has_server_access
+from django.http import HttpResponse
 
 
 @method_decorator(login_required, name='dispatch')
@@ -25,12 +26,9 @@ class DashboardView(View):
     """
     template_name = 'servers/dashboard.html'
     
-    def get(self, request, lang=None):
+    def get(self, request):
         """
         Display dashboard with accessible servers.
-        
-        Args:
-            lang: Language code ('zh' for Chinese, None for English)
         
         Returns:
             Rendered dashboard template with server list
@@ -48,6 +46,9 @@ class DashboardView(View):
         context = {
             'servers': servers,
         }
+        
+        # Check language preference from cookie
+        lang = request.COOKIES.get('user_lang', 'en')
         
         # Use Chinese template if lang=zh
         if lang == 'zh':
