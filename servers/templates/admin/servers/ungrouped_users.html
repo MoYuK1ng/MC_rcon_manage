@@ -6,6 +6,18 @@
 {% block extrastyle %}
 {{ block.super }}
 <style>
+    /* Force block layout */
+    #content h1,
+    #content .info-banner,
+    #content .no-groups-warning,
+    #content .users-table,
+    #content .empty-state {
+        display: block !important;
+        width: 100% !important;
+        clear: both !important;
+        float: none !important;
+    }
+    
     .info-banner {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
@@ -224,21 +236,25 @@
 {% endblock %}
 
 {% block content %}
-<h1><i class="fas fa-user-slash"></i> {% trans "Ungrouped Users" %}</h1>
+<div style="clear: both; width: 100%;">
+    <h1 style="display: block; width: 100%; margin-bottom: 20px;">
+        <i class="fas fa-user-slash"></i> {% trans "Ungrouped Users" %}
+    </h1>
 
-<div class="info-banner">
-    <h2><i class="fas fa-info-circle"></i> {% trans "Quick Access Management" %}</h2>
-    <p>
-        {% blocktrans count counter=user_count %}
-        {{ counter }} user needs group assignment to access servers.
-        {% plural %}
-        {{ counter }} users need group assignments to access servers.
-        {% endblocktrans %}
-    </p>
+    <div class="info-banner" style="display: block; width: 100%; clear: both;">
+        <h2><i class="fas fa-info-circle"></i> {% trans "Quick Access Management" %}</h2>
+        <p>
+            {% blocktrans count counter=user_count %}
+            {{ counter }} user needs group assignment to access servers.
+            {% plural %}
+            {{ counter }} users need group assignments to access servers.
+            {% endblocktrans %}
+        </p>
+    </div>
 </div>
 
 {% if not available_groups %}
-<div class="no-groups-warning">
+<div class="no-groups-warning" style="display: block; width: 100%; clear: both;">
     <i class="fas fa-exclamation-triangle"></i>
     <strong>{% trans "No groups available!" %}</strong>
     {% trans "Please create groups first in the" %} <a href="{% url 'admin:auth_group_changelist' %}">{% trans "Groups section" %}</a>.
@@ -246,7 +262,7 @@
 {% endif %}
 
 {% if ungrouped_users %}
-    <div class="users-table">
+    <div class="users-table" style="display: block; width: 100%; clear: both;">
         <table>
             <thead>
                 <tr>
@@ -323,7 +339,7 @@
         </table>
     </div>
 {% else %}
-    <div class="empty-state">
+    <div class="empty-state" style="display: block; width: 100%; clear: both;">
         <i class="fas fa-check-circle"></i>
         <h2>{% trans "All Users Are Grouped!" %}</h2>
         <p>{% trans "There are no users without group assignments." %}</p>
