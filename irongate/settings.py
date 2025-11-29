@@ -310,8 +310,8 @@ JAZZMIN_SETTINGS = {
         "auth.group": "vertical_tabs"
     },
     
-    # Language chooser
-    "language_chooser": True,
+    # Language chooser (disabled - use site-wide language setting)
+    "language_chooser": False,
 }
 
 JAZZMIN_UI_TWEAKS = {
