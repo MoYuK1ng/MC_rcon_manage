@@ -314,3 +314,33 @@ msgstr "MC RCON Manager"
 
 msgid "Welcome to MC RCON Manager Admin Panel"
 msgstr "欢迎使用 MC RCON Manager 管理面板"
+
+msgid "Sign In to Your Account"
+msgstr "登录您的账户"
+
+msgid "Don't have an account?"
+msgstr "还没有账户？"
+
+msgid "Sign up"
+msgstr "注册"
+
+msgid "Create an Account"
+msgstr "创建账户"
+
+msgid "Choose a username"
+msgstr "选择一个用户名"
+
+msgid "Enter your email"
+msgstr "输入您的邮箱"
+
+msgid "Create a password"
+msgstr "创建一个密码"
+
+msgid "Confirm your password"
+msgstr "确认您的密码"
+
+msgid "Enter the code"
+msgstr "输入验证码"
+
+msgid "Already have an account?"
+msgstr "已经有账户了？"
