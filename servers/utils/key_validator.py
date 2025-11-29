@@ -1,5 +1,5 @@
 """
-Key Validator for IronGate RCON Portal
+Key Validator for MC RCON Manager
 Validates Fernet encryption keys with detailed error messages
 """
 

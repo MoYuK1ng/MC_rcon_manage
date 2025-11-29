@@ -1,5 +1,5 @@
 """
-Custom Decorators for IronGate
+Custom Decorators for MC RCON Manager
 Provides access control decorators for views
 """
 

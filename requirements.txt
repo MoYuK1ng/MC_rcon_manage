@@ -24,8 +24,7 @@ hypothesis>=6.92.0
 pytest>=7.4.0
 pytest-django>=4.7.0
 
-# Django Admin UI Enhancement
-django-jazzmin>=2.6.0
+# Django Admin uses default interface
 
 # Captcha for Registration
 django-simple-captcha>=0.6.0

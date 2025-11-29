@@ -1,5 +1,5 @@
 """
-File Security Utilities for IronGate RCON Portal
+File Security Utilities for MC RCON Manager
 Checks file permissions for sensitive files like .env
 """
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Encryption Key Verification Tool for IronGate RCON Portal
+Encryption Key Verification Tool for MC RCON Manager
 Verifies encryption keys and tests password decryption
 """
 

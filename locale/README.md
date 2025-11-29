@@ -1,6 +1,6 @@
 # Translation Files
 
-This directory contains translation files for IronGate.
+This directory contains translation files for MC RCON Manager.
 
 ## Structure
 

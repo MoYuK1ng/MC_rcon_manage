@@ -1,5 +1,5 @@
 """
-Custom exceptions for IronGate encryption system
+Custom exceptions for MC RCON Manager encryption system
 Provides clear, actionable error messages for encryption-related failures
 """
 

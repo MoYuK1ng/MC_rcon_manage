@@ -1,7 +1,7 @@
-# Chinese (Simplified) translations for IronGate
+# Chinese (Simplified) translations for MC RCON Manager
 msgid ""
 msgstr ""
-"Project-Id-Version: IronGate 1.0\n"
+"Project-Id-Version: MC RCON Manager 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "Language: zh_Hans\n"
 "MIME-Version: 1.0\n"
@@ -264,8 +264,8 @@ msgstr "没有玩家在线"
 msgid "Last updated"
 msgstr "最后更新"
 
-msgid "Login to IronGate"
-msgstr "登录到IronGate"
+msgid "Login to MC RCON Manager"
+msgstr "登录到 MC RCON Manager"
 
 msgid "Welcome back"
 msgstr "欢迎回来"
@@ -299,3 +299,18 @@ msgstr "请输入Minecraft用户名。"
 
 msgid "You do not have permission to access this server."
 msgstr "您没有访问此服务器的权限。"
+
+msgid "Join MC RCON Manager"
+msgstr "加入 MC RCON Manager"
+
+msgid "Registration successful! Welcome to MC RCON Manager."
+msgstr "注册成功！欢迎使用 MC RCON Manager。"
+
+msgid "MC RCON Manager Admin"
+msgstr "MC RCON Manager 管理后台"
+
+msgid "MC RCON Manager"
+msgstr "MC RCON Manager"
+
+msgid "Welcome to MC RCON Manager Admin Panel"
+msgstr "欢迎使用 MC RCON Manager 管理面板"

@@ -1,5 +1,5 @@
 """
-Models for IronGate RCON Portal
+Models for MC RCON Manager
 Defines Server and WhitelistRequest models with encryption and validation
 """
 

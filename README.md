@@ -118,7 +118,7 @@ python manage.py shell
 
 ### 🔑 Encryption Key Management
 
-IronGate uses Fernet symmetric encryption to protect RCON passwords. Proper key management is essential for security.
+MC RCON Manager uses Fernet symmetric encryption to protect RCON passwords. Proper key management is essential for security.
 
 #### Generate Encryption Key
 
@@ -414,7 +414,7 @@ python manage.py shell
 
 ### 🔑 加密密钥管理
 
-IronGate 使用 Fernet 对称加密保护 RCON 密码。正确的密钥管理对安全至关重要。
+MC RCON Manager 使用 Fernet 对称加密保护 RCON 密码。正确的密钥管理对安全至关重要。
 
 #### 生成加密密钥
 

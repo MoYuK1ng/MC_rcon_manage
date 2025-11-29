@@ -1,5 +1,5 @@
 """
-Django Admin Configuration for IronGate
+Django Admin Configuration for MC RCON Manager
 Registers Server and WhitelistRequest models with custom admin interfaces
 """
 
@@ -351,3 +351,9 @@ class AnnouncementAdmin(admin.ModelAdmin):
         """
         qs = super().get_queryset(request)
         return qs.order_by('-created_at')
+
+
+# Customize admin site headers
+admin.site.site_header = _("MC RCON Manager Admin")
+admin.site.site_title = _("MC RCON Manager")
+admin.site.index_title = _("Welcome to MC RCON Manager Admin Panel")

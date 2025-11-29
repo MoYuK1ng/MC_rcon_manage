@@ -87,7 +87,6 @@ CSRF_TRUSTED_ORIGINS = os.getenv(
 # Application definition
 
 INSTALLED_APPS = [
-    'jazzmin',  # Must be before django.contrib.admin
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -219,120 +218,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # ============================================================================
-# Jazzmin Admin UI Configuration
+# Django Admin Configuration
 # ============================================================================
 
-JAZZMIN_SETTINGS = {
-    # Title
-    "site_title": "IronGate Admin",
-    "site_header": "IronGate RCON Manager",
-    "site_brand": "IronGate",
-    "site_logo": None,
-    "login_logo": None,
-    "site_logo_classes": "img-circle",
-    "site_icon": None,
-    
-    # Welcome text
-    "welcome_sign": "Welcome to IronGate Admin Panel",
-    
-    # Copyright
-    "copyright": "MoYuK1ng",
-    
-    # Search model
-    "search_model": ["auth.User", "servers.Server"],
-    
-    # User menu
-    "user_avatar": None,
-    
-    # Top menu
-    "topmenu_links": [
-        {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
-        {"name": "Dashboard", "url": "dashboard", "permissions": ["auth.view_user"]},
-        {"model": "auth.User"},
-        {"model": "servers.Server"},
-    ],
-    
-    # Side menu
-    "show_sidebar": True,
-    "navigation_expanded": True,
-    "hide_apps": [],
-    "hide_models": [],
-    
-    # Custom links
-    "custom_links": {
-        "servers": [{
-            "name": "View Dashboard", 
-            "url": "/dashboard/",
-            "icon": "fas fa-tachometer-alt",
-            "permissions": ["servers.view_server"]
-        }]
-    },
-    
-    # Icons
-    "icons": {
-        "auth": "fas fa-users-cog",
-        "auth.user": "fas fa-user",
-        "auth.Group": "fas fa-users",
-        "servers.Server": "fas fa-server",
-        "servers.WhitelistRequest": "fas fa-list-check",
-        "servers.DisplaySettings": "fas fa-cog",
-        "servers.Announcement": "fas fa-bullhorn",
-    },
-    
-    # Default icon for models
-    "default_icon_parents": "fas fa-chevron-circle-right",
-    "default_icon_children": "fas fa-circle",
-    
-    # UI Tweaks
-    "show_ui_builder": False,
-    "changeform_format": "horizontal_tabs",
-    "changeform_format_overrides": {
-        "auth.user": "collapsible",
-        "auth.group": "vertical_tabs"
-    },
-    
-    # Theme
-    "theme": "flatly",  # Options: default, cerulean, cosmo, cyborg, darkly, flatly, journal, litera, lumen, lux, materia, minty, pulse, sandstone, simplex, slate, solar, spacelab, superhero, united, yeti
-    
-    # Custom CSS/JS
-    "custom_css": None,
-    "custom_js": None,
-    
-    # Language
-    "language_chooser": True,
-}
-
-JAZZMIN_UI_TWEAKS = {
-    "navbar_small_text": False,
-    "footer_small_text": False,
-    "body_small_text": False,
-    "brand_small_text": False,
-    "brand_colour": "navbar-primary",
-    "accent": "accent-primary",
-    "navbar": "navbar-white navbar-light",
-    "no_navbar_border": False,
-    "navbar_fixed": False,
-    "layout_boxed": False,
-    "footer_fixed": False,
-    "sidebar_fixed": False,
-    "sidebar": "sidebar-dark-primary",
-    "sidebar_nav_small_text": False,
-    "sidebar_disable_expand": False,
-    "sidebar_nav_child_indent": False,
-    "sidebar_nav_compact_style": False,
-    "sidebar_nav_legacy_style": False,
-    "sidebar_nav_flat_style": False,
-    "theme": "flatly",
-    "dark_mode_theme": None,
-    "button_classes": {
-        "primary": "btn-primary",
-        "secondary": "btn-secondary",
-        "info": "btn-info",
-        "warning": "btn-warning",
-        "danger": "btn-danger",
-        "success": "btn-success"
-    }
-}
+# Admin site customization (applied in servers/admin.py)
+ADMIN_SITE_HEADER = "MC RCON Manager Admin"
+ADMIN_SITE_TITLE = "MC RCON Manager"
+ADMIN_INDEX_TITLE = "Welcome to MC RCON Manager Admin Panel"
 
 # ============================================================================
 # Captcha Configuration

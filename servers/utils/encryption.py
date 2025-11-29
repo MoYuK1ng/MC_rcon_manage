@@ -1,5 +1,5 @@
 """
-Encryption Utility for IronGate RCON Portal
+Encryption Utility for MC RCON Manager
 Provides Fernet symmetric encryption for RCON passwords
 """
 

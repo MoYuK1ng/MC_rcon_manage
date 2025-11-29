@@ -1,5 +1,5 @@
 """
-Forms for IronGate RCON Portal
+Forms for MC RCON Manager
 """
 
 from django import forms

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Encryption Key Rotation Tool for IronGate RCON Portal
+Encryption Key Rotation Tool for MC RCON Manager
 Safely rotates encryption keys and re-encrypts all stored passwords
 """
 

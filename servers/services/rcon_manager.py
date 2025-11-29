@@ -1,5 +1,5 @@
 """
-RCON Manager Service for IronGate
+RCON Manager Service for MC RCON Manager
 Handles RCON connections and command execution for Minecraft servers
 """
 

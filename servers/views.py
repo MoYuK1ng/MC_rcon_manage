@@ -1,5 +1,5 @@
 """
-Views for IronGate RCON Portal
+Views for MC RCON Manager
 Handles dashboard, player lists, and whitelist management
 """
 
@@ -230,7 +230,7 @@ class RegisterView(View):
             login(request, user)
             messages.success(
                 request,
-                _('Registration successful! Welcome to IronGate.')
+                _('Registration successful! Welcome to MC RCON Manager.')
             )
             return redirect('dashboard')
         
