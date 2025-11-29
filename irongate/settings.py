@@ -283,13 +283,13 @@ JAZZMIN_SETTINGS = {
     
     # Custom links in sidebar
     "custom_links": {
-        "servers": [
-            {
-                "name": "Ungrouped Users / 未分组用户", 
-                "url": "admin:ungrouped_users", 
-                "icon": "fas fa-user-slash",
-                "permissions": ["auth.change_user"]
-            },
+        "servers": [{
+            "name": "Ungrouped Users / 未分组用户", 
+            "url": "admin:ungrouped_users", 
+            "icon": "fas fa-user-slash",
+            "permissions": ["auth.change_user"]
+        }],
+        "auth": [
             {
                 "name": "━━━━━━━━━━━━━━━━━━━━",
                 "url": "#",
