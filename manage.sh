@@ -992,9 +992,9 @@ view_logs() {
 backup_data() {
     print_banner
     if [ "$LANG_CHOICE" = "zh" ]; then
-        echo "=== 备份数据 ==="
+        echo "=== 备份数据库 ==="
     else
-        echo "=== Backup Data ==="
+        echo "=== Backup Database ==="
     fi
     echo ""
     
@@ -1003,31 +1003,97 @@ backup_data() {
         return
     fi
     
-    BACKUP_DIR="backups"
-    mkdir -p "$BACKUP_DIR"
+    CURRENT_DIR=$(pwd)
     
-    TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-    BACKUP_FILE="${BACKUP_DIR}/backup_${TIMESTAMP}.tar.gz"
-    
+    # Ask for backup directory
     if [ "$LANG_CHOICE" = "zh" ]; then
-        print_info "创建备份..."
+        echo "📁 请输入备份目录路径（按 Enter 使用当前目录）:"
+        read -p "备份目录 [$CURRENT_DIR]: " BACKUP_DIR
     else
-        print_info "Creating backup..."
+        echo "📁 Enter backup directory path (press Enter for current directory):"
+        read -p "Backup directory [$CURRENT_DIR]: " BACKUP_DIR
     fi
     
-    tar -czf "$BACKUP_FILE" \
-        db.sqlite3 \
-        .env \
-        staticfiles/ \
-        2>/dev/null || true
+    BACKUP_DIR=${BACKUP_DIR:-$CURRENT_DIR}
     
-    if [ "$LANG_CHOICE" = "zh" ]; then
-        print_success "备份已创建: $BACKUP_FILE"
-    else
-        print_success "Backup created: $BACKUP_FILE"
+    # Create backup directory if it doesn't exist
+    if [ ! -d "$BACKUP_DIR" ]; then
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_info "创建备份目录..."
+        else
+            print_info "Creating backup directory..."
+        fi
+        mkdir -p "$BACKUP_DIR"
     fi
     
-    ls -lh "$BACKUP_FILE"
+    # Generate backup filename with timestamp
+    TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+    BACKUP_FILE="db_backup_${TIMESTAMP}.sqlite3"
+    BACKUP_PATH="$BACKUP_DIR/$BACKUP_FILE"
+    
+    # Check if database exists
+    if [ ! -f "db.sqlite3" ]; then
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_error "数据库文件不存在: db.sqlite3"
+        else
+            print_error "Database file not found: db.sqlite3"
+        fi
+        press_any_key
+        return
+    fi
+    
+    # Create backup
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        print_info "💾 正在创建备份..."
+    else
+        print_info "💾 Creating backup..."
+    fi
+    
+    cp db.sqlite3 "$BACKUP_PATH"
+    
+    # Verify backup
+    if [ -f "$BACKUP_PATH" ]; then
+        BACKUP_SIZE=$(du -h "$BACKUP_PATH" | cut -f1)
+        echo ""
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_success "✅ 备份创建成功！"
+        else
+            print_success "✅ Backup created successfully!"
+        fi
+        echo ""
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            echo "📋 备份信息:"
+        else
+            echo "📋 Backup Information:"
+        fi
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            echo "  文件名: $BACKUP_FILE"
+            echo "  位置:   $BACKUP_PATH"
+            echo "  大小:   $BACKUP_SIZE"
+            echo "  日期:   $(date '+%Y-%m-%d %H:%M:%S')"
+        else
+            echo "  Filename: $BACKUP_FILE"
+            echo "  Location: $BACKUP_PATH"
+            echo "  Size:     $BACKUP_SIZE"
+            echo "  Date:     $(date '+%Y-%m-%d %H:%M:%S')"
+        fi
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo ""
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            echo "💡 要恢复此备份，请在主菜单选择 '9) 恢复数据'"
+        else
+            echo "💡 To restore this backup, select '9) Restore Data' from main menu"
+        fi
+        echo ""
+    else
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_error "❌ 备份失败！"
+        else
+            print_error "❌ Backup failed!"
+        fi
+    fi
     
     press_any_key
 }
@@ -1035,87 +1101,178 @@ backup_data() {
 restore_data() {
     print_banner
     if [ "$LANG_CHOICE" = "zh" ]; then
-        echo "=== 恢复数据 ==="
+        echo "=== 恢复数据库 ==="
     else
-        echo "=== Restore Data ==="
+        echo "=== Restore Database ==="
     fi
     echo ""
     
-    if [ ! -d "backups" ]; then
-        print_error "Backup directory not found"
+    if ! check_and_enter_project_dir; then
         press_any_key
         return
     fi
     
+    # Ask for backup file path
     if [ "$LANG_CHOICE" = "zh" ]; then
-        print_info "可用的备份文件:"
+        echo "📁 请输入备份文件的完整路径:"
+        read -p "备份文件路径: " BACKUP_FILE
     else
-        print_info "Available backup files:"
+        echo "📁 Enter the full path to the backup file:"
+        read -p "Backup file path: " BACKUP_FILE
     fi
     
-    ls -lh backups/*.tar.gz 2>/dev/null || {
-        print_error "No backup files found"
-        press_any_key
-        return
-    }
-    
-    echo ""
-    if [ "$LANG_CHOICE" = "zh" ]; then
-        read -p "输入备份文件名: " backup_file
-    else
-        read -p "Enter backup filename: " backup_file
-    fi
-    
-    if [ ! -f "backups/$backup_file" ]; then
-        print_error "Backup file not found"
-        press_any_key
-        return
-    fi
-    
-    if [ "$LANG_CHOICE" = "zh" ]; then
-        print_warning "这将覆盖当前数据！"
-        read -p "确认恢复? (yes/no): " confirm
-    else
-        print_warning "This will overwrite current data!"
-        read -p "Confirm restore? (yes/no): " confirm
-    fi
-    
-    if [ "$confirm" != "yes" ]; then
+    # Check if backup file exists
+    if [ ! -f "$BACKUP_FILE" ]; then
         if [ "$LANG_CHOICE" = "zh" ]; then
-            print_info "已取消"
+            print_error "❌ 备份文件不存在: $BACKUP_FILE"
         else
-            print_info "Cancelled"
+            print_error "❌ Backup file not found: $BACKUP_FILE"
         fi
         press_any_key
         return
     fi
     
+    # Show backup info
+    BACKUP_SIZE=$(du -h "$BACKUP_FILE" | cut -f1)
+    echo ""
     if [ "$LANG_CHOICE" = "zh" ]; then
-        print_info "停止服务..."
+        echo "📋 备份文件信息:"
+        echo "  文件: $BACKUP_FILE"
+        echo "  大小: $BACKUP_SIZE"
     else
-        print_info "Stopping service..."
+        echo "📋 Backup file information:"
+        echo "  File: $BACKUP_FILE"
+        echo "  Size: $BACKUP_SIZE"
     fi
-    systemctl stop mc-rcon
+    echo ""
     
+    # Confirm restore
     if [ "$LANG_CHOICE" = "zh" ]; then
-        print_info "恢复数据..."
+        echo "⚠️  警告: 这将替换您当前的数据库！"
+        echo "   请确保您已经备份了当前数据库。"
+        echo ""
+        read -p "是否继续? (yes/no): " CONFIRM
     else
-        print_info "Restoring data..."
+        echo "⚠️  WARNING: This will replace your current database!"
+        echo "   Make sure you have a backup of your current database."
+        echo ""
+        read -p "Do you want to continue? (yes/no): " CONFIRM
     fi
-    tar -xzf "backups/$backup_file"
     
-    if [ "$LANG_CHOICE" = "zh" ]; then
-        print_info "启动服务..."
-    else
-        print_info "Starting service..."
+    if [ "$CONFIRM" != "yes" ]; then
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_info "ℹ️  恢复已取消。"
+        else
+            print_info "ℹ️  Restore cancelled."
+        fi
+        press_any_key
+        return
     fi
+    
+    # Create backup of current database before restore
+    if [ -f "db.sqlite3" ]; then
+        TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+        CURRENT_BACKUP="db_before_restore_${TIMESTAMP}.sqlite3"
+        echo ""
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_info "💾 正在备份当前数据库..."
+        else
+            print_info "💾 Creating backup of current database..."
+        fi
+        cp db.sqlite3 "$CURRENT_BACKUP"
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_success "✅ 当前数据库已备份到: $CURRENT_BACKUP"
+        else
+            print_success "✅ Current database backed up to: $CURRENT_BACKUP"
+        fi
+    fi
+    
+    # Stop the service if running
+    echo ""
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        print_info "🛑 正在停止 MC RCON 服务..."
+    else
+        print_info "🛑 Stopping MC RCON service..."
+    fi
+    
+    if systemctl is-active --quiet mc-rcon; then
+        systemctl stop mc-rcon
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_success "✅ 服务已停止"
+        else
+            print_success "✅ Service stopped"
+        fi
+    else
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_info "ℹ️  服务未运行"
+        else
+            print_info "ℹ️  Service is not running"
+        fi
+    fi
+    
+    # Restore database
+    echo ""
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        print_info "🔄 正在恢复数据库..."
+    else
+        print_info "🔄 Restoring database..."
+    fi
+    
+    cp "$BACKUP_FILE" db.sqlite3
+    
+    # Verify restore
+    if [ -f "db.sqlite3" ]; then
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_success "✅ 数据库恢复成功！"
+        else
+            print_success "✅ Database restored successfully!"
+        fi
+    else
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_error "❌ 恢复失败！"
+        else
+            print_error "❌ Restore failed!"
+        fi
+        press_any_key
+        return
+    fi
+    
+    # Start the service
+    echo ""
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        print_info "🚀 正在启动 MC RCON 服务..."
+    else
+        print_info "🚀 Starting MC RCON service..."
+    fi
+    
     systemctl start mc-rcon
     
-    if [ "$LANG_CHOICE" = "zh" ]; then
-        print_success "数据已恢复"
+    # Check service status
+    sleep 2
+    if systemctl is-active --quiet mc-rcon; then
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_success "✅ 服务启动成功"
+        else
+            print_success "✅ Service started successfully"
+        fi
     else
-        print_success "Data restored"
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_error "❌ 警告: 服务启动失败"
+            echo "   使用以下命令查看日志: journalctl -u mc-rcon -n 50"
+        else
+            print_error "❌ Warning: Service failed to start"
+            echo "   Check logs with: journalctl -u mc-rcon -n 50"
+        fi
     fi
+    
+    echo ""
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        print_success "🎉 数据库恢复完成！"
+    else
+        print_success "🎉 Database restore complete!"
+    fi
+    echo ""
+    
     press_any_key
 }
 
@@ -1200,7 +1357,7 @@ uninstall_all() {
     echo ""
     
     if [ "$LANG_CHOICE" = "zh" ]; then
-        print_warning "警告：这将删除所有数据和配置！"
+        print_warning "⚠️  警告：这将删除所有数据和配置！"
         echo ""
         echo "将要删除："
         echo "  - 项目文件"
@@ -1208,9 +1365,8 @@ uninstall_all() {
         echo "  - 配置文件"
         echo "  - Systemd 服务"
         echo ""
-        read -p "确认卸载? 输入 'YES' 继续: " confirm
     else
-        print_warning "WARNING: This will delete all data and configurations!"
+        print_warning "⚠️  WARNING: This will delete all data and configurations!"
         echo ""
         echo "Will delete:"
         echo "  - Project files"
@@ -1218,14 +1374,43 @@ uninstall_all() {
         echo "  - Configuration files"
         echo "  - Systemd service"
         echo ""
+    fi
+    
+    # Ask if user wants to backup first
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        echo "💾 建议在卸载前备份数据库"
+        read -p "是否现在进行备份? (y/n) [y]: " do_backup
+    else
+        echo "💾 It's recommended to backup your database before uninstalling"
+        read -p "Do you want to backup now? (y/n) [y]: " do_backup
+    fi
+    
+    do_backup=${do_backup:-y}
+    
+    if [ "$do_backup" = "y" ] || [ "$do_backup" = "Y" ]; then
+        # Run backup function
+        backup_data
+        echo ""
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            print_info "备份完成，继续卸载流程..."
+        else
+            print_info "Backup complete, continuing with uninstall..."
+        fi
+        echo ""
+    fi
+    
+    # Final confirmation
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        read -p "确认卸载? 输入 'YES' 继续: " confirm
+    else
         read -p "Confirm uninstall? Type 'YES' to continue: " confirm
     fi
     
     if [ "$confirm" != "YES" ]; then
         if [ "$LANG_CHOICE" = "zh" ]; then
-            print_info "已取消"
+            print_info "已取消卸载"
         else
-            print_info "Cancelled"
+            print_info "Uninstall cancelled"
         fi
         press_any_key
         return
@@ -1292,33 +1477,11 @@ uninstall_all() {
     systemctl daemon-reload
     print_success "Service file removed"
     
-    # 3. Backup database (optional)
+    # 3. Remove project directory
     if [ "$LANG_CHOICE" = "zh" ]; then
-        print_info "步骤 3/4: 备份数据库..."
-        read -p "是否备份数据库? (y/n) [y]: " backup_choice
+        print_info "步骤 3/3: 删除项目文件..."
     else
-        print_info "Step 3/4: Backing up database..."
-        read -p "Backup database? (y/n) [y]: " backup_choice
-    fi
-    
-    backup_choice=${backup_choice:-y}
-    if [ "$backup_choice" = "y" ] || [ "$backup_choice" = "Y" ]; then
-        if [ -f "${INSTALL_DIR}/db.sqlite3" ]; then
-            BACKUP_FILE="/tmp/mc_rcon_backup_$(date +%Y%m%d_%H%M%S).tar.gz"
-            tar -czf "$BACKUP_FILE" -C "$INSTALL_DIR" db.sqlite3 .env 2>/dev/null || true
-            if [ "$LANG_CHOICE" = "zh" ]; then
-                print_success "数据库已备份到: $BACKUP_FILE"
-            else
-                print_success "Database backed up to: $BACKUP_FILE"
-            fi
-        fi
-    fi
-    
-    # 4. Remove project directory
-    if [ "$LANG_CHOICE" = "zh" ]; then
-        print_info "步骤 4/4: 删除项目文件..."
-    else
-        print_info "Step 4/4: Removing project files..."
+        print_info "Step 3/3: Removing project files..."
     fi
     
     rm -rf "$INSTALL_DIR"
@@ -1330,21 +1493,21 @@ uninstall_all() {
     if [ "$LANG_CHOICE" = "zh" ]; then
         echo "卸载完成！"
         echo "============================================================"
-        if [ -n "$BACKUP_FILE" ]; then
-            echo ""
-            echo "数据库备份位置: $BACKUP_FILE"
-        fi
     else
         echo "Uninstall Complete!"
         echo "============================================================"
-        if [ -n "$BACKUP_FILE" ]; then
-            echo ""
-            echo "Database backup location: $BACKUP_FILE"
-        fi
     fi
     echo ""
     
     press_any_key
+    
+    # Exit after uninstall
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        print_info "再见！"
+    else
+        print_info "Goodbye!"
+    fi
+    exit 0
 }
 
 # ============================================================
