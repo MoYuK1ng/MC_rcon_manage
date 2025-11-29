@@ -829,6 +829,11 @@ update_code() {
         print_info "Step 3/8: Pulling latest code..."
     fi
     
+    # Remove compiled translation files to avoid conflicts
+    rm -f locale/*/LC_MESSAGES/*.mo
+    
+    # Reset any local changes and pull
+    git reset --hard HEAD
     git pull origin main
     print_success "Code updated"
     
