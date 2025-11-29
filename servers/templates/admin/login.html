@@ -3,180 +3,233 @@
 
 {% block extrastyle %}
 <script src="https://cdn.tailwindcss.com"></script>
-<script>
-    tailwind.config = {
-        theme: {
-            extend: {
-                colors: {
-                    primary: {
-                        50: '#f0f9ff',
-                        100: '#e0f2fe',
-                        200: '#bae6fd',
-                        300: '#7dd3fc',
-                        400: '#38bdf8',
-                        500: '#0ea5e9',
-                        600: '#0284c7',
-                        700: '#0369a1',
-                        800: '#075985',
-                        900: '#0c4a6e',
-                    }
-                }
-            }
-        }
-    }
-</script>
 <style>
+    /* Game Server Login - Copyright © 2025 MoYuK1ng */
+    
     body {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%) !important;
+        min-height: 100vh !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        position: relative !important;
+        overflow: hidden !important;
+    }
+    
+    body::before {
+        content: '' !important;
+        position: absolute !important;
+        top: -50% !important;
+        left: -50% !important;
+        width: 200% !important;
+        height: 200% !important;
+        background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%) !important;
+        animation: rotate 20s linear infinite !important;
+    }
+    
+    @keyframes rotate {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
     }
     
     #header, #content-related, .breadcrumbs {
-        display: none;
+        display: none !important;
     }
     
     #content {
-        padding: 0;
-        max-width: none;
-        margin: 0;
+        padding: 0 !important;
+        max-width: none !important;
+        margin: 0 !important;
+        position: relative !important;
+        z-index: 1 !important;
     }
     
     .login-container {
-        background: white;
-        border-radius: 1rem;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        overflow: hidden;
-        width: 100%;
-        max-width: 450px;
+        background: var(--bg-card) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 1rem !important;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+        overflow: hidden !important;
+        width: 100% !important;
+        max-width: 450px !important;
+        position: relative !important;
     }
     
     .login-header {
-        background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
-        padding: 2.5rem 2rem;
-        text-align: center;
-        color: white;
+        background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)) !important;
+        padding: 3rem 2rem !important;
+        text-align: center !important;
+        position: relative !important;
+        overflow: hidden !important;
+    }
+    
+    .login-header::before {
+        content: '' !important;
+        position: absolute !important;
+        top: -50% !important;
+        right: -20% !important;
+        width: 300px !important;
+        height: 300px !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+        border-radius: 50% !important;
     }
     
     .login-icon {
-        width: 4rem;
-        height: 4rem;
-        background: rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(10px);
-        border-radius: 1rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1rem;
+        width: 5rem !important;
+        height: 5rem !important;
+        background: rgba(255, 255, 255, 0.2) !important;
+        backdrop-filter: blur(10px) !important;
+        border-radius: 1rem !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin: 0 auto 1.5rem !important;
+        position: relative !important;
+        z-index: 1 !important;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3) !important;
     }
     
     .login-header h1 {
-        font-size: 1.875rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
+        font-size: 2rem !important;
+        font-weight: 700 !important;
+        color: white !important;
+        margin-bottom: 0.5rem !important;
+        position: relative !important;
+        z-index: 1 !important;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
     }
     
     .login-header p {
-        font-size: 1rem;
-        opacity: 0.9;
+        font-size: 1rem !important;
+        color: rgba(255, 255, 255, 0.9) !important;
+        position: relative !important;
+        z-index: 1 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.1em !important;
+        font-weight: 600 !important;
     }
     
     .login-form {
-        padding: 2rem;
+        padding: 2.5rem 2rem !important;
     }
     
     .form-row {
-        margin-bottom: 1.5rem;
-        padding: 0;
-        border: none;
+        margin-bottom: 1.5rem !important;
+        padding: 0 !important;
+        border: none !important;
     }
     
     .form-row label {
-        display: block;
-        color: #475569;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-        font-size: 0.875rem;
+        display: block !important;
+        color: var(--text-secondary) !important;
+        font-weight: 600 !important;
+        margin-bottom: 0.75rem !important;
+        font-size: 0.875rem !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.05em !important;
     }
     
     .form-row input[type="text"],
     .form-row input[type="password"] {
-        width: 100%;
-        max-width: none;
-        padding: 0.75rem 1rem;
-        border: 2px solid #e2e8f0;
-        border-radius: 0.5rem;
-        font-size: 1rem;
-        transition: all 0.2s;
+        width: 100% !important;
+        max-width: none !important;
+        padding: 1rem 1.25rem !important;
+        background: var(--bg-hover) !important;
+        border: 2px solid var(--border) !important;
+        border-radius: 0.5rem !important;
+        color: var(--text-primary) !important;
+        font-size: 1rem !important;
+        transition: all 0.3s !important;
     }
     
     .form-row input[type="text"]:focus,
     .form-row input[type="password"]:focus {
-        outline: none;
-        border-color: #0ea5e9;
-        box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        outline: none !important;
+        border-color: var(--accent-blue) !important;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1) !important;
+        background: var(--bg-card) !important;
     }
     
     .submit-row {
-        background: transparent;
-        padding: 0;
-        margin-top: 2rem;
-        border: none;
+        background: transparent !important;
+        padding: 0 !important;
+        margin-top: 2rem !important;
+        border: none !important;
     }
     
     .submit-row input[type="submit"] {
-        width: 100%;
-        padding: 0.875rem;
-        background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
-        color: white;
-        border: none;
-        border-radius: 0.5rem;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        width: 100% !important;
+        padding: 1rem !important;
+        background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 0.5rem !important;
+        font-size: 1rem !important;
+        font-weight: 700 !important;
+        cursor: pointer !important;
+        transition: all 0.3s !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.1em !important;
+        box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4) !important;
     }
     
     .submit-row input[type="submit"]:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px) !important;
+        box-shadow: 0 15px 30px -5px rgba(59, 130, 246, 0.5) !important;
     }
     
     .errornote {
-        background: #fee2e2;
-        color: #dc2626;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        margin-bottom: 1.5rem;
-        border-left: 4px solid #ef4444;
-        font-weight: 500;
+        background: rgba(239, 68, 68, 0.1) !important;
+        color: var(--accent-red) !important;
+        padding: 1rem 1.25rem !important;
+        border-radius: 0.5rem !important;
+        margin-bottom: 1.5rem !important;
+        border-left: 4px solid var(--accent-red) !important;
+        font-weight: 500 !important;
+        font-size: 0.875rem !important;
     }
     
     .login-footer {
-        text-align: center;
-        padding: 1.5rem 2rem;
-        background: #f8fafc;
-        border-top: 1px solid #e2e8f0;
+        text-align: center !important;
+        padding: 1.5rem 2rem !important;
+        background: var(--bg-hover) !important;
+        border-top: 1px solid var(--border) !important;
     }
     
     .login-footer p {
-        color: #64748b;
-        font-size: 0.875rem;
-        margin: 0;
+        color: var(--text-secondary) !important;
+        font-size: 0.875rem !important;
+        margin: 0 !important;
     }
     
     .login-footer a {
-        color: #0ea5e9;
-        text-decoration: none;
-        font-weight: 600;
+        color: var(--accent-blue) !important;
+        text-decoration: none !important;
+        font-weight: 600 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 0.5rem !important;
+        transition: color 0.2s !important;
     }
     
     .login-footer a:hover {
-        color: #0369a1;
+        color: var(--accent-purple) !important;
+    }
+    
+    .version-badge {
+        position: absolute !important;
+        bottom: 2rem !important;
+        right: 2rem !important;
+        background: rgba(26, 31, 46, 0.8) !important;
+        backdrop-filter: blur(10px) !important;
+        padding: 0.5rem 1rem !important;
+        border-radius: 0.5rem !important;
+        border: 1px solid var(--border) !important;
+        color: var(--text-secondary) !important;
+        font-size: 0.75rem !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.05em !important;
     }
 </style>
 {% endblock %}
@@ -187,12 +240,12 @@
 <div class="login-container">
     <div class="login-header">
         <div class="login-icon">
-            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path>
+            <svg width="48" height="48" fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path>
             </svg>
         </div>
         <h1>MC RCON Manager</h1>
-        <p>{% trans 'Admin Panel Login' %}</p>
+        <p>{% trans 'Admin Panel' %}</p>
     </div>
     
     <form action="{{ app_path }}" method="post" id="login-form" class="login-form">
@@ -221,7 +274,7 @@
             {{ form.username.label_tag }}
             {{ form.username }}
             {% if form.username.errors %}
-                <div class="errornote" style="margin-top: 0.5rem;">{{ form.username.errors }}</div>
+                <div class="errornote" style="margin-top: 0.75rem;">{{ form.username.errors }}</div>
             {% endif %}
         </div>
         
@@ -229,25 +282,29 @@
             {{ form.password.label_tag }}
             {{ form.password }}
             {% if form.password.errors %}
-                <div class="errornote" style="margin-top: 0.5rem;">{{ form.password.errors }}</div>
+                <div class="errornote" style="margin-top: 0.75rem;">{{ form.password.errors }}</div>
             {% endif %}
             <input type="hidden" name="next" value="{{ next }}">
         </div>
         
         <div class="submit-row">
-            <input type="submit" value="{% trans 'Log in' %}">
+            <input type="submit" value="{% trans 'Access Admin Panel' %}">
         </div>
     </form>
     
     <div class="login-footer">
         <p>
             <a href="{% url 'dashboard' %}">
-                <svg class="w-4 h-4 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                 </svg>
                 {% trans 'Back to Dashboard' %}
             </a>
         </p>
     </div>
+</div>
+
+<div class="version-badge">
+    © 2025 MoYuK1ng
 </div>
 {% endblock %}
