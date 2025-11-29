@@ -3,16 +3,39 @@
     <strong>© 2025 <a href="https://github.com/MoYuK1ng/MC_rcon_manage" target="_blank" rel="noopener noreferrer">MoYuK1ng</a> - MC RCON Manager</strong>
 </footer>
 
+<style>
+/* Hide Jazzmin version completely */
+.main-footer .float-right {
+    display: none !important;
+}
+</style>
+
 <script>
-// Clean Jazzmin version from footer
-document.addEventListener('DOMContentLoaded', function() {
-    const footer = document.querySelector('.main-footer');
-    if (footer) {
-        // Remove version div
+(function() {
+    'use strict';
+    function cleanFooter() {
+        const footer = document.querySelector('.main-footer');
+        if (!footer) return;
+        
+        // Remove version div if exists
         const versionDiv = footer.querySelector('.float-right');
         if (versionDiv) {
             versionDiv.remove();
         }
+        
+        // If footer still contains "Jazzmin" or version number, rebuild it
+        if (footer.textContent.includes('Jazzmin') || footer.textContent.includes('版本') || footer.textContent.includes('3.0')) {
+            footer.innerHTML = '<strong>© 2025 <a href="https://github.com/MoYuK1ng/MC_rcon_manage" target="_blank" rel="noopener noreferrer">MoYuK1ng</a> - MC RCON Manager</strong>';
+        }
     }
-});
+    
+    // Run multiple times to ensure it works
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', cleanFooter);
+    } else {
+        cleanFooter();
+    }
+    setTimeout(cleanFooter, 100);
+    setTimeout(cleanFooter, 500);
+})();
 </script>
