@@ -88,6 +88,9 @@ INSTALLED_APPS = [
     # Local apps must be first to override other app templates
     'servers',
     
+    # Jazzmin admin theme (must be before django.contrib.admin)
+    'jazzmin',
+    
     # Django apps
     'django.contrib.admin',
     'django.contrib.auth',
@@ -247,19 +250,98 @@ ACCOUNT_EMAIL_VERIFICATION = 'optional'  # Can be 'mandatory', 'optional', or 'n
 
 
 # ============================================================================ 
-# Django Jazzmin Configuration
+# Django Jazzmin Configuration - Vercel Style
+# Copyright © 2025 MoYuK1ng
 # ============================================================================ 
 
 JAZZMIN_SETTINGS = {
-    "site_title": "MC RCON Admin",
+    # Site branding
+    "site_title": "MC RCON Manager",
     "site_header": "MC RCON Manager",
-    "site_brand": "MC RCON",
-    "welcome_sign": "Welcome to the MC RCON Manager Control Panel",
-    "copyright": "MC RCON Manager by <a href='https://github.com/MoYuK1ng/MC_rcon_manage' target='_blank'>MoYuK1ng</a>",
-    "show_ui_builder": True,
+    "site_brand": "MC RCON Manager",
+    "site_logo": None,
+    "login_logo": None,
+    "site_icon": None,
+    
+    # Welcome text
+    "welcome_sign": "Manage your Minecraft servers",
+    
+    # Copyright (no version number)
+    "copyright": "© 2025 MoYuK1ng",
+    
+    # Hide version number
     "show_version": False,
+    
+    # Search
+    "search_model": ["auth.User", "servers.Server", "servers.WhitelistRequest"],
+    
+    # Top menu links
+    "topmenu_links": [
+        {"name": "Dashboard", "url": "dashboard", "permissions": ["auth.view_user"]},
+        {"name": "User Site", "url": "/", "new_window": False},
+    ],
+    
+    # User menu
+    "usermenu_links": [
+        {"name": "User Dashboard", "url": "dashboard", "icon": "fas fa-home"},
+    ],
+    
+    # Side menu
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    
+    # Icons
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+        "servers.Server": "fas fa-server",
+        "servers.WhitelistRequest": "fas fa-clipboard-list",
+        "servers.Announcement": "fas fa-bullhorn",
+    },
+    
+    # UI Builder
+    "show_ui_builder": False,
+    
+    # Change form
+    "changeform_format": "horizontal_tabs",
+    "changeform_format_overrides": {
+        "auth.user": "collapsible",
+        "auth.group": "vertical_tabs"
+    },
+    
+    # Language chooser
+    "language_chooser": True,
 }
 
 JAZZMIN_UI_TWEAKS = {
-    "theme": "litera",
+    # Vercel-inspired color scheme
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text": False,
+    "brand_small_text": False,
+    "brand_colour": "navbar-white",
+    "accent": "accent-primary",
+    "navbar": "navbar-white navbar-light",
+    "no_navbar_border": False,
+    "navbar_fixed": True,
+    "layout_boxed": False,
+    "footer_fixed": False,
+    "sidebar_fixed": True,
+    "sidebar": "sidebar-light-primary",
+    "sidebar_nav_small_text": False,
+    "sidebar_nav_child_indent": True,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": True,
+    "theme": "flatly",  # Clean, modern theme
+    "dark_mode_theme": None,
+    "button_classes": {
+        "primary": "btn-primary",
+        "secondary": "btn-secondary",
+        "info": "btn-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-success"
+    },
 }
