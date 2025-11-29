@@ -73,6 +73,25 @@
     overflow: hidden;
 }
 
+/* Hover effect when sidebar is collapsed - expand on hover */
+.sidebar-collapse .main-sidebar:hover .sidebar-project-info {
+    width: 250px;
+}
+
+.sidebar-collapse .main-sidebar:hover .sidebar-project-info a {
+    justify-content: flex-start;
+    padding: 12px 16px;
+}
+
+.sidebar-collapse .main-sidebar:hover .sidebar-project-info .nav-icon {
+    margin-right: 12px;
+}
+
+.sidebar-collapse .main-sidebar:hover .sidebar-project-info .project-name {
+    opacity: 1;
+    width: auto;
+}
+
 /* Responsive adjustments */
 @media (max-width: 991px) {
     .sidebar-project-info {
