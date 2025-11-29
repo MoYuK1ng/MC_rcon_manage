@@ -281,6 +281,16 @@ JAZZMIN_SETTINGS = {
         {"name": "User Dashboard", "url": "dashboard", "permissions": ["auth.view_user"], "icon": "fas fa-home"},
     ],
     
+    # Custom links in sidebar
+    "custom_links": {
+        "servers": [{
+            "name": "Ungrouped Users / 未分组用户", 
+            "url": "admin:ungrouped_users", 
+            "icon": "fas fa-user-slash",
+            "permissions": ["auth.change_user"]
+        }]
+    },
+    
     # User menu
     "usermenu_links": [
         {"name": "User Dashboard", "url": "dashboard", "icon": "fas fa-home"},

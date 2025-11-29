@@ -414,3 +414,19 @@ class AnnouncementAdmin(admin.ModelAdmin):
 admin.site.site_header = _("MC RCON Manager Admin")
 admin.site.site_title = _("MC RCON Manager")
 admin.site.index_title = _("Welcome to MC RCON Manager Admin Panel")
+
+
+# Register custom admin URLs
+from django.urls import path
+from servers.admin_views import ungrouped_users_view
+
+
+def get_admin_urls(urls):
+    """Add custom admin URLs"""
+    custom_urls = [
+        path('ungrouped-users/', ungrouped_users_view, name='ungrouped_users'),
+    ]
+    return custom_urls + urls
+
+
+admin.site.get_urls = lambda: get_admin_urls(admin.site.get_urls())
