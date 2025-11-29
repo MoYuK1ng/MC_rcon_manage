@@ -468,3 +468,7 @@ msgstr "只有激活的公告才会显示给用户"
 
 msgid "Username must be 3-16 characters long and contain only letters, numbers, and underscores"
 msgstr "用户名必须是3-16个字符，只能包含字母、数字和下划线"
+
+# App name
+msgid "MC RCON 管理"
+msgstr "MC RCON 管理"
