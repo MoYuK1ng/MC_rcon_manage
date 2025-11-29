@@ -87,6 +87,9 @@ CSRF_TRUSTED_ORIGINS = os.getenv(
 # Application definition
 
 INSTALLED_APPS = [
+    # Local apps (must be before django.contrib.admin for template override)
+    'servers',
+    # Django apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -96,8 +99,6 @@ INSTALLED_APPS = [
     # Third-party apps
     'django_htmx',
     'captcha',  # django-simple-captcha
-    # Local apps
-    'servers',
 ]
 
 MIDDLEWARE = [
