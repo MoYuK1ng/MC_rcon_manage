@@ -344,3 +344,127 @@ msgstr "输入验证码"
 
 msgid "Already have an account?"
 msgstr "已经有账户了？"
+
+# Model translations
+msgid "Server"
+msgstr "服务器"
+
+msgid "Servers"
+msgstr "服务器"
+
+msgid "Whitelist Request"
+msgstr "白名单申请"
+
+msgid "Whitelist Requests"
+msgstr "白名单申请"
+
+msgid "Announcement"
+msgstr "公告"
+
+msgid "Announcements"
+msgstr "公告"
+
+msgid "Server Name"
+msgstr "服务器名称"
+
+msgid "Display name for the Minecraft server"
+msgstr "Minecraft服务器的显示名称"
+
+msgid "RCON IP Address"
+msgstr "RCON IP地址"
+
+msgid "IPv4 address for RCON connection (management only)"
+msgstr "RCON连接的IPv4地址（仅管理员可见）"
+
+msgid "RCON Port"
+msgstr "RCON端口"
+
+msgid "RCON port number (default: 25575, management only)"
+msgstr "RCON端口号（默认：25575，仅管理员可见）"
+
+msgid "Game Server IP"
+msgstr "游戏服务器IP"
+
+msgid "IP or domain for players to connect (e.g., play.example.com)"
+msgstr "玩家连接的IP或域名（例如：play.example.com）"
+
+msgid "Game Server Port"
+msgstr "游戏服务器端口"
+
+msgid "Port for players to connect (default: 25565)"
+msgstr "玩家连接的端口（默认：25565）"
+
+msgid "Encrypted RCON Password"
+msgstr "加密的RCON密码"
+
+msgid "Encrypted RCON password (never stored in plaintext)"
+msgstr "加密的RCON密码（永不明文存储）"
+
+msgid "Access Groups"
+msgstr "访问组"
+
+msgid "User groups that can access this server"
+msgstr "可以访问此服务器的用户组"
+
+msgid "Created At"
+msgstr "创建时间"
+
+msgid "Updated At"
+msgstr "更新时间"
+
+msgid "User"
+msgstr "用户"
+
+msgid "User who submitted the whitelist request"
+msgstr "提交白名单申请的用户"
+
+msgid "Target Minecraft server"
+msgstr "目标Minecraft服务器"
+
+msgid "Minecraft Username"
+msgstr "Minecraft用户名"
+
+msgid "Minecraft username to whitelist (3-16 alphanumeric characters and underscores)"
+msgstr "要加入白名单的Minecraft用户名（3-16个字母、数字和下划线）"
+
+msgid "Current status of the whitelist request"
+msgstr "白名单申请的当前状态"
+
+msgid "Response Log"
+msgstr "响应日志"
+
+msgid "RCON server response or error message"
+msgstr "RCON服务器响应或错误消息"
+
+msgid "Pending"
+msgstr "待处理"
+
+msgid "Approved"
+msgstr "已批准"
+
+msgid "Processed"
+msgstr "已处理"
+
+msgid "Failed"
+msgstr "失败"
+
+msgid "Title"
+msgstr "标题"
+
+msgid "Announcement title (supports Chinese and English)"
+msgstr "公告标题（支持中英文）"
+
+msgid "Content"
+msgstr "内容"
+
+msgid "Announcement content (supports HTML formatting)"
+msgstr "公告内容（支持HTML格式）"
+
+msgid "Active"
+msgstr "激活"
+
+msgid "Only active announcements are displayed to users"
+msgstr "只有激活的公告才会显示给用户"
+
+msgid "Username must be 3-16 characters long and contain only letters, numbers, and underscores"
+msgstr "用户名必须是3-16个字符，只能包含字母、数字和下划线"
