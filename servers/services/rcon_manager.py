@@ -5,11 +5,15 @@ Handles RCON command execution for Minecraft servers using a connection pool.
 
 import re
 import socket
+import logging
 from typing import Dict, List
 from mcrcon import MCRconException
 
 # Import the global connection pool for persistent connections.
 from .rcon_pool import rcon_pool
+
+# Set up logger
+logger = logging.getLogger(__name__)
 
 
 class RconHandler:
@@ -130,8 +134,11 @@ class RconHandler:
         Returns:
             A dictionary with success status and a server response message.
         """
+        logger.info(f"Attempting to add {username} to whitelist on {self.host}:{self.port}")
+        
         # Validate username format to prevent invalid characters.
         if not re.match(r'^[a-zA-Z0-9_]{3,16}$', username):
+            logger.warning(f"Invalid username format: {username}")
             return {
                 'success': False, 
                 'message': 'Invalid username format. Must be 3-16 characters, letters, numbers, and underscores.'
@@ -139,37 +146,52 @@ class RconHandler:
 
         try:
             # Add user to whitelist
+            logger.debug(f"Executing: whitelist add {username}")
             add_response = self._execute_command(f'whitelist add {username}')
+            logger.info(f"Add response: {add_response}")
             
             # Reload whitelist to apply changes immediately
             # This is CRITICAL - without reload, the whitelist won't take effect
+            logger.debug("Executing: whitelist reload")
             reload_response = self._execute_command('whitelist reload')
+            logger.info(f"Reload response: {reload_response}")
+            
+            success_message = f'{add_response} {reload_response}' if add_response and reload_response else f'Successfully added {username} to the whitelist and reloaded.'
+            logger.info(f"Whitelist addition successful for {username}")
             
             return {
                 'success': True,
-                'message': f'{add_response} Whitelist reloaded.' if add_response else f'Successfully added {username} to the whitelist and reloaded.'
+                'message': success_message
             }
         
         except socket.timeout:
+            error_msg = f'Connection to {self.host}:{self.port} timed out'
+            logger.error(error_msg)
             return {
                 'success': False,
-                'message': f'Connection to {self.host}:{self.port} timed out'
+                'message': error_msg
             }
         
         except ConnectionRefusedError:
+            error_msg = f'Connection to {self.host}:{self.port} refused - server may be offline'
+            logger.error(error_msg)
             return {
                 'success': False,
-                'message': f'Connection to {self.host}:{self.port} refused - server may be offline'
+                'message': error_msg
             }
         
         except MCRconException as e:
+            error_msg = f'RCON error: {str(e)}'
+            logger.error(f"RCON exception for {username}: {error_msg}")
             return {
                 'success': False,
-                'message': f'RCON error: {str(e)}'
+                'message': error_msg
             }
         
         except Exception as e:
+            error_msg = f'Unexpected error: {str(e)}'
+            logger.exception(f"Unexpected error adding {username} to whitelist")
             return {
                 'success': False,
-                'message': f'Unexpected error: {str(e)}'
+                'message': error_msg
             }

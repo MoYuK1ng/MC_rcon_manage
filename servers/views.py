@@ -102,9 +102,27 @@ class WhitelistAddView(View):
             messages.error(request, _('Please enter a Minecraft username.'))
             return redirect('dashboard')
         
-        if WhitelistRequest.objects.filter(server=server, minecraft_username=minecraft_username).exists():
-            messages.warning(request, _('This username is already on the whitelist or has a pending request.'))
-            return redirect('dashboard')
+        # Check for existing whitelist requests
+        existing_request = WhitelistRequest.objects.filter(
+            server=server, 
+            minecraft_username=minecraft_username
+        ).first()
+        
+        if existing_request:
+            # If there's a successful request, don't allow duplicate
+            if existing_request.status == WhitelistRequest.Status.PROCESSED:
+                messages.warning(request, _('This username is already on the whitelist.'))
+                return redirect('dashboard')
+            
+            # If there's a failed request, allow retry by deleting the old one
+            if existing_request.status == WhitelistRequest.Status.FAILED:
+                existing_request.delete()
+                messages.info(request, _('Retrying whitelist addition for {username}...').format(username=minecraft_username))
+            
+            # If there's a pending request, don't allow duplicate
+            if existing_request.status == WhitelistRequest.Status.PENDING:
+                messages.warning(request, _('There is already a pending request for this username.'))
+                return redirect('dashboard')
 
         whitelist_request = WhitelistRequest(user=request.user, server=server, minecraft_username=minecraft_username)
         try:
