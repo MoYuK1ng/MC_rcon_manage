@@ -57,7 +57,7 @@
                     <!-- Server Header -->
                     <div class="relative p-6 bg-gradient-to-br from-white to-gray-50">
                         <!-- Status Indicator -->
-                        <div class="absolute top-4 right-4">
+                        <div class="absolute top-4 right-4" id="status-indicator-{{ server.id }}">
                             <div class="relative">
                                 <div class="w-3 h-3 bg-emerald-500 rounded-full animate-pulse-slow"></div>
                                 <div class="absolute inset-0 w-3 h-3 bg-emerald-400 rounded-full animate-ping"></div>
@@ -187,28 +187,59 @@
 </div>
 
 <script>
-// Update player count dynamically
+// Update player count and server status dynamically
 document.addEventListener('htmx:afterSwap', function(event) {
     const targetEl = event.detail.target;
     if (targetEl.id.startsWith('player-list-')) {
         const serverId = targetEl.id.replace('player-list-', '');
         const playerBadges = targetEl.querySelectorAll('.player-badge');
         const countElement = document.getElementById('player-count-' + serverId);
-        if (countElement) {
-            // Check if it's the initial load (still has shimmer)
-            const shimmer = countElement.querySelector('.loading-shimmer');
-            if (shimmer) {
-                // Replace shimmer with count
-                countElement.innerHTML = playerBadges.length;
+        const statusIndicator = document.getElementById('status-indicator-' + serverId);
+        
+        // Check server status from the response
+        const statusWrapper = targetEl.querySelector('[data-server-status]');
+        const isOnline = statusWrapper && statusWrapper.dataset.serverStatus === 'online';
+        
+        // Update status indicator
+        if (statusIndicator) {
+            if (isOnline) {
+                // Server is online - green indicator
+                statusIndicator.innerHTML = `
+                    <div class="relative">
+                        <div class="w-3 h-3 bg-emerald-500 rounded-full animate-pulse-slow"></div>
+                        <div class="absolute inset-0 w-3 h-3 bg-emerald-400 rounded-full animate-ping"></div>
+                    </div>
+                `;
             } else {
-                // Smooth update
-                if (countElement.textContent !== playerBadges.length.toString()) {
-                    countElement.classList.add('animate-fade-in');
-                    countElement.textContent = playerBadges.length;
-                    countElement.addEventListener('animationend', () => {
-                        countElement.classList.remove('animate-fade-in');
-                    }, { once: true });
+                // Server is offline - red indicator
+                statusIndicator.innerHTML = `
+                    <div class="relative">
+                        <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                    </div>
+                `;
+            }
+        }
+        
+        // Update player count
+        if (countElement) {
+            const shimmer = countElement.querySelector('.loading-shimmer');
+            
+            if (isOnline) {
+                // Server online - show player count
+                if (shimmer) {
+                    countElement.innerHTML = playerBadges.length;
+                } else {
+                    if (countElement.textContent !== playerBadges.length.toString()) {
+                        countElement.classList.add('animate-fade-in');
+                        countElement.textContent = playerBadges.length;
+                        countElement.addEventListener('animationend', () => {
+                            countElement.classList.remove('animate-fade-in');
+                        }, { once: true });
+                    }
                 }
+            } else {
+                // Server offline - show dash
+                countElement.innerHTML = '<span class="text-red-500">-</span>';
             }
         }
     }
