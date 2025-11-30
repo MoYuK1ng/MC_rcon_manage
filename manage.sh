@@ -1030,15 +1030,56 @@ view_logs() {
 }
 
 # ============================================================
-# 8-9. Backup and Restore
+# 8. Backup Management (Integrated with automatic backup system)
 # ============================================================
 
-backup_data() {
+backup_menu() {
+    while true; do
+        print_banner
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            echo "=== 备份管理 ==="
+            echo ""
+            echo "  1) 立即创建备份"
+            echo "  2) 列出所有备份"
+            echo "  3) 清理旧备份"
+            echo "  4) 查看备份配置"
+            echo "  0) 返回主菜单"
+        else
+            echo "=== Backup Management ==="
+            echo ""
+            echo "  1) Create backup now"
+            echo "  2) List all backups"
+            echo "  3) Cleanup old backups"
+            echo "  4) View backup configuration"
+            echo "  0) Return to main menu"
+        fi
+        echo ""
+        read -p "Enter option [0-4]: " backup_choice
+        
+        case $backup_choice in
+            1) create_backup_now ;;
+            2) list_backups ;;
+            3) cleanup_old_backups ;;
+            4) view_backup_config ;;
+            0) return ;;
+            *)
+                if [ "$LANG_CHOICE" = "zh" ]; then
+                    print_error "无效选项"
+                else
+                    print_error "Invalid option"
+                fi
+                press_any_key
+                ;;
+        esac
+    done
+}
+
+create_backup_now() {
     print_banner
     if [ "$LANG_CHOICE" = "zh" ]; then
-        echo "=== 备份数据库 ==="
+        echo "=== 立即创建备份 ==="
     else
-        echo "=== Backup Database ==="
+        echo "=== Create Backup Now ==="
     fi
     echo ""
     
@@ -1047,98 +1088,180 @@ backup_data() {
         return
     fi
     
-    CURRENT_DIR=$(pwd)
+    # Activate virtual environment
+    if [ -d "venv" ]; then
+        source venv/bin/activate
+    fi
     
-    # Ask for backup directory
+    # Run backup command
     if [ "$LANG_CHOICE" = "zh" ]; then
-        echo "📁 请输入备份目录路径（按 Enter 使用当前目录）:"
-        read -p "备份目录 [$CURRENT_DIR]: " BACKUP_DIR
+        print_info "正在创建备份..."
     else
-        echo "📁 Enter backup directory path (press Enter for current directory):"
-        read -p "Backup directory [$CURRENT_DIR]: " BACKUP_DIR
+        print_info "Creating backup..."
     fi
+    echo ""
     
-    BACKUP_DIR=${BACKUP_DIR:-$CURRENT_DIR}
+    python manage.py backup_database --force
     
-    # Create backup directory if it doesn't exist
-    if [ ! -d "$BACKUP_DIR" ]; then
-        if [ "$LANG_CHOICE" = "zh" ]; then
-            print_info "创建备份目录..."
-        else
-            print_info "Creating backup directory..."
-        fi
-        mkdir -p "$BACKUP_DIR"
+    echo ""
+    press_any_key
+}
+
+list_backups() {
+    print_banner
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        echo "=== 备份列表 ==="
+    else
+        echo "=== Backup List ==="
     fi
+    echo ""
     
-    # Generate backup filename with timestamp
-    TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-    BACKUP_FILE="db_backup_${TIMESTAMP}.sqlite3"
-    BACKUP_PATH="$BACKUP_DIR/$BACKUP_FILE"
-    
-    # Check if database exists
-    if [ ! -f "db.sqlite3" ]; then
-        if [ "$LANG_CHOICE" = "zh" ]; then
-            print_error "数据库文件不存在: db.sqlite3"
-        else
-            print_error "Database file not found: db.sqlite3"
-        fi
+    if ! check_and_enter_project_dir; then
         press_any_key
         return
     fi
     
-    # Create backup
+    # Activate virtual environment
+    if [ -d "venv" ]; then
+        source venv/bin/activate
+    fi
+    
+    # Use backup manager to list backups
+    python backup_manager.py list
+    
+    echo ""
+    press_any_key
+}
+
+cleanup_old_backups() {
+    print_banner
     if [ "$LANG_CHOICE" = "zh" ]; then
-        print_info "💾 正在创建备份..."
+        echo "=== 清理旧备份 ==="
     else
-        print_info "💾 Creating backup..."
+        echo "=== Cleanup Old Backups ==="
+    fi
+    echo ""
+    
+    if ! check_and_enter_project_dir; then
+        press_any_key
+        return
     fi
     
-    cp db.sqlite3 "$BACKUP_PATH"
+    # Activate virtual environment
+    if [ -d "venv" ]; then
+        source venv/bin/activate
+    fi
     
-    # Verify backup
-    if [ -f "$BACKUP_PATH" ]; then
-        BACKUP_SIZE=$(du -h "$BACKUP_PATH" | cut -f1)
-        echo ""
-        if [ "$LANG_CHOICE" = "zh" ]; then
-            print_success "✅ 备份创建成功！"
-        else
-            print_success "✅ Backup created successfully!"
-        fi
-        echo ""
+    # Use backup manager to cleanup
+    python backup_manager.py cleanup
+    
+    echo ""
+    press_any_key
+}
+
+view_backup_config() {
+    print_banner
+    if [ "$LANG_CHOICE" = "zh" ]; then
+        echo "=== 备份配置 ==="
+    else
+        echo "=== Backup Configuration ==="
+    fi
+    echo ""
+    
+    if ! check_and_enter_project_dir; then
+        press_any_key
+        return
+    fi
+    
+    # Read configuration from .env file
+    if [ -f ".env" ]; then
+        ENABLE_AUTO_BACKUP=$(grep "^ENABLE_AUTO_BACKUP=" .env | cut -d'=' -f2)
+        BACKUP_PATH=$(grep "^BACKUP_PATH=" .env | cut -d'=' -f2)
+        BACKUP_MAX_COUNT=$(grep "^BACKUP_MAX_COUNT=" .env | cut -d'=' -f2)
+        
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         if [ "$LANG_CHOICE" = "zh" ]; then
-            echo "📋 备份信息:"
+            echo "📋 当前配置:"
         else
-            echo "📋 Backup Information:"
+            echo "📋 Current Configuration:"
         fi
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        
         if [ "$LANG_CHOICE" = "zh" ]; then
-            echo "  文件名: $BACKUP_FILE"
-            echo "  位置:   $BACKUP_PATH"
-            echo "  大小:   $BACKUP_SIZE"
-            echo "  日期:   $(date '+%Y-%m-%d %H:%M:%S')"
+            echo "  自动备份: ${ENABLE_AUTO_BACKUP:-未配置}"
+            echo "  备份路径: ${BACKUP_PATH:-未配置}"
+            echo "  最大保留: ${BACKUP_MAX_COUNT:-5} 个备份"
         else
-            echo "  Filename: $BACKUP_FILE"
-            echo "  Location: $BACKUP_PATH"
-            echo "  Size:     $BACKUP_SIZE"
-            echo "  Date:     $(date '+%Y-%m-%d %H:%M:%S')"
+            echo "  Auto Backup: ${ENABLE_AUTO_BACKUP:-Not configured}"
+            echo "  Backup Path: ${BACKUP_PATH:-Not configured}"
+            echo "  Max Count:   ${BACKUP_MAX_COUNT:-5} backups"
         fi
+        
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         echo ""
-        if [ "$LANG_CHOICE" = "zh" ]; then
-            echo "💡 要恢复此备份，请在主菜单选择 '9) 恢复数据'"
-        else
-            echo "💡 To restore this backup, select '9) Restore Data' from main menu"
+        
+        # Check if backup directory exists and show stats
+        if [ -n "$BACKUP_PATH" ] && [ -d "$BACKUP_PATH" ]; then
+            BACKUP_COUNT=$(ls -1 "$BACKUP_PATH"/db_backup_*.sqlite3 2>/dev/null | wc -l)
+            if [ "$LANG_CHOICE" = "zh" ]; then
+                echo "  当前备份数量: $BACKUP_COUNT"
+            else
+                echo "  Current backup count: $BACKUP_COUNT"
+            fi
+            
+            if [ $BACKUP_COUNT -gt 0 ]; then
+                TOTAL_SIZE=$(du -sh "$BACKUP_PATH" 2>/dev/null | cut -f1)
+                if [ "$LANG_CHOICE" = "zh" ]; then
+                    echo "  占用空间: $TOTAL_SIZE"
+                else
+                    echo "  Total size: $TOTAL_SIZE"
+                fi
+            fi
         fi
+        
         echo ""
+        
+        # Show cron job status
+        if [ "$LANG_CHOICE" = "zh" ]; then
+            echo "📅 定时任务状态:"
+        else
+            echo "📅 Scheduled Task Status:"
+        fi
+        
+        if crontab -l 2>/dev/null | grep -q "backup_database"; then
+            if [ "$LANG_CHOICE" = "zh" ]; then
+                echo "  ✅ 已配置自动备份定时任务"
+                echo ""
+                echo "  定时任务详情:"
+                crontab -l 2>/dev/null | grep "backup_database"
+            else
+                echo "  ✅ Automatic backup scheduled"
+                echo ""
+                echo "  Cron job details:"
+                crontab -l 2>/dev/null | grep "backup_database"
+            fi
+        else
+            if [ "$LANG_CHOICE" = "zh" ]; then
+                echo "  ⚠️  未配置定时任务"
+                echo ""
+                echo "  要设置每日自动备份，运行:"
+                echo "  (crontab -l 2>/dev/null; echo \"0 2 * * * cd $(pwd) && python3 manage.py backup_database >> /var/log/mc_rcon_backup.log 2>&1\") | crontab -"
+            else
+                echo "  ⚠️  No scheduled task configured"
+                echo ""
+                echo "  To set up daily automatic backup, run:"
+                echo "  (crontab -l 2>/dev/null; echo \"0 2 * * * cd $(pwd) && python3 manage.py backup_database >> /var/log/mc_rcon_backup.log 2>&1\") | crontab -"
+            fi
+        fi
     else
         if [ "$LANG_CHOICE" = "zh" ]; then
-            print_error "❌ 备份失败！"
+            print_error "未找到 .env 配置文件"
         else
-            print_error "❌ Backup failed!"
+            print_error ".env configuration file not found"
         fi
     fi
     
+    echo ""
     press_any_key
 }
 
@@ -1666,7 +1789,7 @@ main() {
             5) restart_service ;;
             6) view_status ;;
             7) view_logs ;;
-            8) backup_data ;;
+            8) backup_menu ;;
             9) restore_data ;;
             10) change_admin_password ;;
             11) uninstall_all ;;
