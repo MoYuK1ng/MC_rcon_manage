@@ -538,6 +538,50 @@ EOF
     
     print_success "Admin account created"
     
+    # Configure automatic backup
+    echo ""
+    echo "=== 自动备份配置 / Automatic Backup Configuration ==="
+    read -p "是否启用自动服务器数据备份？Do you want to enable automatic server data backups? (Y/n): " enable_backup
+    
+    if [[ "$enable_backup" =~ ^[Yy]$ ]] || [[ -z "$enable_backup" ]]; then
+        echo "ENABLE_AUTO_BACKUP=True" >> .env
+        echo ""
+        read -p "请输入备份目录的完整路径 Enter the full path for the backup directory (default: /opt/mc_rcon/backups): " backup_path
+        
+        if [[ -z "$backup_path" ]]; then
+            backup_path="/opt/mc_rcon/backups"
+        fi
+        
+        # Create backup directory if it doesn't exist
+        mkdir -p "$backup_path"
+        
+        if [[ $? -eq 0 ]]; then
+            echo "BACKUP_PATH=$backup_path" >> .env
+            echo "BACKUP_MAX_COUNT=5" >> .env
+            echo "✅ 自动备份已启用，备份目录: $backup_path"
+            echo "✅ Automatic backup enabled, backup directory: $backup_path"
+            
+            # Set up cron job for daily backups
+            echo ""
+            read -p "是否设置每日自动备份？Do you want to set up daily automatic backups? (Y/n): " setup_cron
+            
+            if [[ "$setup_cron" =~ ^[Yy]$ ]] || [[ -z "$setup_cron" ]]; then
+                # Add cron job for daily backup at 2 AM
+                (crontab -l 2>/dev/null; echo "0 2 * * * cd $INSTALL_DIR && python3 manage.py backup_database >> /var/log/mc_rcon_backup.log 2>&1") | crontab -
+                echo "✅ 每日备份任务已设置 (凌晨2点执行)"
+                echo "✅ Daily backup task scheduled (runs at 2 AM)"
+            fi
+        else
+            echo "❌ 无法创建备份目录，跳过自动备份配置"
+            echo "❌ Failed to create backup directory, skipping automatic backup setup"
+            echo "ENABLE_AUTO_BACKUP=False" >> .env
+        fi
+    else
+        echo "ENABLE_AUTO_BACKUP=False" >> .env
+        echo "⏭️  跳过自动备份配置"
+        echo "⏭️  Skipping automatic backup configuration"
+    fi
+    
     # 9. Collect static files
     if [ "$LANG_CHOICE" = "zh" ]; then
         print_info "步骤 8/9: 收集静态文件..."

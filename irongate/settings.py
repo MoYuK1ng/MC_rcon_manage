@@ -193,6 +193,18 @@ LOCALE_PATHS = [
     BASE_DIR / 'locale',
 ]
 
+# ============================================================================
+# Automatic Backup Configuration
+# ============================================================================
+# Enable/disable automatic database backups
+ENABLE_AUTO_BACKUP = os.getenv('ENABLE_AUTO_BACKUP', 'False').lower() == 'true'
+
+# Backup directory path
+BACKUP_PATH = os.getenv('BACKUP_PATH', '/opt/mc_rcon/backups')
+
+# Maximum number of backup files to retain (default: 5)
+BACKUP_MAX_COUNT = int(os.getenv('BACKUP_MAX_COUNT', '5'))
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
