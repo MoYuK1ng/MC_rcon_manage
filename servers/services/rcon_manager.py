@@ -122,7 +122,7 @@ class RconHandler:
     
     def add_whitelist(self, username: str) -> Dict[str, any]:
         """
-        Add a username to the server's whitelist.
+        Add a username to the server's whitelist and reload the whitelist.
         
         Args:
             username: Minecraft username to whitelist.
@@ -138,11 +138,16 @@ class RconHandler:
             }
 
         try:
-            response = self._execute_command(f'whitelist add {username}')
+            # Add user to whitelist
+            add_response = self._execute_command(f'whitelist add {username}')
+            
+            # Reload whitelist to apply changes immediately
+            # This is CRITICAL - without reload, the whitelist won't take effect
+            reload_response = self._execute_command('whitelist reload')
             
             return {
                 'success': True,
-                'message': response if response else f'Successfully added {username} to the whitelist.'
+                'message': f'{add_response} Whitelist reloaded.' if add_response else f'Successfully added {username} to the whitelist and reloaded.'
             }
         
         except socket.timeout:
