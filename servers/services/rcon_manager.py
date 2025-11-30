@@ -195,3 +195,75 @@ class RconHandler:
                 'success': False,
                 'message': error_msg
             }
+    
+    def sync_all_whitelists(self) -> Dict[str, any]:
+        """
+        Synchronize all successful whitelist entries from database to server.
+        This ensures the server's whitelist matches the database records.
+        
+        Returns:
+            A dictionary with success status, sync count, and message.
+        """
+        logger.info(f"Starting whitelist sync for server {self.server.name}")
+        
+        try:
+            # Import here to avoid circular dependency
+            from servers.models import WhitelistRequest
+            
+            # Get all successfully processed whitelist requests for this server
+            successful_requests = WhitelistRequest.objects.filter(
+                server=self.server,
+                status=WhitelistRequest.Status.PROCESSED
+            ).values_list('minecraft_username', flat=True)
+            
+            usernames = list(successful_requests)
+            logger.info(f"Found {len(usernames)} usernames to sync: {usernames}")
+            
+            if not usernames:
+                return {
+                    'success': True,
+                    'synced_count': 0,
+                    'message': 'No whitelist entries to sync.'
+                }
+            
+            # Add each username to the whitelist
+            synced_count = 0
+            failed_users = []
+            
+            for username in usernames:
+                try:
+                    logger.debug(f"Syncing: whitelist add {username}")
+                    response = self._execute_command(f'whitelist add {username}')
+                    logger.debug(f"Sync response for {username}: {response}")
+                    synced_count += 1
+                except Exception as e:
+                    logger.error(f"Failed to sync {username}: {e}")
+                    failed_users.append(username)
+            
+            # Reload whitelist to apply all changes
+            logger.debug("Executing: whitelist reload")
+            reload_response = self._execute_command('whitelist reload')
+            logger.info(f"Reload response: {reload_response}")
+            
+            if failed_users:
+                message = f'Synced {synced_count}/{len(usernames)} users. Failed: {", ".join(failed_users)}. Whitelist reloaded.'
+            else:
+                message = f'Successfully synced all {synced_count} users to whitelist and reloaded.'
+            
+            logger.info(f"Whitelist sync completed: {message}")
+            
+            return {
+                'success': True,
+                'synced_count': synced_count,
+                'failed_count': len(failed_users),
+                'message': message
+            }
+        
+        except Exception as e:
+            error_msg = f'Whitelist sync failed: {str(e)}'
+            logger.exception("Whitelist sync error")
+            return {
+                'success': False,
+                'synced_count': 0,
+                'message': error_msg
+            }

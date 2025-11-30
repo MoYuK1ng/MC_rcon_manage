@@ -140,13 +140,27 @@ class WhitelistAddView(View):
         
         if result['success']:
             whitelist_request.status = WhitelistRequest.Status.PROCESSED
-            messages.success(request, _('Successfully added {username} to {server} whitelist.').format(username=minecraft_username, server=server.name))
+            whitelist_request.response_log = result['message']
+            whitelist_request.save()
+            
+            # Sync all whitelists to ensure consistency
+            sync_result = handler.sync_all_whitelists()
+            if sync_result['success']:
+                messages.success(request, _('Successfully added {username} to {server} whitelist. Synced {count} total users.').format(
+                    username=minecraft_username, 
+                    server=server.name,
+                    count=sync_result['synced_count']
+                ))
+            else:
+                messages.warning(request, _('Added {username} but sync failed: {error}').format(
+                    username=minecraft_username,
+                    error=sync_result['message']
+                ))
         else:
             whitelist_request.status = WhitelistRequest.Status.FAILED
+            whitelist_request.response_log = result['message']
+            whitelist_request.save()
             messages.error(request, _('Failed to add {username} to whitelist: {error}').format(username=minecraft_username, error=result['message']))
-
-        whitelist_request.response_log = result['message']
-        whitelist_request.save()
         
         return redirect('dashboard')
 
